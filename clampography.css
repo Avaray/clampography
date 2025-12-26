@@ -311,7 +311,6 @@
     height: 0.375em;
     background-color: currentColor;
     border-radius: 50%;
-    opacity: 0.4;
   }
 
   /* Right-aligned numbers for professional look (e.g. "9." aligns with "10.") */
@@ -331,7 +330,6 @@
     text-align: right;
     font-weight: 600;
     color: currentColor;
-    opacity: 0.6;
   }
 
   /* Nested lists - indentation only, spacing handled by li rules above */
