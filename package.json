@@ -1,17 +1,11 @@
 {
   "name": "clampography",
-  "version": "0.9.10",
+  "version": "2.0.0-beta.0",
   "description": "Fluid typography system based on CSS clamp(). Alternative to Tailwind CSS Typography plugin.",
-  "main": "clampography.css",
-  "style": "clampography.css",
-  "files": [
-    "clampography.css",
-    "presets/"
-  ],
+  "main": "src/index.js",
+  "type": "module",
   "exports": {
-    ".": "./clampography.css",
-    "./base": "./clampography.css",
-    "./*": "./presets/*.css"
+    ".": "./src/index.js"
   },
   "keywords": [
     "alternative",
@@ -26,11 +20,14 @@
     "font-size",
     "markdown",
     "style",
+    "styles",
     "tailwind",
     "tailwind-css",
     "tailwind-plugin",
     "tailwindcss",
     "text",
+    "theme",
+    "themes",
     "typography"
   ],
   "repository": {
@@ -39,5 +36,8 @@
   },
   "homepage": "https://next.dav.one/clampography/",
   "author": "Dawid Wąsowski",
-  "license": "MIT"
+  "license": "MIT",
+  "peerDependencies": {
+    "tailwindcss": ">=4.0.0"
+  }
 }
