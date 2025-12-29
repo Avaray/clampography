@@ -1,36 +1,30 @@
 import plugin from "tailwindcss/plugin";
-
-// List of required color keys for validation (optional but good practice)
-const REQUIRED_KEYS = [
-  "--clampography-background",
-  "--clampography-text",
-  "--clampography-link",
-  "--clampography-primary",
-  "--clampography-secondary",
-];
+import { themes as builtInThemes } from "./themes.js";
 
 export default plugin.withOptions((options = {}) => {
   return ({ addBase }) => {
     // 1. Extract metadata
     const themeName = options.name;
     const isDefault = options.default ?? false;
-    const isPrefersDark = options.prefersdark ?? false; // lowercase because CSS might force it
+    const isPrefersDark = options.prefersdark ?? false;
     const rootSelector = options.root ?? ":root";
+    // Nowa opcja: color-scheme (defaults to 'light' if not specified)
+    const colorScheme = options["color-scheme"] ?? "light";
 
     if (!themeName) {
       console.warn("Clampography: Theme definition missing 'name' property.");
       return;
     }
 
-    // 2. Extract colors from options
-    // We iterate over the options object and pick anything that looks like our CSS variable
-    // or simply take all known keys.
+    // 2. Prepare Base Colors (Fallback)
+    // We fetch the full palette of the requested color scheme (light/dark)
+    // to fill in any missing gaps in the user's definition.
+    const fallbackTheme = builtInThemes[colorScheme] || builtInThemes["light"];
+
+    // 3. Extract & Merge Colors
     const themeColors = {};
 
-    // You can also support short aliases here if you want (e.g., 'primary' -> '--clampography-primary')
-    // For now, let's assume user passes full variable names or mapped keys.
-
-    // Helper to map simplified keys to full CSS vars (optional convenience)
+    // Mapping of simplified keys to full CSS variable names
     const keyMap = {
       "background": "--clampography-background",
       "surface": "--clampography-surface",
@@ -43,28 +37,40 @@ export default plugin.withOptions((options = {}) => {
       "secondary": "--clampography-secondary",
     };
 
+    // First, populate with fallback colors
+    Object.keys(fallbackTheme).forEach((key) => {
+      themeColors[key] = fallbackTheme[key];
+    });
+
+    // Then override with user provided values
     Object.keys(options).forEach((key) => {
-      // Check if it's one of our mapped short keys
+      // Ignore metadata keys
+      if (
+        ["name", "default", "prefersdark", "root", "color-scheme"].includes(key)
+      ) return;
+
       if (keyMap[key]) {
         themeColors[keyMap[key]] = options[key];
-      } // Or if it is already a custom property key (starts with --)
-      else if (key.startsWith("--")) {
+      } else if (key.startsWith("--")) {
         themeColors[key] = options[key];
       }
     });
 
-    // 3. Generate Styles
+    // Add the CSS property 'color-scheme' for browser UI adaptation (scrollbars, etc.)
+    themeColors["color-scheme"] = colorScheme;
+
+    // 4. Generate Styles
     const styles = {};
 
-    // A. Define the theme as a named data-theme (always available)
+    // A. Define the theme as a named data-theme
     styles[`[data-theme="${themeName}"]`] = themeColors;
 
-    // B. If marked as default, apply to :root
+    // B. If default, apply to root
     if (isDefault) {
       styles[rootSelector] = themeColors;
     }
 
-    // C. If marked as prefers-dark, apply to media query
+    // C. If prefers-dark, apply to media query
     if (isPrefersDark) {
       styles["@media (prefers-color-scheme: dark)"] = {
         [rootSelector]: themeColors,

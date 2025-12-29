@@ -1,5 +1,6 @@
 export const themes = {
   light: {
+    "color-scheme": "light",
     "--clampography-background": "#ffffff",
     "--clampography-surface": "#f3f4f6",
     "--clampography-border": "#e5e7eb",
@@ -11,6 +12,7 @@ export const themes = {
     "--clampography-secondary": "#9333ea",
   },
   dark: {
+    "color-scheme": "dark",
     "--clampography-background": "#0f172a",
     "--clampography-surface": "#1e293b",
     "--clampography-border": "#334155",
@@ -22,6 +24,7 @@ export const themes = {
     "--clampography-secondary": "#a855f7",
   },
   retro: {
+    "color-scheme": "light",
     "--clampography-background": "#ece3ca",
     "--clampography-surface": "#e0d6b6",
     "--clampography-border": "#cbbd99",
@@ -33,6 +36,7 @@ export const themes = {
     "--clampography-secondary": "#f6c342",
   },
   cyberpunk: {
+    "color-scheme": "dark",
     "--clampography-background": "#000b1e",
     "--clampography-surface": "#051630",
     "--clampography-border": "#0f3661",
