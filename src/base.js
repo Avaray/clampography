@@ -31,7 +31,7 @@ export default {
 
   // Shared Heading Structure
   ":where(h1, h2, h3, h4, h5, h6)": {
-    "font-weight": "700",
+    "font-weight": "600",
     "scroll-margin-top": "var(--scroll-offset)",
     "margin-top": "var(--spacing-lg)",
     "margin-bottom": "var(--spacing-xs)",
