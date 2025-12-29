@@ -5,75 +5,97 @@ import extraStyles from "./extra.js";
 
 /**
  * Main plugin function.
- *
- * @param {Object} options
- * @param {Array<string>|string} [options.themes=["light", "dark"]]
- * @param {string} [options.defaultTheme="light"]
- * @param {string|boolean} [options.prefersDark=false]
- * @param {string} [options.root=":root"]
- * @param {boolean} [options.base=true]
- * @param {boolean} [options.extra=false]
  */
 export default plugin.withOptions((options = {}) => {
   return ({ addBase }) => {
-    // 1. Set configuration defaults
-    const configThemes = options.themes ?? ["light", "dark"];
-    const defaultThemeName = options.defaultTheme ?? "light";
-    const prefersDarkTheme = options.prefersDark ?? false;
-    const rootSelector = options.root ?? ":root";
+    // 1. Load Base and Extra styles
     const includeBase = options.base ?? true;
     const includeExtra = options.extra ?? false;
 
-    // 2. Inject Base Styles (if enabled)
-    // baseStyles is already a JS object, so addBase accepts it directly.
-    if (includeBase) {
-      addBase(baseStyles);
-    }
+    if (includeBase) addBase(baseStyles);
+    if (includeExtra) addBase(extraStyles);
 
-    // 3. Inject Extra Styles (if enabled)
-    if (includeExtra) {
-      addBase(extraStyles);
-    }
+    // 2. Parse themes configuration
+    let configThemes = options.themes;
 
-    // 4. Determine themes to include
+    // Default values
     let themesToInclude = [];
+    let defaultThemeName = "light";
+    let prefersDarkTheme = false;
+    let rootSelector = options.root ?? ":root";
 
-    if (configThemes === "all") {
-      themesToInclude = Object.keys(builtInThemes);
+    // Normalize input to an array of strings
+    // CSS might pass this as a single long string separated by commas
+    let rawThemeList = [];
+
+    if (typeof configThemes === "string") {
+      if (configThemes.trim() === "all") {
+        // Special case: themes: all
+        rawThemeList = Object.keys(builtInThemes);
+      } else if (configThemes.trim() === "false") {
+        rawThemeList = [];
+      } else {
+        // Split by comma: "light --default, dark --prefersdark"
+        rawThemeList = configThemes.split(",");
+      }
     } else if (Array.isArray(configThemes)) {
-      themesToInclude = configThemes.filter((name) => builtInThemes[name]);
-    } else if (configThemes === "false") {
-      themesToInclude = [];
+      rawThemeList = configThemes;
+    } else {
+      // Default fallback if nothing provided
+      rawThemeList = ["light", "dark"];
     }
 
-    // Stop if no themes are requested
-    if (
-      themesToInclude.length === 0 && configThemes !== "all" &&
-      (!Array.isArray(configThemes) || configThemes.length === 0)
-    ) {
-      return;
-    }
+    // 3. Process the list and look for flags (--default, --prefersdark)
+    // If "all" was used, we don't look for flags (we use default light/dark logic) unless implemented otherwise.
+    // Here we focus on the explicit list.
 
+    rawThemeList.forEach((rawItem) => {
+      let themeName = rawItem.trim();
+
+      // Ignore empty entries
+      if (!themeName) return;
+
+      // Check for --default flag
+      if (themeName.includes("--default")) {
+        themeName = themeName.replace("--default", "").trim();
+        defaultThemeName = themeName;
+      }
+
+      // Check for --prefersdark flag (case insensitive just in case)
+      if (themeName.toLowerCase().includes("--prefersdark")) {
+        themeName = themeName.replace(/--prefersdark/i, "").trim();
+        prefersDarkTheme = themeName;
+      }
+
+      // Check if theme exists in the database
+      if (builtInThemes[themeName]) {
+        themesToInclude.push(themeName);
+      }
+    });
+
+    // If list is empty after filtering, stop here
+    if (themesToInclude.length === 0) return;
+
+    // 4. Generate CSS
     const themeStyles = {};
 
-    // 5. Generate Default Theme
+    // A. Default theme (:root)
     if (builtInThemes[defaultThemeName]) {
       themeStyles[rootSelector] = builtInThemes[defaultThemeName];
     }
 
-    // 6. Handle Dark Mode preference
+    // B. Theme for prefers-color-scheme: dark
     if (prefersDarkTheme && builtInThemes[prefersDarkTheme]) {
       themeStyles["@media (prefers-color-scheme: dark)"] = {
         [rootSelector]: builtInThemes[prefersDarkTheme],
       };
     }
 
-    // 7. Generate Data Attribute Themes
+    // C. Scoped styles [data-theme="..."]
     themesToInclude.forEach((themeName) => {
       themeStyles[`[data-theme="${themeName}"]`] = builtInThemes[themeName];
     });
 
-    // 8. Inject Theme Variables
     addBase(themeStyles);
   };
 });
