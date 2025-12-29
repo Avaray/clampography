@@ -1,12 +1,11 @@
 /**
  * Base typography and layout styles (structure only, no colors).
- * Converted from base.css.
  */
 export default {
   // Global CSS Variables (Spacing & Fonts)
   "@layer base": {
     ":root": {
-      "--spacing-xs": "clamp(0.5rem, 0.45rem + 0.25vw, 0.75rem)",
+      "--spacing-xs": "clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem)",
       "--spacing-sm": "clamp(0.75rem, 0.5625rem + 0.9375vw, 1.25rem)",
       "--spacing-md": "clamp(1rem, 0.75rem + 1.25vw, 1.5rem)",
       "--spacing-lg": "clamp(1.5rem, 1.125rem + 1.875vw, 2.5rem)",
