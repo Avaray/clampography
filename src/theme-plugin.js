@@ -33,7 +33,11 @@ export default plugin.withOptions((options = {}) => {
     // Helper to map simplified keys to full CSS vars (optional convenience)
     const keyMap = {
       "background": "--clampography-background",
+      "surface": "--clampography-surface",
+      "border": "--clampography-border",
+      "heading": "--clampography-heading",
       "text": "--clampography-text",
+      "muted": "--clampography-muted",
       "link": "--clampography-link",
       "primary": "--clampography-primary",
       "secondary": "--clampography-secondary",
