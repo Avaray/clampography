@@ -215,8 +215,8 @@ export default {
 
   // Blockquotes
   "blockquote": {
-    "margin-top": "0",
-    "margin-bottom": "0",
+    "margin-top": "var(--spacing-lg)",
+    "margin-bottom": "var(--spacing-lg)",
     "padding-left": "var(--spacing-md)",
   },
 
