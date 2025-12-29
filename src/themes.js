@@ -1,7 +1,3 @@
-/**
- * Built-in themes definition.
- * Each theme must strictly use the 5 specific --clampography-* variables.
- */
 export const themes = {
   light: {
     "--clampography-background": "#ffffff",
@@ -32,3 +28,5 @@ export const themes = {
     "--clampography-secondary": "#05ffa1",
   },
 };
+
+export const themesList = Object.keys(themes);
