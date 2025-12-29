@@ -20,7 +20,7 @@ export default plugin.withOptions((options = {}) => {
 
     // Default values
     let themesToInclude = [];
-    let defaultThemeName = null; // Zmiana: Domyślnie brak motywu głównego
+    let defaultThemeName = null;
     let prefersDarkTheme = false;
     let rootSelector = options.root ?? ":root";
 
@@ -29,7 +29,7 @@ export default plugin.withOptions((options = {}) => {
 
     if (typeof configThemes === "string") {
       if (configThemes.trim() === "all") {
-        // Special case: themes: all
+        // Special case: themes: all -> load everything
         rawThemeList = Object.keys(builtInThemes);
       } else if (configThemes.trim() === "false") {
         rawThemeList = [];
@@ -39,7 +39,6 @@ export default plugin.withOptions((options = {}) => {
     } else if (Array.isArray(configThemes)) {
       rawThemeList = configThemes;
     } else {
-      // ZMIANA TUTAJ:
       // Fallback default is EMPTY array.
       // User must explicitly ask for themes via options.
       rawThemeList = [];
@@ -48,23 +47,18 @@ export default plugin.withOptions((options = {}) => {
     // 3. Process the list and look for flags
     rawThemeList.forEach((rawItem) => {
       let themeName = rawItem.trim();
-
-      // Ignore empty entries
       if (!themeName) return;
 
-      // Check for --default flag
       if (themeName.includes("--default")) {
         themeName = themeName.replace("--default", "").trim();
         defaultThemeName = themeName;
       }
 
-      // Check for --prefersdark flag (case insensitive just in case)
       if (themeName.toLowerCase().includes("--prefersdark")) {
         themeName = themeName.replace(/--prefersdark/i, "").trim();
         prefersDarkTheme = themeName;
       }
 
-      // Check if theme exists in the database
       if (builtInThemes[themeName]) {
         themesToInclude.push(themeName);
       }
