@@ -20,12 +20,11 @@ export default plugin.withOptions((options = {}) => {
 
     // Default values
     let themesToInclude = [];
-    let defaultThemeName = "light";
+    let defaultThemeName = null; // Zmiana: Domyślnie brak motywu głównego
     let prefersDarkTheme = false;
     let rootSelector = options.root ?? ":root";
 
     // Normalize input to an array of strings
-    // CSS might pass this as a single long string separated by commas
     let rawThemeList = [];
 
     if (typeof configThemes === "string") {
@@ -35,20 +34,18 @@ export default plugin.withOptions((options = {}) => {
       } else if (configThemes.trim() === "false") {
         rawThemeList = [];
       } else {
-        // Split by comma: "light --default, dark --prefersdark"
         rawThemeList = configThemes.split(",");
       }
     } else if (Array.isArray(configThemes)) {
       rawThemeList = configThemes;
     } else {
-      // Default fallback if nothing provided
-      rawThemeList = ["light", "dark"];
+      // ZMIANA TUTAJ:
+      // Fallback default is EMPTY array.
+      // User must explicitly ask for themes via options.
+      rawThemeList = [];
     }
 
-    // 3. Process the list and look for flags (--default, --prefersdark)
-    // If "all" was used, we don't look for flags (we use default light/dark logic) unless implemented otherwise.
-    // Here we focus on the explicit list.
-
+    // 3. Process the list and look for flags
     rawThemeList.forEach((rawItem) => {
       let themeName = rawItem.trim();
 
@@ -80,7 +77,8 @@ export default plugin.withOptions((options = {}) => {
     const themeStyles = {};
 
     // A. Default theme (:root)
-    if (builtInThemes[defaultThemeName]) {
+    // Only applied if explicitly flagged with --default OR via manual logic (not applied here automatically anymore)
+    if (defaultThemeName && builtInThemes[defaultThemeName]) {
       themeStyles[rootSelector] = builtInThemes[defaultThemeName];
     }
 
