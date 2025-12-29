@@ -6,6 +6,7 @@ export default {
   // Global CSS Variables (Spacing & Fonts)
   "@layer base": {
     ":root": {
+      "--spacing-xs": "clamp(0.5rem, 0.45rem + 0.25vw, 0.75rem)",
       "--spacing-sm": "clamp(0.75rem, 0.5625rem + 0.9375vw, 1.25rem)",
       "--spacing-md": "clamp(1rem, 0.75rem + 1.25vw, 1.5rem)",
       "--spacing-lg": "clamp(1.5rem, 1.125rem + 1.875vw, 2.5rem)",
@@ -29,18 +30,17 @@ export default {
     "text-wrap": "pretty",
   },
 
-  // Headings Structure
+  // Shared Heading Structure
   ":where(h1, h2, h3, h4, h5, h6)": {
     "font-weight": "700",
     "scroll-margin-top": "var(--scroll-offset)",
-    "font-size": "1rem",
-    "line-height": "1.5",
-    "margin-top": "0",
+    "margin-top": "var(--spacing-lg)",
     "margin-bottom": "var(--spacing-xs)",
     "text-decoration": "none",
     "break-after": "avoid",
   },
 
+  // Specific Headings (Values from base.css)
   "h1": {
     "font-size": "clamp(2.25rem, 1.95rem + 1.5vw, 3rem)",
     "line-height": "1.1111",
@@ -49,10 +49,39 @@ export default {
     "margin-bottom": "var(--spacing-xl)",
   },
 
+  "h2": {
+    "font-size": "clamp(1.5rem, 1.35rem + 0.75vw, 1.875rem)",
+    "line-height": "1.3333",
+    "font-weight": "700",
+    "margin-top": "var(--spacing-xl)",
+    "margin-bottom": "var(--spacing-md)",
+  },
+
+  "h3": {
+    "font-size": "clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem)",
+    "line-height": "1.6",
+    "margin-top": "var(--spacing-lg)",
+    "margin-bottom": "var(--spacing-sm)",
+  },
+
+  "h4": {
+    "font-size": "clamp(1rem, 0.975rem + 0.125vw, 1.125rem)",
+    "line-height": "1.5",
+    "margin-top": "var(--spacing-lg)",
+    "margin-bottom": "var(--spacing-sm)",
+  },
+
+  "h5": {
+    "font-size": "1rem",
+    "line-height": "1.5",
+    "margin-top": "var(--spacing-md)",
+    "margin-bottom": "var(--spacing-xs)",
+  },
+
   "h6": {
     "font-size": "0.875rem",
     "line-height": "1.5",
-    "margin-top": "0",
+    "margin-top": "var(--spacing-md)",
     "margin-bottom": "var(--spacing-xs)",
   },
 

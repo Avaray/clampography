@@ -4,21 +4,35 @@ import baseStyles from "./base.js";
 import extraStyles from "./extra.js";
 
 /**
+ * Helper to resolve boolean options from CSS configuration.
+ * CSS values often come as strings ("true"/"false"), which are both truthy in JS.
+ */
+const resolveBool = (value, defaultValue) => {
+  if (value === "false" || value === false) return false;
+  if (value === "true" || value === true) return true;
+  return defaultValue;
+};
+
+/**
  * Main plugin function.
  */
 export default plugin.withOptions((options = {}) => {
   return ({ addBase }) => {
     // 1. Load Base and Extra styles
-    const includeBase = options.base ?? true;
-    const includeExtra = options.extra ?? false;
+    // We use the helper to correctly parse "false" string from CSS
+    const includeBase = resolveBool(options.base, true); // Default: true
+    const includeExtra = resolveBool(options.extra, false); // Default: false
 
-    if (includeBase) addBase(baseStyles);
-    if (includeExtra) addBase(extraStyles);
+    if (includeBase) {
+      addBase(baseStyles);
+    }
+
+    if (includeExtra) {
+      addBase(extraStyles);
+    }
 
     // 2. Parse themes configuration
     let configThemes = options.themes;
-
-    // Default values
     let themesToInclude = [];
     let defaultThemeName = null;
     let prefersDarkTheme = false;
@@ -29,9 +43,10 @@ export default plugin.withOptions((options = {}) => {
 
     if (typeof configThemes === "string") {
       if (configThemes.trim() === "all") {
-        // Special case: themes: all -> load everything
+        // Special case: themes: all
         rawThemeList = Object.keys(builtInThemes);
       } else if (configThemes.trim() === "false") {
+        // Explicitly disabled themes
         rawThemeList = [];
       } else {
         rawThemeList = configThemes.split(",");
@@ -39,39 +54,45 @@ export default plugin.withOptions((options = {}) => {
     } else if (Array.isArray(configThemes)) {
       rawThemeList = configThemes;
     } else {
-      // Fallback default is EMPTY array.
-      // User must explicitly ask for themes via options.
+      // Default behavior: NO themes loaded automatically.
+      // User must specify themes to load them.
       rawThemeList = [];
     }
 
-    // 3. Process the list and look for flags
+    // 3. Process the list and look for flags (--default, --prefersdark)
     rawThemeList.forEach((rawItem) => {
       let themeName = rawItem.trim();
+
+      // Ignore empty entries
       if (!themeName) return;
 
+      // Check for --default flag
       if (themeName.includes("--default")) {
         themeName = themeName.replace("--default", "").trim();
         defaultThemeName = themeName;
       }
 
+      // Check for --prefersdark flag
       if (themeName.toLowerCase().includes("--prefersdark")) {
         themeName = themeName.replace(/--prefersdark/i, "").trim();
         prefersDarkTheme = themeName;
       }
 
+      // Check if theme exists in the database
       if (builtInThemes[themeName]) {
         themesToInclude.push(themeName);
       }
     });
 
     // If list is empty after filtering, stop here
-    if (themesToInclude.length === 0) return;
+    if (
+      themesToInclude.length === 0 && !defaultThemeName && !prefersDarkTheme
+    ) return;
 
     // 4. Generate CSS
     const themeStyles = {};
 
     // A. Default theme (:root)
-    // Only applied if explicitly flagged with --default OR via manual logic (not applied here automatically anymore)
     if (defaultThemeName && builtInThemes[defaultThemeName]) {
       themeStyles[rootSelector] = builtInThemes[defaultThemeName];
     }
