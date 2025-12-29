@@ -1,34 +1,138 @@
+/**
+ * Extra opinionated styles and coloring.
+ * Applies colors to the structural base elements.
+ */
 export default {
-  "hr": {
-    "height": "1px",
-    "border-width": "0",
-    "margin-top": "3rem", /* my-12 (12 * 0.25rem) */
-    "margin-bottom": "3rem", /* my-12 */
-    "background-color": "var(--clampography-secondary)",
+  // --- Basic Coloring (Applying theme variables) ---
+
+  "body": {
+    "background-color": "var(--clampography-background)",
+    "color": "var(--clampography-text)",
   },
 
-  "blockquote": {
-    "border-left-width": "4px",
-    "border-color": "var(--clampography-primary)",
-    "padding-left": "1rem", /* pl-4 */
-    "padding-top": "0.5rem", /* py-2 */
-    "padding-bottom": "0.5rem", /* py-2 */
-    "padding-right": "0.5rem", /* pr-2 */
+  ":where(h1, h2, h3, h4, h5, h6)": {
+    "color": "var(--clampography-heading)",
   },
 
   "a": {
     "color": "var(--clampography-link)",
-    "font-weight": "700", /* font-bold */
-    "letter-spacing": "0.025em", /* tracking-wide */
+  },
+
+  // Lists
+  "ul > li::before": {
+    "background-color": "var(--clampography-primary)", // Bullet points
+  },
+
+  "ol > li::before": {
+    "color": "var(--clampography-secondary)", // Numbers
+  },
+
+  // Inline Code
+  ":where(code, kbd, samp)": {
+    "background-color": "var(--clampography-surface)",
+    "color": "var(--clampography-heading)",
+    "border": "1px solid var(--clampography-border)",
+    "border-radius": "0.25rem",
+  },
+
+  // Preformatted Code Blocks
+  "pre": {
+    "background-color": "var(--clampography-surface)",
+    "border": "1px solid var(--clampography-border)",
+    "border-radius": "0.375rem",
+    "padding": "1rem",
+  },
+
+  // Tables
+  "th": {
+    "color": "var(--clampography-heading)",
+  },
+
+  "th, td": {
+    "border-bottom": "1px solid var(--clampography-border)",
+  },
+
+  "thead th": {
+    "border-bottom-width": "2px",
+  },
+
+  // Captions & Muted text
+  "caption, figcaption, .muted": {
+    "color": "var(--clampography-muted)",
+  },
+
+  // Horizontal Rule (Thematic)
+  "hr": {
+    "height": "1px",
+    "border-width": "0",
+    "margin-top": "3rem",
+    "margin-bottom": "3rem",
+    "background-color": "var(--clampography-border)",
+  },
+
+  // --- Opinionated Extras ---
+
+  // Styled Blockquote
+  "blockquote": {
+    "border-left-width": "4px",
+    "border-left-color": "var(--clampography-primary)",
+    "background-color": "var(--clampography-surface)",
+    "padding": "1rem",
+    "border-radius": "0.25rem",
+    "font-style": "italic",
+    "color": "var(--clampography-heading)",
+  },
+
+  // Styled Links (Enhanced)
+  "a": {
+    "font-weight": "700",
+    "letter-spacing": "0.025em",
     "text-decoration-line": "underline",
-    "text-decoration-thickness": "2px", /* decoration-2 */
-    "text-underline-offset": "4px", /* underline-offset-4 */
+    "text-decoration-thickness": "2px",
+    "text-underline-offset": "4px",
     "transition-property": "color, text-decoration-color",
-    "transition-duration": "150ms", /* duration-150 */
+    "transition-duration": "150ms",
   },
 
   "a:hover": {
-    // Używamy zmiennej zdefiniowanej w themes.js (bez prefixu --color-)
     "text-decoration-color": "var(--clampography-primary)",
+  },
+
+  // Mark
+  "mark": {
+    "background-color": "var(--clampography-primary)",
+    "color": "var(--clampography-background)",
+  },
+
+  // Deleted Text
+  "del": {
+    "text-decoration-color": "var(--clampography-secondary)",
+    "text-decoration-thickness": "2px",
+  },
+
+  // Fieldset
+  "fieldset": {
+    "border": "1px solid var(--clampography-border)",
+    "border-radius": "0.375rem",
+  },
+
+  "legend": {
+    "color": "var(--clampography-heading)",
+  },
+
+  // Details
+  "details": {
+    "border": "1px solid var(--clampography-border)",
+    "border-radius": "0.375rem",
+    "padding": "0.5rem",
+  },
+
+  "summary": {
+    "color": "var(--clampography-heading)",
+  },
+
+  "details[open] > summary": {
+    "border-bottom": "1px solid var(--clampography-border)",
+    "padding-bottom": "0.5rem",
   },
 };

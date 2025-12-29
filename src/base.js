@@ -1,8 +1,9 @@
 /**
- * Base typography and reset styles converted from base.css
+ * Base typography and layout styles (structure only, no colors).
+ * Converted from base.css.
  */
 export default {
-  // Global CSS Variables
+  // Global CSS Variables (Spacing & Fonts)
   "@layer base": {
     ":root": {
       "--spacing-sm": "clamp(0.75rem, 0.5625rem + 0.9375vw, 1.25rem)",
@@ -17,7 +18,7 @@ export default {
     },
   },
 
-  // Typography & Resets
+  // Body Structure
   "body": {
     "font-family": "var(--font-family-base)",
     "font-size": "clamp(1rem, 0.95rem + 0.25vw, 1.125rem)",
@@ -28,6 +29,7 @@ export default {
     "text-wrap": "pretty",
   },
 
+  // Headings Structure
   ":where(h1, h2, h3, h4, h5, h6)": {
     "font-weight": "700",
     "scroll-margin-top": "var(--scroll-offset)",
@@ -54,6 +56,7 @@ export default {
     "margin-bottom": "var(--spacing-xs)",
   },
 
+  // Links
   "a": {
     "text-decoration-line": "underline",
     "text-decoration-thickness": "0.0625em",
@@ -66,6 +69,7 @@ export default {
     "text-decoration": "none",
   },
 
+  // Lists & Menus
   "menu": {
     "list-style": "none",
     "margin-bottom": "var(--spacing-md)",
@@ -98,6 +102,7 @@ export default {
     "margin-top": "0",
   },
 
+  // Inline elements
   ":where(strong, b)": {
     "font-weight": "700",
   },
@@ -179,6 +184,7 @@ export default {
     "font-variant-numeric": "tabular-nums",
   },
 
+  // Blockquotes
   "blockquote": {
     "margin-top": "0",
     "margin-bottom": "0",
@@ -195,6 +201,7 @@ export default {
     "font-style": "inherit",
   },
 
+  // Lists
   ":where(ul, ol)": {
     "list-style": "none",
     "margin-bottom": "0",
@@ -222,7 +229,6 @@ export default {
     "top": "calc(0.875em - 0.1875em)",
     "width": "0.375em",
     "height": "0.375em",
-    "background-color": "currentColor",
     "border-radius": "50%",
   },
 
@@ -243,7 +249,6 @@ export default {
     "width": "1.75em",
     "text-align": "right",
     "font-weight": "600",
-    "color": "currentColor",
   },
 
   ":where(ul, ol) :where(ul, ol)": {
@@ -281,6 +286,7 @@ export default {
     "margin-bottom": "0",
   },
 
+  // Pre / Code
   "pre": {
     "margin-top": "var(--spacing-md)",
     "margin-bottom": "var(--spacing-md)",
@@ -293,10 +299,10 @@ export default {
   "pre code": {
     "font-size": "inherit",
     "padding": "0",
-    "background": "none",
     "border-radius": "0",
   },
 
+  // Fieldset & Form
   "fieldset": {
     "margin-top": "var(--spacing-md)",
     "margin-bottom": "var(--spacing-md)",
@@ -319,6 +325,7 @@ export default {
     "vertical-align": "middle",
   },
 
+  // Media
   ":where(img, video)": {
     "max-width": "100%",
     "height": "auto",
@@ -337,6 +344,7 @@ export default {
     "line-height": "1.5",
   },
 
+  // Tables
   "table": {
     "width": "100%",
     "margin-top": "0",
@@ -371,12 +379,14 @@ export default {
     "border-top-width": "2px",
   },
 
+  // Horizontal Rule
   "hr": {
     "margin-top": "var(--spacing-xl)",
     "margin-bottom": "var(--spacing-xl)",
     "border": "0",
   },
 
+  // Interactive
   ":where(:focus, :focus-visible)": {
     "outline-offset": "2px",
   },
@@ -400,6 +410,7 @@ export default {
     "line-height": "inherit",
   },
 
+  // Resets
   "ul": {
     "margin-top": "0",
     "margin-bottom": "0",
@@ -414,11 +425,6 @@ export default {
   },
 
   "@media print": {
-    "body": {
-      "font-size": "12pt",
-      "line-height": "1.5",
-      "color": "#000",
-    },
     "table": {
       "break-inside": "avoid",
     },
