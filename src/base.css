@@ -177,16 +177,8 @@
   }
 
   /* Code-related elements */
-  :where(code, kbd, samp) {
-    font-family: var(--font-family-mono);
-    padding: clamp(0.0625rem, 0.05rem + 0.0625vw, 0.125rem)
-      clamp(0.1875rem, 0.15rem + 0.1875vw, 0.7125rem);
-  }
-
-  /* Inline code - minimal, scaled padding */
   :where(code:not(pre code), kbd, samp) {
-    padding: clamp(0.0625rem, 0.05rem + 0.0625vw, 0.125rem)
-      clamp(0.1875rem, 0.15rem + 0.1875vw, 0.3125rem);
+    padding: 0.15em 0.3em;
   }
 
   /* Superscript & subscript - essential for scientific notation */
