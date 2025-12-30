@@ -532,28 +532,4 @@
   :where(p, ul, ol, dl, blockquote, figure, table, pre):last-child {
     margin-bottom: 0;
   }
-
-  /* --------------------------------------------------------------------------
-   PRINT STYLES - Optimized for Paper
-   -------------------------------------------------------------------------- */
-
-  @media print {
-    body {
-      font-size: 12pt;
-      line-height: 1.5;
-      color: #000;
-    }
-
-    :where(h1, h2, h3, h4, h5, h6) {
-      break-after: avoid;
-    }
-
-    :where(img, figure, pre, table) {
-      break-inside: avoid;
-    }
-
-    a {
-      text-decoration: underline;
-    }
-  }
 }
