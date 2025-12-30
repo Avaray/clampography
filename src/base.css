@@ -290,14 +290,12 @@
     margin-top: var(--spacing-xs);
   }
 
-  /* Spacing before nested lists */
-  li > :where(ul, ol),
+  /* Spacing for nested lists */
   li > :where(ul, ol):first-child {
-    margin-top: var(--spacing-xs);
+    margin-top: var(--spacing-s);
   }
 
-  /* Spacing before nested lists */
-  li > :where(ul, ol) {
+  li > :where(ul, ol):not(:first-child) {
     margin-top: var(--spacing-xs);
   }
 
