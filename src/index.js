@@ -23,13 +23,8 @@ export default plugin.withOptions((options = {}) => {
     const includeBase = resolveBool(options.base, true); // Default: true
     const includeExtra = resolveBool(options.extra, false); // Default: false
 
-    if (includeBase) {
-      addBase(baseStyles);
-    }
-
-    if (includeExtra) {
-      addBase(extraStyles);
-    }
+    includeBase && addBase(baseStyles);
+    includeExtra && addBase(extraStyles);
 
     // 2. Parse themes configuration
     let configThemes = options.themes;
