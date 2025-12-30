@@ -8,7 +8,7 @@ export default plugin.withOptions((options = {}) => {
     const isDefault = options.default ?? false;
     const isPrefersDark = options.prefersdark ?? false;
     const rootSelector = options.root ?? ":root";
-    // Nowa opcja: color-scheme (defaults to 'light' if not specified)
+    // Defaults to light scheme if not specified
     const colorScheme = options["color-scheme"] ?? "light";
 
     if (!themeName) {
