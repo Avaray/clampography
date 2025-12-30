@@ -1,5 +1,7 @@
 # 🙌 Clampography
 
+> **WARNING**: Beta 2.0.0 is in development and currently unstable.
+
 **Clampography** is a pure CSS typography system that uses the
 [clamp()](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/clamp)
 function for fluid, responsive text scaling. It's designed as an alternative to
