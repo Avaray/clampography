@@ -66,7 +66,7 @@
 
   h3 {
     font-size: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
-    line-height: 1.6;
+    line-height: 1.5;
     margin-top: var(--spacing-lg);
     margin-bottom: var(--spacing-sm);
   }
@@ -90,6 +90,10 @@
     line-height: 1.5;
     margin-top: var(--spacing-md);
     margin-bottom: var(--spacing-xs);
+  }
+
+  :is(h1, h2, h3, h4, h5, h6):first-child {
+    margin-top: 0;
   }
 
   /* --------------------------------------------------------------------------
@@ -164,9 +168,9 @@
     font-style: italic;
   }
 
-  /* Definition term - structural emphasis without forcing italic */
+  /* Definition term - semantic emphasis with italic */
   dfn {
-    font-style: normal;
+    font-style: italic;
     font-weight: 600;
   }
 
@@ -176,17 +180,22 @@
     line-height: 1.5;
   }
 
-  /* Code-related elements */
-  :where(code, kbd, samp) {
+  /* Keyboard input - typically user actions */
+  kbd {
     font-family: var(--font-family-mono);
-    padding: clamp(0.0625rem, 0.05rem + 0.0625vw, 0.125rem)
-      clamp(0.1875rem, 0.15rem + 0.1875vw, 0.7125rem);
+    font-size: 0.875em;
+    font-weight: 600;
   }
 
-  /* Inline code - minimal, scaled padding */
-  :where(code:not(pre code), kbd, samp) {
-    padding: clamp(0.0625rem, 0.05rem + 0.0625vw, 0.125rem)
-      clamp(0.1875rem, 0.15rem + 0.1875vw, 0.3125rem);
+  /* Sample output - typically program/system output */
+  samp {
+    font-family: var(--font-family-mono);
+    font-size: 0.875em;
+  }
+
+  /* Data element - machine-readable values */
+  data {
+    font-variant-numeric: tabular-nums;
   }
 
   /* Superscript & subscript - essential for scientific notation */
@@ -235,7 +244,7 @@
 
   /* Address element */
   address {
-    font-style: normal; /* Reset browser default italic */
+    font-style: italic;
     margin-top: var(--spacing-md);
     margin-bottom: var(--spacing-md);
   }
@@ -290,15 +299,12 @@
     margin-top: var(--spacing-xs);
   }
 
-  /* Spacing before nested lists */
-  li > :where(ul, ol),
-  li > :where(ul, ol):first-child {
+  /* Spacing for nested lists - proper separation from parent text */
+  li > ul,
+  li > ol {
     margin-top: var(--spacing-xs);
-  }
-
-  /* Spacing before nested lists */
-  li > :where(ul, ol) {
-    margin-top: var(--spacing-xs);
+    margin-bottom: var(--spacing-sm);
+    padding-left: var(--spacing-md);
   }
 
   /* Perfectly centered dot relative to the first line of text */
@@ -306,7 +312,9 @@
     content: '';
     position: absolute;
     left: -1.125em;
-    top: calc(0.875em - 0.1875em);
+    top: calc(
+      0.875em - 0.1875em
+    ); /* Aligns with center of first line (assuming 1.5 line-height) */
     width: 0.375em;
     height: 0.375em;
     background-color: currentColor;
@@ -331,13 +339,6 @@
     font-weight: 600;
     color: currentColor;
   }
-
-  /* Nested lists - indentation only, spacing handled by li rules above */
-  :where(ul, ol) :where(ul, ol) {
-    margin-bottom: 0; /* Parent li spacing already handles this */
-    padding-left: var(--spacing-md);
-  }
-
   /* --------------------------------------------------------------------------
    DEFINITION LISTS - Glossaries & Key-Value Pairs
    -------------------------------------------------------------------------- */
@@ -412,6 +413,13 @@
     padding: 0 var(--spacing-xs);
   }
 
+  /* Form labels - structural emphasis for accessibility */
+  label {
+    display: inline-block;
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+  }
+
   /* Form output element - typically displays calculation results */
   output {
     display: inline-block;
@@ -425,12 +433,40 @@
   }
 
   /* --------------------------------------------------------------------------
+   FORM CONTROLS - Typography Inheritance
+   -------------------------------------------------------------------------- */
+
+  input,
+  button,
+  textarea,
+  select,
+  optgroup {
+    font-family: inherit;
+    font-size: 100%;
+    line-height: inherit;
+  }
+
+  /* Textarea - proper line height for multi-line input */
+  textarea {
+    line-height: 1.5;
+  }
+
+  /* Button cursor - indicates interactivity */
+  button,
+  [type='button'],
+  [type='reset'],
+  [type='submit'] {
+    cursor: pointer;
+  }
+
+  /* --------------------------------------------------------------------------
    MEDIA - Images, Videos, Figures
    -------------------------------------------------------------------------- */
 
-  :where(img, video) {
+  :where(img, video, canvas, audio, iframe, svg) {
     max-width: 100%;
     height: auto;
+    vertical-align: middle;
   }
 
   figure {
@@ -453,7 +489,7 @@
     margin-top: var(--spacing-md);
     margin-bottom: var(--spacing-md);
     border-collapse: collapse;
-    font-size: 0.9375em;
+    font-size: 1em;
     line-height: 1.6;
   }
 
@@ -502,6 +538,7 @@
     margin-top: var(--spacing-xl);
     margin-bottom: var(--spacing-xl);
     border: 0;
+    border-top: 1px solid;
   }
 
   /* --------------------------------------------------------------------------
@@ -535,35 +572,12 @@
    UTILITIES - Margin Cleanup
    -------------------------------------------------------------------------- */
 
-  :where(h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, figure, table, pre):first-child {
+  :where(h1, h2, h3, h4, h5, h6, p, ul:not(li > ul, li > ol), ol:not(li > ul, li
+        > ol), dl, blockquote, figure, table, pre):first-child {
     margin-top: 0;
   }
 
   :where(p, ul, ol, dl, blockquote, figure, table, pre):last-child {
     margin-bottom: 0;
-  }
-
-  /* --------------------------------------------------------------------------
-   PRINT STYLES - Optimized for Paper
-   -------------------------------------------------------------------------- */
-
-  @media print {
-    body {
-      font-size: 12pt;
-      line-height: 1.5;
-      color: #000;
-    }
-
-    :where(h1, h2, h3, h4, h5, h6) {
-      break-after: avoid;
-    }
-
-    :where(img, figure, pre, table) {
-      break-inside: avoid;
-    }
-
-    a {
-      text-decoration: underline;
-    }
   }
 }
