@@ -1,8 +1,5 @@
-/**
- * Base typography and layout styles (structure only, no colors).
- */
 export default {
-  // Global CSS Variables (Spacing & Fonts)
+  // ROOT CONFIGURATION
   "@layer base": {
     ":root": {
       "--spacing-xs": "clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem)",
@@ -18,8 +15,8 @@ export default {
     },
   },
 
-  // Body Structure
-  "body": {
+  // BODY - Global Typography Settings
+  body: {
     "font-family": "var(--font-family-base)",
     "font-size": "clamp(1rem, 0.95rem + 0.25vw, 1.125rem)",
     "line-height": "1.75",
@@ -29,18 +26,13 @@ export default {
     "text-wrap": "pretty",
   },
 
-  // Shared Heading Structure
+  // HEADINGS (H1-H6) - Structural Hierarchy
   ":where(h1, h2, h3, h4, h5, h6)": {
     "font-weight": "600",
     "scroll-margin-top": "var(--scroll-offset)",
-    "margin-top": "var(--spacing-lg)",
-    "margin-bottom": "var(--spacing-xs)",
-    "text-decoration": "none",
-    "break-after": "avoid",
   },
 
-  // Specific Headings (Values from base.css)
-  "h1": {
+  h1: {
     "font-size": "clamp(2.25rem, 1.95rem + 1.5vw, 3rem)",
     "line-height": "1.1111",
     "font-weight": "800",
@@ -48,7 +40,7 @@ export default {
     "margin-bottom": "var(--spacing-xl)",
   },
 
-  "h2": {
+  h2: {
     "font-size": "clamp(1.5rem, 1.35rem + 0.75vw, 1.875rem)",
     "line-height": "1.3333",
     "font-weight": "700",
@@ -56,59 +48,63 @@ export default {
     "margin-bottom": "var(--spacing-md)",
   },
 
-  "h3": {
+  h3: {
     "font-size": "clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem)",
-    "line-height": "1.6",
+    "line-height": "1.5",
     "margin-top": "var(--spacing-lg)",
     "margin-bottom": "var(--spacing-sm)",
   },
 
-  "h4": {
+  h4: {
     "font-size": "clamp(1rem, 0.975rem + 0.125vw, 1.125rem)",
     "line-height": "1.5",
     "margin-top": "var(--spacing-lg)",
     "margin-bottom": "var(--spacing-sm)",
   },
 
-  "h5": {
+  h5: {
     "font-size": "1rem",
     "line-height": "1.5",
     "margin-top": "var(--spacing-md)",
     "margin-bottom": "var(--spacing-xs)",
   },
 
-  "h6": {
+  h6: {
     "font-size": "0.875rem",
     "line-height": "1.5",
     "margin-top": "var(--spacing-md)",
     "margin-bottom": "var(--spacing-xs)",
   },
 
-  // Links
-  "a": {
+  ":is(h1, h2, h3, h4, h5, h6):first-child": {
+    "margin-top": "0",
+  },
+
+  // LINKS - Clickable Text (Structural Indicators)
+  a: {
     "text-decoration-line": "underline",
     "text-decoration-thickness": "0.0625em",
     "text-underline-offset": "0.15em",
-    "cursor": "pointer",
-    "text-decoration": "underline",
+    cursor: "pointer",
   },
 
   ":where(h1, h2, h3, h4, h5, h6) a": {
     "text-decoration": "none",
   },
 
-  // Lists & Menus
-  "menu": {
+  // MENU - Interactive Lists (Toolbars, Navigation)
+  menu: {
     "list-style": "none",
     "margin-bottom": "var(--spacing-md)",
     "padding-left": "0",
   },
 
   "menu > li::before": {
-    "display": "none",
+    display: "none",
   },
 
-  "hgroup": {
+  // HGROUP - Heading Groups (Title + Subtitle)
+  hgroup: {
     "margin-bottom": "var(--spacing-lg)",
   },
 
@@ -124,13 +120,12 @@ export default {
     "line-height": "1.5",
   },
 
-  "p": {
+  // TEXT CONTENT - Paragraphs & Inline Elements
+  p: {
     "line-height": "1.75",
     "margin-bottom": "var(--spacing-md)",
-    "margin-top": "0",
   },
 
-  // Inline elements
   ":where(strong, b)": {
     "font-weight": "700",
   },
@@ -139,81 +134,85 @@ export default {
     "font-style": "italic",
   },
 
-  "dfn": {
-    "font-style": "normal",
+  dfn: {
+    "font-style": "italic",
     "font-weight": "600",
   },
 
-  "small": {
+  small: {
     "font-size": "0.875em",
     "line-height": "1.5",
   },
 
-  ":where(code, kbd, samp)": {
+  kbd: {
     "font-family": "var(--font-family-mono)",
-    "padding":
-      "clamp(0.0625rem, 0.05rem + 0.0625vw, 0.125rem) clamp(0.1875rem, 0.15rem + 0.1875vw, 0.3125rem)",
+    "font-size": "0.875em",
+    "font-weight": "600",
   },
 
-  ":where(code:not(pre code))": {
-    "padding":
-      "clamp(0.0625rem, 0.05rem + 0.0625vw, 0.125rem) clamp(0.1875rem, 0.15rem + 0.1875vw, 0.3125rem)",
+  samp: {
+    "font-family": "var(--font-family-mono)",
+    "font-size": "0.875em",
+  },
+
+  data: {
+    "font-variant-numeric": "tabular-nums",
   },
 
   ":where(sub, sup)": {
     "font-size": "0.75em",
     "line-height": "0",
-    "position": "relative",
+    position: "relative",
     "vertical-align": "baseline",
   },
 
-  "sup": {
-    "top": "-0.5em",
+  sup: {
+    top: "-0.5em",
   },
 
-  "sub": {
-    "bottom": "-0.25em",
+  sub: {
+    bottom: "-0.25em",
   },
 
   "abbr[title]": {
     "text-decoration": "underline dotted",
-    "cursor": "help",
+    cursor: "help",
   },
 
-  "del": {
+  del: {
     "text-decoration": "line-through",
   },
 
-  "ins": {
+  ins: {
     "text-decoration": "underline",
   },
 
-  "s": {
+  s: {
     "text-decoration": "line-through",
   },
 
-  "u": {
+  u: {
     "text-decoration": "underline",
   },
 
-  "mark": {
+  mark: {
     "font-style": "normal",
     "font-weight": "inherit",
   },
 
-  "address": {
-    "font-style": "normal",
+  address: {
+    "font-style": "italic",
     "margin-top": "var(--spacing-md)",
     "margin-bottom": "var(--spacing-md)",
   },
 
-  "time": {
+  time: {
     "font-style": "normal",
     "font-variant-numeric": "tabular-nums",
   },
 
-  // Blockquotes
-  "blockquote": {
+  // BLOCKQUOTES - Structural Spacing Only
+  blockquote: {
     "margin-top": "var(--spacing-lg)",
     "margin-bottom": "var(--spacing-lg)",
     "padding-left": "var(--spacing-md)",
@@ -225,20 +224,19 @@ export default {
     "padding-left": "var(--spacing-sm)",
   },
 
-  "q": {
+  q: {
     "font-style": "inherit",
   },
 
-  // Lists
+  // LISTS - Custom Structured Markers (Prose-like)
   ":where(ul, ol)": {
     "list-style": "none",
-    "margin-bottom": "0",
-    "padding-left": "var(--spacing-md)",
-    "margin-top": "var(--spacing-xs)",
+    "margin-bottom": "var(--spacing-md)",
+    "padding-left": "clamp(1.5rem, 1.25rem + 1.25vw, 2rem)",
   },
 
-  "li": {
-    "position": "relative",
+  li: {
+    position: "relative",
     "padding-left": "0.375em",
   },
 
@@ -246,24 +244,25 @@ export default {
     "margin-top": "var(--spacing-xs)",
   },
 
-  "li > :where(ul, ol):first-child": {
+  "li > ul, li > ol": {
     "margin-top": "var(--spacing-xs)",
+    "margin-bottom": "var(--spacing-sm)",
+    "padding-left": "var(--spacing-md)",
   },
 
   "ul > li::before": {
-    "content": "''",
-    "position": "absolute",
-    "left": "-1.125em",
-    "top": "calc(0.875em - 0.1875em)",
-    "width": "0.375em",
-    "height": "0.375em",
+    content: "''",
+    position: "absolute",
+    left: "-1.125em",
+    top: "calc(0.875em - 0.1875em)",
+    width: "0.375em",
+    height: "0.375em",
+    "background-color": "currentColor",
     "border-radius": "50%",
   },
 
-  "ol": {
+  ol: {
     "counter-reset": "list-counter",
-    "margin-top": "0",
-    "margin-bottom": "0",
   },
 
   "ol > li": {
@@ -271,25 +270,22 @@ export default {
   },
 
   "ol > li::before": {
-    "content": "counter(list-counter) '.'",
-    "position": "absolute",
-    "left": "-2.5em",
-    "width": "1.75em",
+    content: "counter(list-counter) '.'",
+    position: "absolute",
+    left: "-2.5em",
+    width: "1.75em",
     "text-align": "right",
     "font-weight": "600",
+    color: "currentColor",
   },
 
-  ":where(ul, ol) :where(ul, ol)": {
-    "margin-bottom": "0",
-    "padding-left": "var(--spacing-md)",
+  // DEFINITION LISTS - Glossaries & Key-Value Pairs
+  dl: {
+    "margin-top": "var(--spacing-md)",
+    "margin-bottom": "var(--spacing-md)",
   },
 
-  "dl": {
-    "margin-top": "0",
-    "margin-bottom": "0",
-  },
-
-  "dt": {
+  dt: {
     "font-weight": "600",
     "margin-top": "var(--spacing-sm)",
   },
@@ -298,7 +294,7 @@ export default {
     "margin-top": "0",
   },
 
-  "dd": {
+  dd: {
     "margin-left": "var(--spacing-md)",
   },
 
@@ -314,75 +310,95 @@ export default {
     "margin-bottom": "0",
   },
 
-  // Pre / Code
-  "pre": {
+  // CODE BLOCKS - Monospace Typography
+  pre: {
     "margin-top": "var(--spacing-md)",
     "margin-bottom": "var(--spacing-md)",
     "font-family": "var(--font-family-mono)",
     "line-height": "1.6",
     "overflow-x": "auto",
-    "break-inside": "avoid",
   },
 
   "pre code": {
     "font-size": "inherit",
-    "padding": "0",
+    padding: "0",
+    background: "none",
     "border-radius": "0",
   },
 
-  // Fieldset & Form
-  "fieldset": {
+  // FORMS - Basic Structure
+  fieldset: {
     "margin-top": "var(--spacing-md)",
     "margin-bottom": "var(--spacing-md)",
-    "padding": "var(--spacing-md)",
-    "border": "0",
+    padding: "var(--spacing-md)",
+    border: "0",
   },
 
-  "legend": {
+  legend: {
     "font-weight": "600",
-    "padding": "0 var(--spacing-xs)",
+    padding: "0 var(--spacing-xs)",
   },
 
-  "output": {
-    "display": "inline-block",
+  label: {
+    display: "inline-block",
+    "font-weight": "600",
+    "margin-bottom": "var(--spacing-xs)",
+  },
+
+  output: {
+    display: "inline-block",
     "font-variant-numeric": "tabular-nums",
   },
 
   ":where(meter, progress)": {
-    "display": "inline-block",
+    display: "inline-block",
     "vertical-align": "middle",
   },
 
-  // Media
-  ":where(img, video)": {
+  // FORM CONTROLS - Typography Inheritance
+  "input, button, textarea, select, optgroup": {
+    "font-family": "inherit",
+    "font-size": "100%",
+    "line-height": "inherit",
+  },
+
+  textarea: {
+    "line-height": "1.5",
+  },
+
+  "button, [type='button'], [type='reset'], [type='submit']": {
+    cursor: "pointer",
+  },
+
+  // MEDIA - Images, Videos, Figures
+  ":where(img, video, canvas, audio, iframe, svg)": {
     "max-width": "100%",
-    "height": "auto",
-    "break-inside": "avoid",
+    height: "auto",
+    "vertical-align": "middle",
   },
 
-  "figure": {
-    "margin-top": "0",
-    "margin-bottom": "0",
-    "break-inside": "avoid",
+  figure: {
+    "margin-top": "var(--spacing-lg)",
+    "margin-bottom": "var(--spacing-lg)",
   },
 
-  "figcaption": {
+  figcaption: {
     "margin-top": "0.375rem",
     "font-size": "0.875em",
     "line-height": "1.5",
   },
 
-  // Tables
-  "table": {
-    "width": "100%",
-    "margin-top": "0",
-    "margin-bottom": "0",
+  // TABLES - Structural Layout
+  table: {
+    width: "100%",
+    "margin-top": "var(--spacing-md)",
+    "margin-bottom": "var(--spacing-md)",
     "border-collapse": "collapse",
-    "font-size": "0.9375em",
+    "font-size": "1em",
     "line-height": "1.6",
   },
 
-  "caption": {
+  caption: {
     "margin-bottom": "var(--spacing-xs)",
     "font-size": "0.875em",
     "font-weight": "600",
@@ -390,42 +406,50 @@ export default {
   },
 
   "th, td": {
-    "padding": "var(--spacing-xs) var(--spacing-sm)",
+    padding: "var(--spacing-xs) var(--spacing-sm)",
     "text-align": "left",
-    "font-weight": "600",
   },
 
-  "thead th, tbody th, tbody td, tfoot th, tfoot td": {
-    "vertical-align": "top",
+  th: {
+    "font-weight": "600",
   },
 
   "thead th": {
     "vertical-align": "bottom",
   },
 
+  "tbody th, tbody td": {
+    "vertical-align": "top",
+  },
+
+  "tfoot th, tfoot td": {
+    "vertical-align": "top",
+  },
+
   "tbody + tbody": {
     "border-top-width": "2px",
   },
 
-  // Horizontal Rule
-  "hr": {
+  // SEPARATORS - Spacing Only
+  hr: {
     "margin-top": "var(--spacing-xl)",
     "margin-bottom": "var(--spacing-xl)",
-    "border": "0",
+    border: "0",
+    "border-top": "1px solid",
   },
 
-  // Interactive
+  // INTERACTIVE ELEMENTS - Accessibility
   ":where(:focus, :focus-visible)": {
     "outline-offset": "2px",
   },
 
-  "details": {
+  details: {
     "margin-top": "var(--spacing-md)",
     "margin-bottom": "var(--spacing-md)",
   },
 
-  "summary": {
-    "cursor": "pointer",
+  summary: {
+    cursor: "pointer",
     "font-weight": "600",
   },
 
@@ -433,28 +457,18 @@ export default {
     "margin-bottom": "var(--spacing-xs)",
   },
 
-  "dialog": {
+  dialog: {
     "font-size": "inherit",
     "line-height": "inherit",
   },
 
-  // Resets
-  "ul": {
-    "margin-top": "0",
-    "margin-bottom": "0",
-  },
-
-  ":where(p, pre):first-child": {
-    "margin-top": "0",
-  },
-
-  ":where(p, pre):last-child": {
-    "margin-bottom": "0",
-  },
-
-  "@media print": {
-    "table": {
-      "break-inside": "avoid",
+  // UTILITIES - Margin Cleanup
+  ":where(h1, h2, h3, h4, h5, h6, p, ul:not(li > ul, li > ol), ol:not(li > ul, li > ol), dl, blockquote, figure, table, pre):first-child":
+    {
+      "margin-top": "0",
     },
+
+  ":where(p, ul, ol, dl, blockquote, figure, table, pre):last-child": {
+    "margin-bottom": "0",
   },
 };
