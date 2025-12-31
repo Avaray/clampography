@@ -252,7 +252,7 @@
   /* Time element */
   time {
     font-style: normal;
-    font-variant-numeric: tabular-nums; /* Monospace numbers for alignment */
+    font-variant-numeric: tabular-nums;
   }
 
   /* --------------------------------------------------------------------------
