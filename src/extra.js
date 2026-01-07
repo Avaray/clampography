@@ -2,9 +2,9 @@
  * Extra opinionated styles and coloring.
  * Applies colors to the structural base elements.
  */
+
 export default {
   // --- Basic Coloring (Applying theme variables) ---
-
   "body": {
     "background-color": "var(--clampography-background)",
     "color": "var(--clampography-text)",
@@ -33,6 +33,12 @@ export default {
     "color": "var(--clampography-heading)",
     "border": "1px solid var(--clampography-border)",
     "border-radius": "0.25rem",
+    "padding": "0.125rem var(--spacing-xs)",
+  },
+
+  // Keyboard input - vertical alignment
+  "kbd": {
+    transform: "translateY(-0.15em)",
   },
 
   // Preformatted Code Blocks
@@ -44,16 +50,26 @@ export default {
   },
 
   // Tables
+  "table": {
+    "padding": "var(--spacing-sm)",
+    "border": "1px solid var(--clampography-border)",
+  },
+
   "th": {
     "color": "var(--clampography-heading)",
   },
 
   "th, td": {
-    "border-bottom": "1px solid var(--clampography-border)",
+    "border": "1px solid var(--clampography-border)",
   },
 
   "thead th": {
     "border-bottom-width": "2px",
+  },
+
+  // Zebra striping for table rows
+  "tbody tr:nth-child(even)": {
+    "background-color": "var(--clampography-surface)",
   },
 
   // Captions & Muted text
@@ -102,6 +118,8 @@ export default {
   "mark": {
     "background-color": "var(--clampography-primary)",
     "color": "var(--clampography-background)",
+    "padding": "0.125rem var(--spacing-xs)",
+    "border-radius": "0.25rem",
   },
 
   // Deleted Text
