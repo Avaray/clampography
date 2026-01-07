@@ -144,15 +144,13 @@ export default {
     "line-height": "1.5",
   },
 
-  kbd: {
+  ":where(code, kbd, samp)": {
     "font-family": "var(--font-family-mono)",
     "font-size": "0.875em",
-    "font-weight": "600",
   },
 
-  samp: {
-    "font-family": "var(--font-family-mono)",
-    "font-size": "0.875em",
+  kbd: {
+    "font-weight": "600",
   },
 
   data: {
@@ -331,7 +329,6 @@ export default {
     "margin-top": "var(--spacing-md)",
     "margin-bottom": "var(--spacing-md)",
     padding: "var(--spacing-md)",
-    border: "0",
   },
 
   legend: {
