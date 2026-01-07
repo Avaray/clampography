@@ -16,94 +16,120 @@ const resolveBool = (value, defaultValue) => {
 /**
  * Main plugin function.
  */
-export default plugin.withOptions((options = {}) => {
-  return ({ addBase }) => {
-    // 1. Load Base and Extra styles
-    // We use the helper to correctly parse "false" string from CSS
-    const includeBase = resolveBool(options.base, true); // Default: true
-    const includeExtra = resolveBool(options.extra, false); // Default: false
+export default plugin.withOptions(
+  (options = {}) => {
+    return ({ addBase }) => {
+      // 1. Load Base and Extra styles
+      // We use the helper to correctly parse "false" string from CSS
+      const includeBase = resolveBool(options.base, true); // Default: true
+      const includeExtra = resolveBool(options.extra, false); // Default: false
 
-    includeBase && addBase(baseStyles);
-    includeExtra && addBase(extraStyles);
+      includeBase && addBase(baseStyles);
+      includeExtra && addBase(extraStyles);
 
-    // 2. Parse themes configuration
-    let configThemes = options.themes;
-    let themesToInclude = [];
-    let defaultThemeName = null;
-    let prefersDarkTheme = false;
-    let rootSelector = options.root ?? ":root";
+      // 2. Parse themes configuration
+      let configThemes = options.themes;
+      let themesToInclude = [];
+      let defaultThemeName = null;
+      let prefersDarkTheme = false;
+      let rootSelector = options.root ?? ":root";
 
-    // Normalize input to an array of strings
-    let rawThemeList = [];
+      // Normalize input to an array of strings
+      let rawThemeList = [];
 
-    if (typeof configThemes === "string") {
-      if (configThemes.trim() === "all") {
-        // Special case: themes: all
-        rawThemeList = Object.keys(builtInThemes);
-      } else if (configThemes.trim() === "false") {
-        // Explicitly disabled themes
-        rawThemeList = [];
+      if (typeof configThemes === "string") {
+        if (["all", "true", "yes"].includes(configThemes.trim())) {
+          // Special case: themes: all
+          rawThemeList = Object.keys(builtInThemes);
+        } else if (["false", "none", "no"].includes(configThemes.trim())) {
+          // Explicitly disabled themes
+          rawThemeList = [];
+        } else {
+          rawThemeList = configThemes.split(",");
+        }
+      } else if (Array.isArray(configThemes)) {
+        rawThemeList = configThemes;
       } else {
-        rawThemeList = configThemes.split(",");
-      }
-    } else if (Array.isArray(configThemes)) {
-      rawThemeList = configThemes;
-    } else {
-      // Default behavior: NO themes loaded automatically.
-      // User must specify themes to load them.
-      rawThemeList = [];
-    }
-
-    // 3. Process the list and look for flags (--default, --prefersdark)
-    rawThemeList.forEach((rawItem) => {
-      let themeName = rawItem.trim();
-
-      // Ignore empty entries
-      if (!themeName) return;
-
-      // Check for --default flag
-      if (themeName.includes("--default")) {
-        themeName = themeName.replace("--default", "").trim();
-        defaultThemeName = themeName;
+        // Default behavior: NO themes loaded automatically.
+        // User must specify themes to load them.
+        rawThemeList = [];
       }
 
-      // Check for --prefersdark flag
-      if (themeName.toLowerCase().includes("--prefersdark")) {
-        themeName = themeName.replace(/--prefersdark/i, "").trim();
-        prefersDarkTheme = themeName;
+      // 3. Process the list and look for flags (--default, --prefersdark)
+      rawThemeList.forEach((rawItem) => {
+        let themeName = rawItem.trim();
+
+        // Ignore empty entries
+        if (!themeName) return;
+
+        // Check for --default flag
+        if (themeName.includes("--default")) {
+          themeName = themeName.replace("--default", "").trim();
+          defaultThemeName = themeName;
+        }
+
+        // Check for --prefersdark flag
+        if (themeName.toLowerCase().includes("--prefersdark")) {
+          themeName = themeName.replace(/--prefersdark/i, "").trim();
+          prefersDarkTheme = themeName;
+        }
+
+        // Check if theme exists in the database
+        if (builtInThemes[themeName]) {
+          themesToInclude.push(themeName);
+        }
+      });
+
+      // If list is empty after filtering, stop here
+      if (
+        themesToInclude.length === 0 && !defaultThemeName && !prefersDarkTheme
+      ) return;
+
+      // 4. Generate CSS
+      const themeStyles = {};
+
+      // A. Default theme (:root)
+      if (defaultThemeName && builtInThemes[defaultThemeName]) {
+        themeStyles[rootSelector] = builtInThemes[defaultThemeName];
       }
 
-      // Check if theme exists in the database
-      if (builtInThemes[themeName]) {
-        themesToInclude.push(themeName);
+      // B. Theme for prefers-color-scheme: dark
+      if (prefersDarkTheme && builtInThemes[prefersDarkTheme]) {
+        themeStyles["@media (prefers-color-scheme: dark)"] = {
+          [rootSelector]: builtInThemes[prefersDarkTheme],
+        };
       }
-    });
 
-    // If list is empty after filtering, stop here
-    if (
-      themesToInclude.length === 0 && !defaultThemeName && !prefersDarkTheme
-    ) return;
+      // C. Scoped styles [data-theme="..."]
+      themesToInclude.forEach((themeName) => {
+        themeStyles[`[data-theme="${themeName}"]`] = builtInThemes[themeName];
+      });
 
-    // 4. Generate CSS
-    const themeStyles = {};
-
-    // A. Default theme (:root)
-    if (defaultThemeName && builtInThemes[defaultThemeName]) {
-      themeStyles[rootSelector] = builtInThemes[defaultThemeName];
-    }
-
-    // B. Theme for prefers-color-scheme: dark
-    if (prefersDarkTheme && builtInThemes[prefersDarkTheme]) {
-      themeStyles["@media (prefers-color-scheme: dark)"] = {
-        [rootSelector]: builtInThemes[prefersDarkTheme],
-      };
-    }
-
-    // C. Scoped styles [data-theme="..."]
-    themesToInclude.forEach((themeName) => {
-      themeStyles[`[data-theme="${themeName}"]`] = builtInThemes[themeName];
-    });
-
-    addBase(themeStyles);
-  };
-});
+      addBase(themeStyles);
+    };
+  },
+  // Theme extension - enables utilities like bg-surface, text-heading, etc.
+  (options = {}) => {
+    return {
+      theme: {
+        extend: {
+          colors: {
+            background: "var(--clampography-background)",
+            border: "var(--clampography-border)",
+            error: "var(--clampography-error)",
+            heading: "var(--clampography-heading)",
+            info: "var(--clampography-info)",
+            link: "var(--clampography-link)",
+            muted: "var(--clampography-muted)",
+            primary: "var(--clampography-primary)",
+            secondary: "var(--clampography-secondary)",
+            success: "var(--clampography-success)",
+            surface: "var(--clampography-surface)",
+            text: "var(--clampography-text)",
+            warning: "var(--clampography-warning)",
+          },
+        },
+      },
+    };
+  },
+);
