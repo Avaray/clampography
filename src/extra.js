@@ -6,32 +6,32 @@
 export default {
   // --- Basic Coloring (Applying theme variables) ---
   "body": {
-    "background-color": "var(--clampography-background)",
-    "color": "var(--clampography-text)",
+    "background-color": "oklch(var(--clampography-background))",
+    "color": "oklch(var(--clampography-text))",
   },
 
   ":where(h1, h2, h3, h4, h5, h6)": {
-    "color": "var(--clampography-heading)",
+    "color": "oklch(var(--clampography-heading))",
   },
 
   "a": {
-    "color": "var(--clampography-link)",
+    "color": "oklch(var(--clampography-link))",
   },
 
   // Lists
   "ul > li::before": {
-    "background-color": "var(--clampography-primary)", // Bullet points
+    "background-color": "oklch(var(--clampography-primary))", // Bullet points
   },
 
   "ol > li::before": {
-    "color": "var(--clampography-secondary)", // Numbers
+    "color": "oklch(var(--clampography-secondary))", // Numbers
   },
 
   // Inline Code
   ":where(code, kbd, samp)": {
-    "background-color": "var(--clampography-surface)",
-    "color": "var(--clampography-heading)",
-    "border": "1px solid var(--clampography-border)",
+    "background-color": "oklch(var(--clampography-surface))",
+    "color": "oklch(var(--clampography-heading))",
+    "border": "1px solid oklch(var(--clampography-border))",
     "border-radius": "0.25rem",
     "padding": "0.125rem var(--spacing-xs)",
   },
@@ -43,8 +43,8 @@ export default {
 
   // Preformatted Code Blocks
   "pre": {
-    "background-color": "var(--clampography-surface)",
-    "border": "1px solid var(--clampography-border)",
+    "background-color": "oklch(var(--clampography-surface))",
+    "border": "1px solid oklch(var(--clampography-border))",
     "border-radius": "0.375rem",
     "padding": "1rem",
   },
@@ -52,15 +52,15 @@ export default {
   // Tables
   "table": {
     "padding": "var(--spacing-sm)",
-    "border": "1px solid var(--clampography-border)",
+    "border": "1px solid oklch(var(--clampography-border))",
   },
 
   "th": {
-    "color": "var(--clampography-heading)",
+    "color": "oklch(var(--clampography-heading))",
   },
 
   "th, td": {
-    "border": "1px solid var(--clampography-border)",
+    "border": "1px solid oklch(var(--clampography-border))",
   },
 
   "thead th": {
@@ -69,12 +69,12 @@ export default {
 
   // Zebra striping for table rows
   "tbody tr:nth-child(even)": {
-    "background-color": "var(--clampography-surface)",
+    "background-color": "oklch(var(--clampography-surface))",
   },
 
   // Captions & Muted text
   "caption, figcaption, .muted": {
-    "color": "var(--clampography-muted)",
+    "color": "oklch(var(--clampography-muted))",
   },
 
   // Horizontal Rule (Thematic)
@@ -83,7 +83,7 @@ export default {
     "border-width": "0",
     "margin-top": "3rem",
     "margin-bottom": "3rem",
-    "background-color": "var(--clampography-border)",
+    "background-color": "oklch(var(--clampography-border))",
   },
 
   // --- Opinionated Extras ---
@@ -91,12 +91,12 @@ export default {
   // Styled Blockquote
   "blockquote": {
     "border-left-width": "4px",
-    "border-left-color": "var(--clampography-primary)",
-    "background-color": "var(--clampography-surface)",
+    "border-left-color": "oklch(var(--clampography-primary))",
+    "background-color": "oklch(var(--clampography-surface))",
     "padding": "1rem",
     "border-radius": "0.25rem",
     "font-style": "italic",
-    "color": "var(--clampography-heading)",
+    "color": "oklch(var(--clampography-heading))",
   },
 
   // Styled Links (Enhanced)
@@ -111,46 +111,46 @@ export default {
   },
 
   "a:hover": {
-    "text-decoration-color": "var(--clampography-primary)",
+    "text-decoration-color": "oklch(var(--clampography-primary))",
   },
 
   // Mark
   "mark": {
-    "background-color": "var(--clampography-primary)",
-    "color": "var(--clampography-background)",
+    "background-color": "oklch(var(--clampography-primary))",
+    "color": "oklch(var(--clampography-background))",
     "padding": "0.125rem var(--spacing-xs)",
     "border-radius": "0.25rem",
   },
 
   // Deleted Text
   "del": {
-    "text-decoration-color": "var(--clampography-secondary)",
+    "text-decoration-color": "oklch(var(--clampography-secondary))",
     "text-decoration-thickness": "2px",
   },
 
   // Fieldset
   "fieldset": {
-    "border": "1px solid var(--clampography-border)",
+    "border": "1px solid oklch(var(--clampography-border))",
     "border-radius": "0.375rem",
   },
 
   "legend": {
-    "color": "var(--clampography-heading)",
+    "color": "oklch(var(--clampography-heading))",
   },
 
   // Details
   "details": {
-    "border": "1px solid var(--clampography-border)",
+    "border": "1px solid oklch(var(--clampography-border))",
     "border-radius": "0.375rem",
     "padding": "0.5rem",
   },
 
   "summary": {
-    "color": "var(--clampography-heading)",
+    "color": "oklch(var(--clampography-heading))",
   },
 
   "details[open] > summary": {
-    "border-bottom": "1px solid var(--clampography-border)",
+    "border-bottom": "1px solid oklch(var(--clampography-border))",
     "padding-bottom": "0.5rem",
   },
 };
