@@ -54,7 +54,17 @@ export default plugin.withOptions((options = {}) => {
       ) return;
 
       if (keyMap[key]) {
-        themeColors[keyMap[key]] = options[key];
+        const value = options[key];
+
+        // Validate OKLCH
+        if (!/^\d+\.?\d*%?\s+[\d.]+\s+[\d.]+$/.test(value)) {
+          console.warn(
+            `Clampography: Color "${key}" has value "${value}" which doesn't match OKLCH format. ` +
+              `Expected format: "lightness chroma hue" (e.g., "70% 0.2 180"). `,
+          );
+        }
+
+        themeColors[keyMap[key]] = value;
       } else if (key.startsWith("--")) {
         themeColors[key] = options[key];
       }
