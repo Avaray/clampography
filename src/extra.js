@@ -111,21 +111,6 @@ export default {
     "color": "oklch(var(--clampography-heading))",
   },
 
-  // Styled Links (Enhanced)
-  "a": {
-    "font-weight": "700",
-    "letter-spacing": "0.025em",
-    "text-decoration-line": "underline",
-    "text-decoration-thickness": "2px",
-    "text-underline-offset": "4px",
-    "transition-property": "color, text-decoration-color",
-    "transition-duration": "150ms",
-  },
-
-  "a:hover": {
-    "text-decoration-color": "oklch(var(--clampography-primary))",
-  },
-
   // Mark
   "mark": {
     "background-color": "oklch(var(--clampography-primary))",
