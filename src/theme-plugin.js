@@ -53,20 +53,38 @@ export default plugin.withOptions((options = {}) => {
         ["name", "default", "prefersdark", "root", "color-scheme"].includes(key)
       ) return;
 
-      if (keyMap[key]) {
-        const value = options[key];
+      const value = options[key];
 
-        // Validate OKLCH
-        if (!/^\d+\.?\d*%?\s+[\d.]+\s+[\d.]+$/.test(value)) {
-          console.warn(
-            `Clampography: Color "${key}" has value "${value}" which doesn't match OKLCH format. ` +
-              `Expected format: "lightness chroma hue" (e.g., "70% 0.2 180"). `,
-          );
+      if (keyMap[key]) {
+        // Validate color format for better DX
+        if (value && typeof value === "string") {
+          // Check if value starts with oklch() or is a valid CSS color
+          const isOklch = value.trim().startsWith("oklch(");
+          const isHex = /^#[0-9A-Fa-f]{3,8}$/.test(value.trim());
+          const isRgb = value.trim().startsWith("rgb(") ||
+            value.trim().startsWith("rgba(");
+
+          if (!isOklch && !isHex && !isRgb) {
+            console.warn(
+              `Clampography (${themeName}): Color "${key}" has value "${value}" which may not be a valid color format. ` +
+                `For best compatibility with opacity modifiers (e.g., bg-${key}/20), use full OKLCH format: ` +
+                `oklch(70% 0.2 180) or oklch(0.7 0.2 180)`,
+            );
+          }
+
+          if (isHex || isRgb) {
+            console.info(
+              `Clampography (${themeName}): Color "${key}" uses ${
+                isHex ? "HEX" : "RGB"
+              } format. ` +
+                `Consider using OKLCH format for better color space support and smoother gradients.`,
+            );
+          }
         }
 
         themeColors[keyMap[key]] = value;
       } else if (key.startsWith("--")) {
-        themeColors[key] = options[key];
+        themeColors[key] = value;
       }
     });
 

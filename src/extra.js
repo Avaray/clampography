@@ -1,21 +1,15 @@
-/**
- * Extra opinionated styles and coloring.
- * Applies colors to the structural base elements.
- */
-
 export default {
-  // Basic Body Styles
+  // --- Basic Coloring (Applying theme variables) ---
   "body": {
     "background-color": "oklch(var(--clampography-background))",
     "color": "oklch(var(--clampography-text))",
   },
 
-  // Headings
   ":where(h1, h2, h3, h4, h5, h6)": {
     "color": "oklch(var(--clampography-heading))",
   },
 
-  // Links
+  // Styled Links (Enhanced)
   "a": {
     "color": "oklch(var(--clampography-link))",
     "font-weight": "700",
@@ -28,17 +22,16 @@ export default {
   },
 
   "a:hover": {
-    "text-decoration-color": "oklch(var(--clampography-link))",
+    "text-decoration-color": "oklch(var(--clampography-primary))",
   },
 
-  // Lists - Bullet points
+  // Lists
   "ul > li::before": {
-    "background-color": "oklch(var(--clampography-primary))",
+    "background-color": "oklch(var(--clampography-primary))", // Bullet points
   },
 
-  // Lists - Numbered points
   "ol > li::before": {
-    "color": "oklch(var(--clampography-secondary))",
+    "color": "oklch(var(--clampography-secondary))", // Numbers
   },
 
   // Inline Code
@@ -126,7 +119,7 @@ export default {
   },
 
   // Buttons - All types
-  // WILL BE REMOVED
+  // WILL BE REMOVED FROM THIS FILE
   ":where(button, [type='button'], [type='reset'], [type='submit'])": {
     "padding": "var(--spacing-xs) var(--spacing-sm)",
     "border": "1px solid oklch(var(--clampography-border))",
@@ -134,7 +127,7 @@ export default {
   },
 
   // Inputs - All types
-  // WILL BE REMOVED
+  // WILL BE REMOVED FROM THIS FILE
   ":where(input:not([type='checkbox'], [type='radio']), textarea, select)": {
     "padding": "var(--spacing-xs) var(--spacing-sm)",
     "border": "1px solid oklch(var(--clampography-border))",
@@ -158,7 +151,6 @@ export default {
     "padding": "0.5rem",
   },
 
-  // Summary
   "summary": {
     "color": "oklch(var(--clampography-heading))",
   },
