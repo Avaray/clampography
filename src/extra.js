@@ -4,18 +4,31 @@
  */
 
 export default {
-  // --- Basic Coloring (Applying theme variables) ---
+  // Basic Body Styles
   "body": {
     "background-color": "oklch(var(--clampography-background))",
     "color": "oklch(var(--clampography-text))",
   },
 
+  // Headings
   ":where(h1, h2, h3, h4, h5, h6)": {
     "color": "oklch(var(--clampography-heading))",
   },
 
+  // Links
   "a": {
     "color": "oklch(var(--clampography-link))",
+    "font-weight": "700",
+    "letter-spacing": "0.025em",
+    "text-decoration-line": "underline",
+    "text-decoration-thickness": "2px",
+    "text-underline-offset": "4px",
+    "transition-property": "color, text-decoration-color",
+    "transition-duration": "150ms",
+  },
+
+  "a:hover": {
+    "text-decoration-color": "oklch(var(--clampography-link))",
   },
 
   // Lists - Bullet points
