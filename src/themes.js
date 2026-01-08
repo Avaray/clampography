@@ -12,7 +12,7 @@ export const themes = {
     "--clampography-secondary": "55% 0.28 300",
     "--clampography-success": "65% 0.17 165",
     "--clampography-surface": "96% 0.003 264",
-    "--clampography-text": "31% 0.02 257",
+    "--clampography-text": "13% 0.02 257",
     "--clampography-warning": "72% 0.17 65",
   },
   dark: {
