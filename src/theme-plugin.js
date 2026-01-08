@@ -27,14 +27,18 @@ export default plugin.withOptions((options = {}) => {
     // Mapping of simplified keys to full CSS variable names
     const keyMap = {
       "background": "--clampography-background",
-      "surface": "--clampography-surface",
       "border": "--clampography-border",
+      "error": "--clampography-error",
       "heading": "--clampography-heading",
-      "text": "--clampography-text",
-      "muted": "--clampography-muted",
+      "info": "--clampography-info",
       "link": "--clampography-link",
+      "muted": "--clampography-muted",
       "primary": "--clampography-primary",
       "secondary": "--clampography-secondary",
+      "success": "--clampography-success",
+      "surface": "--clampography-surface",
+      "text": "--clampography-text",
+      "warning": "--clampography-warning",
     };
 
     // First, populate with fallback colors
