@@ -2,4 +2,4 @@
 - Create more themes (current ones were just created for testing)
 - Check H1 on small screens, min 2.25rem (36px) and spacing XL might be too much
 - In config "themes: all" does nothing. It should set theme based on preferred
-  color scheme
+  color scheme. Currently it does not set any theme.
