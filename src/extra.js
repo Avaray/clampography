@@ -125,6 +125,22 @@ export default {
     "text-decoration-thickness": "2px",
   },
 
+  // Buttons - All types
+  // WILL BE REMOVED
+  ":where(button, [type='button'], [type='reset'], [type='submit'])": {
+    "padding": "var(--spacing-xs) var(--spacing-sm)",
+    "border": "1px solid oklch(var(--clampography-border))",
+    "border-radius": "0.375rem", // ← Rounded corners
+  },
+
+  // Inputs - All types
+  // WILL BE REMOVED
+  ":where(input:not([type='checkbox'], [type='radio']), textarea, select)": {
+    "padding": "var(--spacing-xs) var(--spacing-sm)",
+    "border": "1px solid oklch(var(--clampography-border))",
+    "border-radius": "0.375rem", // ← Rounded corners
+  },
+
   // Fieldset
   "fieldset": {
     "border": "1px solid oklch(var(--clampography-border))",
