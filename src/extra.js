@@ -18,13 +18,14 @@ export default {
     "color": "oklch(var(--clampography-link))",
   },
 
-  // Lists
+  // Lists - Bullet points
   "ul > li::before": {
-    "background-color": "oklch(var(--clampography-primary))", // Bullet points
+    "background-color": "oklch(var(--clampography-primary))",
   },
 
+  // Lists - Numbered points
   "ol > li::before": {
-    "color": "oklch(var(--clampography-secondary))", // Numbers
+    "color": "oklch(var(--clampography-secondary))",
   },
 
   // Inline Code
@@ -86,8 +87,6 @@ export default {
     "background-color": "oklch(var(--clampography-border))",
   },
 
-  // --- Opinionated Extras ---
-
   // Styled Blockquote
   "blockquote": {
     "border-left-width": "4px",
@@ -145,6 +144,7 @@ export default {
     "padding": "0.5rem",
   },
 
+  // Summary
   "summary": {
     "color": "oklch(var(--clampography-heading))",
   },
