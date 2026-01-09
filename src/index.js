@@ -30,7 +30,7 @@ export default plugin.withOptions(
 
         // Show startup log only once
         if (showLogs && firstRun) {
-          console.log(`🌼 Clampography v${version} loaded successfully`);
+          console.log(`🍀 Clampography v${version} loaded successfully`);
           firstRun = false;
         }
 

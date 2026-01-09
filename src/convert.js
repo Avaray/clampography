@@ -171,13 +171,13 @@ try {
   console.log(`📖 Reading ${INPUT_FILE}...`);
   const cssContent = readFileSync(resolve(INPUT_FILE), "utf-8");
 
-  console.log("⚙️ Converting CSS to JS...");
+  console.log("✨ Converting CSS to JS...");
   const jsContent = convertCSStoJS(cssContent);
 
   console.log(`💾 Writing ${OUTPUT_FILE}...`);
   writeFileSync(resolve(OUTPUT_FILE), jsContent, "utf-8");
 
-  console.log("✅ Conversion complete!");
+  console.log("✔️ Conversion complete!");
   console.log(`📄 Output: ${OUTPUT_FILE}`);
 } catch (error) {
   console.error("❌ Error:", error.message);

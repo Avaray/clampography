@@ -8,13 +8,14 @@ export default plugin.withOptions((options = {}) => {
     const isDefault = options.default ?? false;
     const isPrefersDark = options.prefersdark ?? false;
     const rootSelector = options.root ?? ":root";
-    // Defaults to light scheme if not specified
     const colorScheme = options["color-scheme"] ?? "light";
     const showLogs = options.logs !== false; // Default: true
 
     if (!themeName) {
       if (showLogs) {
-        console.warn("Clampography: Theme definition missing 'name' property.");
+        console.warn(
+          "🍀 Clampography: Theme definition missing 'name' property.",
+        );
       }
       return;
     }
