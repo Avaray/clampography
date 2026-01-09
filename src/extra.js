@@ -17,6 +17,8 @@ export default {
     "text-decoration-line": "underline",
     "text-decoration-thickness": "2px",
     "text-underline-offset": "4px",
+    "text-decoration-color":
+      "color-mix(in oklab, var(--clampography-link) 20%, transparent)",
     "transition-property": "color, text-decoration-color",
     "transition-duration": "150ms",
   },
