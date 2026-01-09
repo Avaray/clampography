@@ -29,9 +29,9 @@ Load only typography and spacing styles without any colors.
 
 **Result:**
 
-- ✅ Typography styles (headings, paragraphs, lists)
-- ✅ Fluid spacing system
-- ✅ Structural base styles
+- ✔️ Typography styles (headings, paragraphs, lists)
+- ✔️ Fluid spacing system
+- ✔️ Structural base styles
 - ❌ No colors loaded
 
 **Use case:** When you want to use your own color system but need the
@@ -104,11 +104,11 @@ Add colored borders, backgrounds, and enhanced styling.
 
 **Result:**
 
-- ✅ All base styles
-- ✅ Colored elements (tables, code blocks, forms)
-- ✅ Enhanced blockquotes with background
-- ✅ Styled buttons and inputs
-- ✅ Zebra-striped tables
+- ✔️ All base styles
+- ✔️ Colored elements (tables, code blocks, forms)
+- ✔️ Enhanced blockquotes with background
+- ✔️ Styled buttons and inputs
+- ✔️ Zebra-striped tables
 
 **Use case:** When you want a complete, ready-to-use styled design system.
 
@@ -581,10 +581,10 @@ primary: "oklch(70% 0.25 180)";
 
 **Benefits:**
 
-- ✅ Works with opacity modifiers (`bg-primary/50`)
-- ✅ Perceptually uniform (better gradients)
-- ✅ Wider color gamut than sRGB
-- ✅ Better for accessibility
+- ✔️ Works with opacity modifiers (`bg-primary/50`)
+- ✔️ Perceptually uniform (better gradients)
+- ✔️ Wider color gamut than sRGB
+- ✔️ Better for accessibility
 
 ---
 
@@ -665,7 +665,7 @@ background-color: color-mix(
 /* ❌ Wrong - no themes loaded */
 @plugin "clampography";
 
-/* ✅ Correct - themes loaded */
+/* ✔️ Correct - themes loaded */
 @plugin "clampography" {
   themes: all;
 }
@@ -695,7 +695,7 @@ background-color: color-mix(
 /* ❌ Wrong format */
 primary: "70% 0.25 180";
 
-/* ✅ Correct format */
+/* ✔️ Correct format */
 primary: "oklch(70% 0.25 180)";
 ```
 
@@ -746,7 +746,7 @@ Or for custom themes:
 
 ```css
 /* Make sure colors include oklch() wrapper */
-primary: "oklch(70% 0.25 180)"; /* ✅ Good */
+primary: "oklch(70% 0.25 180)"; /* ✔️ Good */
 primary: "70% 0.25 180"; /* ❌ Bad */
 ```
 
