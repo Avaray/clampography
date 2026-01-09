@@ -10,9 +10,12 @@ export default plugin.withOptions((options = {}) => {
     const rootSelector = options.root ?? ":root";
     // Defaults to light scheme if not specified
     const colorScheme = options["color-scheme"] ?? "light";
+    const showLogs = options.logs !== false; // Default: true
 
     if (!themeName) {
-      console.warn("Clampography: Theme definition missing 'name' property.");
+      if (showLogs) {
+        console.warn("Clampography: Theme definition missing 'name' property.");
+      }
       return;
     }
 
@@ -50,14 +53,15 @@ export default plugin.withOptions((options = {}) => {
     Object.keys(options).forEach((key) => {
       // Ignore metadata keys
       if (
-        ["name", "default", "prefersdark", "root", "color-scheme"].includes(key)
+        ["name", "default", "prefersdark", "root", "color-scheme", "logs"]
+          .includes(key)
       ) return;
 
       const value = options[key];
 
       if (keyMap[key]) {
-        // Validate color format for better DX
-        if (value && typeof value === "string") {
+        // Validate color format for better DX (only if logs enabled)
+        if (showLogs && value && typeof value === "string") {
           // Check if value starts with oklch() or is a valid CSS color
           const isOklch = value.trim().startsWith("oklch(");
           const isHex = /^#[0-9A-Fa-f]{3,8}$/.test(value.trim());
