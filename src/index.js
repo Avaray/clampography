@@ -4,7 +4,7 @@ import baseStyles from "./base.js";
 import extraStyles from "./extra.js";
 
 // Import version from package.json
-import { version } from "./package.json" with { type: "json" };
+import { version } from "../package.json" with { type: "json" };
 
 /**
  * Helper to resolve boolean options from CSS configuration.
