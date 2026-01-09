@@ -83,8 +83,6 @@ export default {
   // LINKS - Clickable Text (Structural Indicators)
   a: {
     "text-decoration-line": "underline",
-    "text-decoration-thickness": "0.0625em",
-    "text-underline-offset": "0.15em",
     cursor: "pointer",
   },
 
