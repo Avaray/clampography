@@ -79,7 +79,7 @@ export default plugin.withOptions((options = {}) => {
 
           if (isHex || isRgb) {
             console.info(
-              `Clampography (${themeName}): Color "${key}" uses ${
+              `🍀 Clampography (${themeName}): Color "${key}" uses ${
                 isHex ? "HEX" : "RGB"
               } format. ` +
                 `Consider using OKLCH format for better color space support and smoother gradients.`,
