@@ -37,7 +37,6 @@ export default plugin.withOptions(
 
       // Normalize input to an array of strings
       let rawThemeList = [];
-
       if (typeof configThemes === "string") {
         if (["all", "true", "yes"].includes(configThemes.trim())) {
           // Special case: themes: all
@@ -94,6 +93,7 @@ export default plugin.withOptions(
         if (!defaultThemeName && themesToInclude.includes("light")) {
           defaultThemeName = "light";
         }
+
         if (!prefersDarkTheme && themesToInclude.includes("dark")) {
           prefersDarkTheme = "dark";
         }
@@ -117,12 +117,37 @@ export default plugin.withOptions(
       }
 
       // C. All themes available via [data-theme] attribute
+      // WITH higher specificity to override media query
       themesToInclude.forEach((themeName) => {
         // Skip if already added as default (to avoid duplication)
         if (themeName === defaultThemeName) return;
 
-        themeStyles[`[data-theme="${themeName}"]`] = builtInThemes[themeName];
+        const selector =
+          `html[data-theme="${themeName}"], [data-theme="${themeName}"]`;
+        themeStyles[selector] = builtInThemes[themeName];
       });
+
+      // ✅ D. CRITICAL: Override media query with data-theme selectors
+      // This ensures manual theme selection always wins over system preference
+      if (prefersDarkTheme) {
+        themeStyles["@media (prefers-color-scheme: dark)"] = {
+          ...themeStyles["@media (prefers-color-scheme: dark)"],
+        };
+
+        // Add all themes inside media query to override the :root rule
+        themesToInclude.forEach((themeName) => {
+          if (themeName === prefersDarkTheme) return; // Skip the prefersDark theme itself
+
+          const selector =
+            `html[data-theme="${themeName}"], [data-theme="${themeName}"]`;
+
+          // Add inside media query
+          if (!themeStyles["@media (prefers-color-scheme: dark)"][selector]) {
+            themeStyles["@media (prefers-color-scheme: dark)"][selector] =
+              builtInThemes[themeName];
+          }
+        });
+      }
 
       addBase(themeStyles);
     };
