@@ -33,6 +33,7 @@ export default plugin.withOptions(
       let defaultThemeName = null;
       let prefersDarkTheme = false;
       let rootSelector = options.root ?? ":root";
+      let isAllThemes = false; // Track if user specified "all"
 
       // Normalize input to an array of strings
       let rawThemeList = [];
@@ -40,6 +41,7 @@ export default plugin.withOptions(
       if (typeof configThemes === "string") {
         if (["all", "true", "yes"].includes(configThemes.trim())) {
           // Special case: themes: all
+          isAllThemes = true;
           rawThemeList = Object.keys(builtInThemes);
         } else if (["false", "none", "no"].includes(configThemes.trim())) {
           // Explicitly disabled themes
@@ -85,7 +87,19 @@ export default plugin.withOptions(
         themesToInclude.length === 0 && !defaultThemeName && !prefersDarkTheme
       ) return;
 
-      // 4. Generate CSS
+      // 4. Auto-configure defaults for "themes: all"
+      // If user didn't specify --default or --prefersdark flags,
+      // automatically set light as default and dark for prefers-color-scheme
+      if (isAllThemes) {
+        if (!defaultThemeName && themesToInclude.includes("light")) {
+          defaultThemeName = "light";
+        }
+        if (!prefersDarkTheme && themesToInclude.includes("dark")) {
+          prefersDarkTheme = "dark";
+        }
+      }
+
+      // 5. Generate CSS
       const themeStyles = {};
 
       // A. Default theme (:root)
