@@ -778,6 +778,8 @@ browser DevTools.
 
 ## Best Practices
 
+> This section needs to be modified.
+
 1. **Use `themes: all` for most projects** - Automatic light/dark support
 2. **Use OKLCH for custom themes** - Better colors and gradients
 3. **Define only colors that differ from default** - Others auto-fill
@@ -811,6 +813,8 @@ browser DevTools.
 | _(... 11 more colors)_ |                       |               | See [All 13 Colors](#all-13-available-colors) |
 
 ### Available Theme Names
+
+> `retro` and `cyberpunk` will be removed. I created them only for testing.
 
 - `light` - Clean light theme
 - `dark` - Modern dark theme
