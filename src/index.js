@@ -99,23 +99,28 @@ export default plugin.withOptions(
         }
       }
 
-      // 5. Generate CSS
+      // 5. Generate CSS (daisyUI v5 approach)
       const themeStyles = {};
 
-      // A. Default theme (:root)
+      // A. Default theme - uses :where() for lower specificity
       if (defaultThemeName && builtInThemes[defaultThemeName]) {
-        themeStyles[rootSelector] = builtInThemes[defaultThemeName];
+        const defaultSelector =
+          `:where(${rootSelector}),[data-theme="${defaultThemeName}"]`;
+        themeStyles[defaultSelector] = builtInThemes[defaultThemeName];
       }
 
-      // B. Theme for prefers-color-scheme: dark
+      // B. Theme for prefers-color-scheme: dark - only applies to root selector
       if (prefersDarkTheme && builtInThemes[prefersDarkTheme]) {
         themeStyles["@media (prefers-color-scheme: dark)"] = {
           [rootSelector]: builtInThemes[prefersDarkTheme],
         };
       }
 
-      // C. Scoped styles [data-theme="..."]
+      // C. All themes available via [data-theme] attribute
       themesToInclude.forEach((themeName) => {
+        // Skip if already added as default (to avoid duplication)
+        if (themeName === defaultThemeName) return;
+
         themeStyles[`[data-theme="${themeName}"]`] = builtInThemes[themeName];
       });
 

@@ -91,18 +91,21 @@ export default plugin.withOptions((options = {}) => {
     // Add the CSS property 'color-scheme' for browser UI adaptation (scrollbars, etc.)
     themeColors["color-scheme"] = colorScheme;
 
-    // 4. Generate Styles
+    // 4. Generate Styles (daisyUI v5 approach)
     const styles = {};
 
-    // A. Define the theme as a named data-theme
-    styles[`[data-theme="${themeName}"]`] = themeColors;
+    // Build selector based on flags
+    let selector = `[data-theme="${themeName}"]`;
 
-    // B. If default, apply to root
+    // If default, prepend :where(root) with lower specificity
     if (isDefault) {
-      styles[rootSelector] = themeColors;
+      selector = `:where(${rootSelector}),${selector}`;
     }
 
-    // C. If prefers-dark, apply to media query
+    // Apply theme to the constructed selector
+    styles[selector] = themeColors;
+
+    // If prefers-dark, apply only to root selector in media query
     if (isPrefersDark) {
       styles["@media (prefers-color-scheme: dark)"] = {
         [rootSelector]: themeColors,
