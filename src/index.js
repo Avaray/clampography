@@ -2,6 +2,7 @@ import plugin from "tailwindcss/plugin";
 import { themes as builtInThemes } from "./themes.js";
 import baseStyles from "./base.js";
 import extraStyles from "./extra.js";
+import { sharedState } from "./shared-state.js";
 
 // Import version from package.json
 import { version } from "../package.json" with { type: "json" };
@@ -25,8 +26,9 @@ export default plugin.withOptions(
 
     return (options = {}) => {
       return ({ addBase }) => {
-        // Extract logs option (default: true)
+        // Extract logs option (default: true) and update shared state
         const showLogs = resolveBool(options.logs, true);
+        sharedState.logsEnabled = showLogs; // ← Update shared state
 
         // Show startup log only once
         if (showLogs && firstRun) {
@@ -36,8 +38,8 @@ export default plugin.withOptions(
 
         // 1. Load Base and Extra styles
         // We use the helper to correctly parse "false" string from CSS
-        const includeBase = resolveBool(options.base, true); // Default: true
-        const includeExtra = resolveBool(options.extra, false); // Default: false
+        const includeBase = resolveBool(options.base, true);
+        const includeExtra = resolveBool(options.extra, false);
 
         includeBase && addBase(baseStyles);
         includeExtra && addBase(extraStyles);
@@ -48,7 +50,7 @@ export default plugin.withOptions(
         let defaultThemeName = null;
         let prefersDarkTheme = false;
         let rootSelector = options.root ?? ":root";
-        let isAllThemes = false; // Track if user specified "all"
+        let isAllThemes = false;
 
         // Normalize input to an array of strings
         let rawThemeList = [];
@@ -114,7 +116,7 @@ export default plugin.withOptions(
           }
         }
 
-        // 5. Generate CSS (daisyUI v5 approach)
+        // 5. Generate CSS
         const themeStyles = {};
 
         // A. Default theme - uses :where() for lower specificity
