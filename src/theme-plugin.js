@@ -1,6 +1,5 @@
 import plugin from "tailwindcss/plugin";
 import { themes as builtInThemes } from "./themes.js";
-import { sharedState } from "./shared-state.js";
 
 export default plugin.withOptions((options = {}) => {
   return ({ addBase }) => {
@@ -10,13 +9,7 @@ export default plugin.withOptions((options = {}) => {
     const isPrefersDark = options.prefersdark ?? false;
     const rootSelector = options.root ?? ":root";
     const colorScheme = options["color-scheme"] ?? "light";
-
-    // Check BOTH: local logs option AND shared state
-    // Local option takes precedence if explicitly set
-    const localLogs = options.logs;
-    const showLogs = localLogs !== undefined
-      ? (localLogs !== false)
-      : sharedState.logsEnabled;
+    const showLogs = options.logs !== false; // Default: true
 
     if (!themeName) {
       if (showLogs) {
@@ -68,7 +61,7 @@ export default plugin.withOptions((options = {}) => {
       const value = options[key];
 
       if (keyMap[key]) {
-        // Validate color format (only if logs enabled)
+        // Validate color format for better DX (only if logs enabled)
         if (showLogs && value && typeof value === "string") {
           // Check if value starts with oklch() or is a valid CSS color
           const isOklch = value.trim().startsWith("oklch(");
@@ -103,7 +96,7 @@ export default plugin.withOptions((options = {}) => {
     // Add the CSS property 'color-scheme' for browser UI adaptation (scrollbars, etc.)
     themeColors["color-scheme"] = colorScheme;
 
-    // 4. Generate Styles
+    // 4. Generate Styles (daisyUI v5 approach)
     const styles = {};
 
     // Build selector based on flags
