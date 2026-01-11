@@ -37,7 +37,7 @@ export default {
   },
 
   // Inline Code
-  ":where(code, kbd, samp)": {
+  ":where(code:not(pre code), kbd, samp)": {
     "background-color": "var(--clampography-surface)",
     "color": "var(--clampography-heading)",
     "border": "1px solid var(--clampography-border)",
