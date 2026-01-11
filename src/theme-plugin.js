@@ -9,7 +9,9 @@ export default plugin.withOptions((options = {}) => {
     const isPrefersDark = options.prefersdark ?? false;
     const rootSelector = options.root ?? ":root";
     const colorScheme = options["color-scheme"] ?? "light";
-    const showLogs = options.logs !== false; // Default: true
+
+    // This option is completely separate from the main plugin's logs option
+    const showLogs = options.logs !== false;
 
     if (!themeName) {
       if (showLogs) {
@@ -61,7 +63,7 @@ export default plugin.withOptions((options = {}) => {
       const value = options[key];
 
       if (keyMap[key]) {
-        // Validate color format for better DX (only if logs enabled)
+        // Validate color format (only if logs enabled)
         if (showLogs && value && typeof value === "string") {
           // Check if value starts with oklch() or is a valid CSS color
           const isOklch = value.trim().startsWith("oklch(");
@@ -96,7 +98,7 @@ export default plugin.withOptions((options = {}) => {
     // Add the CSS property 'color-scheme' for browser UI adaptation (scrollbars, etc.)
     themeColors["color-scheme"] = colorScheme;
 
-    // 4. Generate Styles (daisyUI v5 approach)
+    // 4. Generate Styles
     const styles = {};
 
     // Build selector based on flags

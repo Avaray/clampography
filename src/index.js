@@ -114,7 +114,7 @@ export default plugin.withOptions(
           }
         }
 
-        // 5. Generate CSS (daisyUI v5 approach)
+        // 5. Generate CSS
         const themeStyles = {};
 
         // A. Default theme - uses :where() for lower specificity
