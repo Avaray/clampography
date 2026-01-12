@@ -2,22 +2,21 @@
 
 /**
  * JS to CSS Converter for Bun.sh
- * Converts base.js to base.css and base.css.min (without comments)
+ * Converts multiple .js files to .css and .css.min
  */
 
-import { writeFileSync } from "fs";
-import { resolve } from "path";
+import { existsSync, mkdirSync, statSync, writeFileSync } from "fs";
+import { basename, resolve } from "path";
 
 // Configuration
-const INPUT_FILE = "base.js";
-const OUTPUT_FILE = "base.css";
-const OUTPUT_MIN_FILE = "base.css.min";
+const FILES_TO_CONVERT = ["base.js", "extra.js"];
+const OUTPUT_DIR = "css";
 
 /**
  * Import the JS module dynamically
  */
-async function loadJSModule() {
-  const module = await import(`./${INPUT_FILE}`);
+async function loadJSModule(filePath) {
+  const module = await import(`./${filePath}`);
   return module.default;
 }
 
@@ -96,24 +95,39 @@ function toMinifiedCSS(obj) {
 }
 
 /**
- * Main conversion function
+ * Get output file names from input file name
  */
-async function convertJStoCSS() {
-  try {
-    console.log(`📖 Loading ${INPUT_FILE}...`);
-    const jsObject = await loadJSModule();
+function getOutputFileNames(inputFile) {
+  const baseNameWithoutExt = basename(inputFile, ".js");
+  return {
+    css: `${baseNameWithoutExt}.css`,
+    min: `${baseNameWithoutExt}.css.min`,
+  };
+}
 
-    console.log("⚙️  Converting JS to CSS...");
+/**
+ * Convert single JS file to CSS
+ */
+async function convertFile(inputFile) {
+  const outputNames = getOutputFileNames(inputFile);
+  const outputCSS = resolve(OUTPUT_DIR, outputNames.css);
+  const outputMin = resolve(OUTPUT_DIR, outputNames.min);
+
+  try {
+    console.log(`\n📖 Loading ${inputFile}...`);
+    const jsObject = await loadJSModule(inputFile);
+
+    console.log(`⚙️  Converting to CSS...`);
     let cssContent = toCSSString(jsObject, 0);
 
     // Wrap in @layer base
     cssContent = `@layer base {${cssContent}\n}\n`;
 
-    console.log(`💾 Writing ${OUTPUT_FILE}...`);
-    writeFileSync(resolve(OUTPUT_FILE), cssContent, "utf-8");
+    console.log(`💾 Writing ${outputNames.css}...`);
+    writeFileSync(outputCSS, cssContent, "utf-8");
 
     // Generate minified version
-    console.log("⚙️  Generating minified CSS...");
+    console.log(`⚙️  Generating minified version...`);
     let minifiedContent = toMinifiedCSS(jsObject);
 
     // Wrap minified in @layer base
@@ -121,33 +135,106 @@ async function convertJStoCSS() {
       minifiedContent.replace("@layer base{", "").replace(/}$/, "")
     }}`;
 
-    console.log(`💾 Writing ${OUTPUT_MIN_FILE}...`);
-    writeFileSync(resolve(OUTPUT_MIN_FILE), minifiedContent, "utf-8");
-
-    console.log("✅ Conversion complete!");
-    console.log(`📄 Output files:`);
-    console.log(`   - ${OUTPUT_FILE}`);
-    console.log(`   - ${OUTPUT_MIN_FILE}`);
+    console.log(`💾 Writing ${outputNames.min}...`);
+    writeFileSync(outputMin, minifiedContent, "utf-8");
 
     // Show file sizes
-    const fs = await import("fs");
-    const cssSize = fs.statSync(OUTPUT_FILE).size;
-    const minSize = fs.statSync(OUTPUT_MIN_FILE).size;
+    const cssSize = statSync(outputCSS).size;
+    const minSize = statSync(outputMin).size;
     const reduction = ((1 - minSize / cssSize) * 100).toFixed(1);
 
-    console.log(`📊 File sizes:`);
-    console.log(`   - ${OUTPUT_FILE}: ${(cssSize / 1024).toFixed(2)} KB`);
+    console.log(`✅ ${inputFile} converted successfully!`);
+    console.log(`   📄 ${outputNames.css}: ${(cssSize / 1024).toFixed(2)} KB`);
     console.log(
-      `   - ${OUTPUT_MIN_FILE}: ${
+      `   📄 ${outputNames.min}: ${
         (minSize / 1024).toFixed(2)
       } KB (${reduction}% smaller)`,
     );
+
+    return {
+      input: inputFile,
+      output: outputNames.css,
+      outputMin: outputNames.min,
+      cssSize,
+      minSize,
+      reduction,
+    };
   } catch (error) {
-    console.error("❌ Error:", error.message);
-    console.error(error.stack);
-    process.exit(1);
+    console.error(`❌ Error converting ${inputFile}:`, error.message);
+    return null;
   }
 }
 
+/**
+ * Main conversion function
+ */
+async function convertAllFiles() {
+  console.log("🚀 Starting CSS conversion...");
+  console.log(`📁 Output directory: ${OUTPUT_DIR}`);
+  console.log(`📝 Files to convert: ${FILES_TO_CONVERT.length}`);
+
+  // Create output directory if it doesn't exist
+  if (!existsSync(OUTPUT_DIR)) {
+    console.log(`📁 Creating output directory: ${OUTPUT_DIR}`);
+    mkdirSync(OUTPUT_DIR, { recursive: true });
+  }
+
+  const results = [];
+
+  // Convert all files
+  for (const file of FILES_TO_CONVERT) {
+    const result = await convertFile(file);
+    if (result) {
+      results.push(result);
+    }
+  }
+
+  // Summary
+  console.log("\n" + "=".repeat(60));
+  console.log("📊 CONVERSION SUMMARY");
+  console.log("=".repeat(60));
+
+  if (results.length === 0) {
+    console.log("❌ No files were converted successfully.");
+    process.exit(1);
+  }
+
+  console.log(
+    `✅ Successfully converted: ${results.length}/${FILES_TO_CONVERT.length} files\n`,
+  );
+
+  let totalCSSSize = 0;
+  let totalMinSize = 0;
+
+  results.forEach((result) => {
+    console.log(`📄 ${result.input}`);
+    console.log(
+      `   → ${OUTPUT_DIR}/${result.output} (${
+        (result.cssSize / 1024).toFixed(2)
+      } KB)`,
+    );
+    console.log(
+      `   → ${OUTPUT_DIR}/${result.outputMin} (${
+        (result.minSize / 1024).toFixed(2)
+      } KB, ${result.reduction}% smaller)`,
+    );
+    totalCSSSize += result.cssSize;
+    totalMinSize += result.minSize;
+  });
+
+  const totalReduction = ((1 - totalMinSize / totalCSSSize) * 100).toFixed(1);
+
+  console.log("\n" + "-".repeat(60));
+  console.log(`📊 Total CSS size: ${(totalCSSSize / 1024).toFixed(2)} KB`);
+  console.log(`📊 Total Minified size: ${(totalMinSize / 1024).toFixed(2)} KB`);
+  console.log(`📊 Total reduction: ${totalReduction}%`);
+  console.log("=".repeat(60));
+  console.log("🎉 All conversions completed!");
+}
+
 // Run conversion
-convertJStoCSS();
+convertAllFiles().catch((error) => {
+  console.error("❌ Fatal error:", error.message);
+  console.error(error.stack);
+  process.exit(1);
+});

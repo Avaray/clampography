@@ -1,5 +1,5 @@
 *.lock*
 *.log*
 .vscode/
-/*.css
+css/
 node_modules/
