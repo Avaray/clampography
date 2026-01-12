@@ -1,154 +1,60 @@
 #!/usr/bin/env bun
 
 /**
- * Converts base.css to base.js format with preserved comments
- * https://claude.ai/chat/90dedd98-3e31-4831-a620-c35d6523b836
+ * JS to CSS Converter for Bun.sh
+ * Converts base.js to base.css and base.css.min (without comments)
  */
 
-import { readFileSync, writeFileSync } from "fs";
+import { writeFileSync } from "fs";
 import { resolve } from "path";
 
 // Configuration
-const INPUT_FILE = "base.css";
-const OUTPUT_FILE = "base.js";
+const INPUT_FILE = "base.js";
+const OUTPUT_FILE = "base.css";
+const OUTPUT_MIN_FILE = "base.css.min";
 
 /**
- * Parse CSS content into structured data
+ * Import the JS module dynamically
  */
-function parseCSS(css) {
-  const result = {};
-  const lines = css.split("\n");
-  let currentContext = result;
-  let contextStack = [result];
-  let currentSelector = null;
-  let inAtLayer = false;
-  let buffer = "";
-  let commentBuffer = [];
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
-
-    // Skip empty lines
-    if (!line) {
-      if (commentBuffer.length > 0) {
-        commentBuffer.push("");
-      }
-      continue;
-    }
-
-    // Capture comments
-    if (line.startsWith("/*")) {
-      const commentLines = [line];
-      while (i < lines.length && !lines[i].includes("*/")) {
-        i++;
-        commentLines.push(lines[i].trim());
-      }
-      commentBuffer.push(...commentLines);
-      continue;
-    }
-
-    // Handle @layer
-    if (line.startsWith("@layer")) {
-      const match = line.match(/@layer\s+(\w+)/);
-      if (match) {
-        inAtLayer = true;
-        currentContext["@layer base"] = {};
-        contextStack.push(currentContext["@layer base"]);
-        currentContext = currentContext["@layer base"];
-      }
-      continue;
-    }
-
-    // Handle opening brace (new rule)
-    if (line.includes("{") && !line.includes("}")) {
-      const selector = line.replace("{", "").trim();
-
-      // Store comments before selector
-      if (commentBuffer.length > 0) {
-        currentContext[`__comment_${Object.keys(currentContext).length}`] =
-          commentBuffer.join("\n");
-        commentBuffer = [];
-      }
-
-      currentContext[selector] = {};
-      contextStack.push(currentContext[selector]);
-      currentContext = currentContext[selector];
-      currentSelector = selector;
-      continue;
-    }
-
-    // Handle closing brace
-    if (line === "}") {
-      contextStack.pop();
-      currentContext = contextStack[contextStack.length - 1];
-      currentSelector = null;
-      continue;
-    }
-
-    // Handle properties
-    if (line.includes(":") && currentSelector) {
-      let [prop, ...valueParts] = line.split(":");
-      let value = valueParts.join(":").trim();
-
-      // Remove semicolon and inline comments
-      const inlineComment = value.match(/\/\*.*?\*\//);
-      if (inlineComment) {
-        value = value.replace(inlineComment[0], "").trim();
-      }
-      value = value.replace(";", "").trim();
-
-      prop = prop.trim();
-
-      // Store inline comment separately if exists
-      if (inlineComment && inlineComment[0]) {
-        currentContext[`__inline_comment_${prop}`] = inlineComment[0];
-      }
-
-      currentContext[prop] = value;
-    }
-  }
-
-  return result;
+async function loadJSModule() {
+  const module = await import(`./${INPUT_FILE}`);
+  return module.default;
 }
 
 /**
- * Convert parsed CSS to JS object string
+ * Convert JS object to CSS string
  */
-function toJSObject(obj, indent = 0) {
+function toCSSString(obj, indent = 0) {
   const spaces = "  ".repeat(indent);
   const lines = [];
 
   for (const [key, value] of Object.entries(obj)) {
-    // Handle comments
-    if (key.startsWith("__comment_")) {
-      const comment = value.split("\n").map((line) => `${spaces}${line}`).join(
-        "\n",
-      );
-      lines.push(comment);
-      continue;
-    }
-
-    if (key.startsWith("__inline_comment_")) {
-      continue; // Skip inline comments in first pass
-    }
-
     if (typeof value === "object" && !Array.isArray(value)) {
-      // It's a nested object (selector)
-      lines.push(`${spaces}"${key}": {`);
-      lines.push(toJSObject(value, indent + 1));
-      lines.push(`${spaces}},`);
-    } else {
-      // It's a property
-      const formattedValue = value.includes('"') || value.includes("'")
-        ? `"${value.replace(/"/g, '\\"')}"`
-        : `"${value}"`;
+      // It's a selector
+      if (key === "@layer base") {
+        // Special handling for @layer
+        lines.push(`${spaces}@layer base {`);
+        lines.push(toCSSString(value, indent + 1));
+        lines.push(`${spaces}}`);
+      } else {
+        // Regular selector
+        lines.push("");
+        lines.push(`${spaces}${key} {`);
 
-      // Check for inline comment
-      const inlineCommentKey = `__inline_comment_${key}`;
-      const inlineComment = obj[inlineCommentKey];
-      const comment = inlineComment ? ` ${inlineComment}` : "";
+        // Process properties
+        const properties = [];
+        for (const [prop, val] of Object.entries(value)) {
+          if (typeof val === "object") {
+            // Nested selector - shouldn't happen but handle it
+            lines.push(toCSSString({ [prop]: val }, indent + 1));
+          } else {
+            properties.push(`${spaces}  ${prop}: ${val};`);
+          }
+        }
 
-      lines.push(`${spaces}"${key}": ${formattedValue},${comment}`);
+        lines.push(...properties);
+        lines.push(`${spaces}}`);
+      }
     }
   }
 
@@ -156,30 +62,92 @@ function toJSObject(obj, indent = 0) {
 }
 
 /**
+ * Convert JS object to minified CSS string
+ */
+function toMinifiedCSS(obj) {
+  const parts = [];
+
+  for (const [key, value] of Object.entries(obj)) {
+    if (typeof value === "object" && !Array.isArray(value)) {
+      if (key === "@layer base") {
+        parts.push("@layer base{");
+        parts.push(toMinifiedCSS(value));
+        parts.push("}");
+      } else {
+        // Regular selector
+        const properties = [];
+        for (const [prop, val] of Object.entries(value)) {
+          if (typeof val === "object") {
+            // Nested - handle recursively
+            parts.push(toMinifiedCSS({ [prop]: val }));
+          } else {
+            properties.push(`${prop}:${val}`);
+          }
+        }
+
+        if (properties.length > 0) {
+          parts.push(`${key}{${properties.join(";")}}`);
+        }
+      }
+    }
+  }
+
+  return parts.join("");
+}
+
+/**
  * Main conversion function
  */
-function convertCSStoJS(cssContent) {
-  const parsed = parseCSS(cssContent);
-  const jsContent = `export default {\n${
-    toJSObject(parsed["@layer base"] || parsed, 1)
-  }\n};\n`;
-  return jsContent;
+async function convertJStoCSS() {
+  try {
+    console.log(`📖 Loading ${INPUT_FILE}...`);
+    const jsObject = await loadJSModule();
+
+    console.log("⚙️  Converting JS to CSS...");
+    let cssContent = toCSSString(jsObject, 0);
+
+    // Wrap in @layer base
+    cssContent = `@layer base {${cssContent}\n}\n`;
+
+    console.log(`💾 Writing ${OUTPUT_FILE}...`);
+    writeFileSync(resolve(OUTPUT_FILE), cssContent, "utf-8");
+
+    // Generate minified version
+    console.log("⚙️  Generating minified CSS...");
+    let minifiedContent = toMinifiedCSS(jsObject);
+
+    // Wrap minified in @layer base
+    minifiedContent = `@layer base{${
+      minifiedContent.replace("@layer base{", "").replace(/}$/, "")
+    }}`;
+
+    console.log(`💾 Writing ${OUTPUT_MIN_FILE}...`);
+    writeFileSync(resolve(OUTPUT_MIN_FILE), minifiedContent, "utf-8");
+
+    console.log("✅ Conversion complete!");
+    console.log(`📄 Output files:`);
+    console.log(`   - ${OUTPUT_FILE}`);
+    console.log(`   - ${OUTPUT_MIN_FILE}`);
+
+    // Show file sizes
+    const fs = await import("fs");
+    const cssSize = fs.statSync(OUTPUT_FILE).size;
+    const minSize = fs.statSync(OUTPUT_MIN_FILE).size;
+    const reduction = ((1 - minSize / cssSize) * 100).toFixed(1);
+
+    console.log(`📊 File sizes:`);
+    console.log(`   - ${OUTPUT_FILE}: ${(cssSize / 1024).toFixed(2)} KB`);
+    console.log(
+      `   - ${OUTPUT_MIN_FILE}: ${
+        (minSize / 1024).toFixed(2)
+      } KB (${reduction}% smaller)`,
+    );
+  } catch (error) {
+    console.error("❌ Error:", error.message);
+    console.error(error.stack);
+    process.exit(1);
+  }
 }
 
-// Main execution
-try {
-  console.log(`📖 Reading ${INPUT_FILE}...`);
-  const cssContent = readFileSync(resolve(INPUT_FILE), "utf-8");
-
-  console.log("✨ Converting CSS to JS...");
-  const jsContent = convertCSStoJS(cssContent);
-
-  console.log(`💾 Writing ${OUTPUT_FILE}...`);
-  writeFileSync(resolve(OUTPUT_FILE), jsContent, "utf-8");
-
-  console.log("✔️ Conversion complete!");
-  console.log(`📄 Output: ${OUTPUT_FILE}`);
-} catch (error) {
-  console.error("❌ Error:", error.message);
-  process.exit(1);
-}
+// Run conversion
+convertJStoCSS();
