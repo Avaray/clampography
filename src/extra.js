@@ -33,7 +33,7 @@ export default {
   },
 
   "ol > li::before": {
-    "color": "var(--clampography-secondary)", // Numbers
+    "color": "var(--clampography-primary)", // Numbers
   },
 
   // Inline Code
