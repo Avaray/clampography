@@ -1,4 +1,5 @@
-*.log*
 *.lock*
-node_modules/
+*.log*
 .vscode/
+/*.css
+node_modules/
