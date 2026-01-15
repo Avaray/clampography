@@ -1,5 +1,3 @@
 - Create extra styles in extra.js (current ones were just created for testing)
 - Create more themes (current ones were just created for testing)
 - Check H1 on small screens, min 2.25rem (36px) and spacing XL might be too much
-- Consider exposing a method to fetch the current theme list for use in the
-  theme switcher.
