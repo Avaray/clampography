@@ -144,7 +144,7 @@ Create your own theme with OKLCH colors:
 
 ## Learn More
 
-📖 **[Complete Usage Guide](USAGE.md)** - Detailed documentation:
+📖 **[Complete Usage Guide](/USAGE.md)** - Detailed documentation:
 
 - All configuration options
 - Built-in themes (light, dark, retro, cyberpunk)
