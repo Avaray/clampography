@@ -11,8 +11,10 @@ import { version } from "../package.json" with { type: "json" };
  * CSS values often come as strings ("true"/"false"), which are both truthy in JS.
  */
 const resolveBool = (value, defaultValue) => {
-  if (value === "false" || value === false) return false;
-  if (value === "true" || value === true) return true;
+  if (
+    value === "false" || value === false || value === "no" || value === "none"
+  ) return false;
+  if (value === "true" || value === true || value === "yes") return true;
   return defaultValue;
 };
 
@@ -173,7 +175,13 @@ export default plugin.withOptions(
     // ✅ Extract prefix option (default: "clampography")
     // This prefix is ONLY used for Tailwind utility classes (e.g., bg-clampography-primary)
     // CSS variables remain unchanged (always --clampography-*)
-    const prefix = options.prefix ?? "clampography";
+    const prefixEnabled = resolveBool(options.prefix, true);
+    const prefix = prefixEnabled
+      ? (typeof options.prefix === "string" &&
+          !["false", "no", "none", "true"].includes(options.prefix)
+        ? options.prefix
+        : "clampography")
+      : "";
 
     // Helper to add prefix with separator
     const addPrefix = (name) => prefix ? `${prefix}-${name}` : name;
