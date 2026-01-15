@@ -4,38 +4,39 @@
 
 **Clampography** is a pure CSS typography system that uses the
 [clamp()](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/clamp)
-function for fluid, responsive text scaling. It's designed as an alternative to
-[@tailwindcss/typography](https://github.com/tailwindlabs/tailwindcss-typography),
-but works with or without [Tailwind CSS](https://tailwindcss.com/). With
+function for fluid, responsive text scaling. Built as a Tailwind CSS plugin, it
+delivers production-ready typography with optional theming support. With
 [94% global browser support](https://caniuse.com/css-math-functions), it works
 on nearly all modern devices.
 
-- **No default styling:** No colors, borders, transforms, or decorations.
-- **Structure only:** Manages size, spacing, weight, and font-family.
+- **Typography first:** Fluid, responsive text scaling without any styling
+- **Structure only:** Manages size, spacing, weight, and font-family
 - **Smart scaling:** Contextual elements use `em` (relative), blocks use
-  `clamp()` (fluid).
+  `clamp()` (fluid)
+- **Optional theming:** Built-in light/dark themes or create your own with OKLCH
+  colors
+- **Tailwind plugin:** Requires Tailwind CSS v4
 
 ## The purpose
 
 [CSS resets](https://en.wikipedia.org/wiki/Reset_style_sheet) like
 [Tailwind's Preflight](https://tailwindcss.com/docs/preflight) remove all
 browser typography defaults, leaving you with unstyled text. **Clampography**
-delivers production-ready text scaling that responds to viewport changes
-automatically, while leaving all aesthetic choices to you.
+delivers production-ready typography that responds to viewport changes
+automatically, while leaving all aesthetic choices to you. Add themes only if
+you need them.
 
 Visit the temporary [demo page](https://next.dav.one/clampography/) to see how
 it looks.
 
 ## Requirements
 
-Use [Vite](https://vitejs.dev/), [Webpack](https://webpack.js.org/), or similar
-build tool for CSS bundling. Popular frameworks like
-[Astro](https://astro.build/), [Next.js](https://nextjs.org/),
-[Remix](https://remix.run/), and
-[SvelteKit](https://svelte.dev/docs/kit/introduction) include CSS bundling by
-default and work seamlessly with **Clampography**. Without a build tool, native
-CSS `@import` combined with `@layer` has about 91% browser coverage and only
-works in browsers released since early 2022.
+- **Tailwind CSS v4** (required)
+- A build tool like [Vite](https://vitejs.dev/),
+  [Webpack](https://webpack.js.org/), or framework with CSS bundling like
+  [Astro](https://astro.build/), [Next.js](https://nextjs.org/),
+  [Remix](https://remix.run/),
+  [SvelteKit](https://svelte.dev/docs/kit/introduction)
 
 ## Installation
 
@@ -53,21 +54,106 @@ bun install clampography
 deno install npm:clampography
 ```
 
-## Usage
+## Quick Start
+
+### Typography Only (Recommended)
+
+Load just the typography system without any colors:
 
 ```css
-/* First import Tailwind CSS */
 @import "tailwindcss";
+@plugin "clampography";
+```
 
-/* Then import Clampography */
-@import "clampography";
+**Result:**
 
-/* Then you can override Clampography's base styles */
-@layer base {
-  h1 {
-    font-size: clamp(2.35rem, 1.95rem + 1.5vw, 4rem);
-    font-weight: 400;
-    line-height: 1.15;
-  }
+- ✅ Fluid typography (headings, paragraphs, lists)
+- ✅ Responsive spacing system
+- ✅ Structural base styles
+- ❌ No colors, borders, or decorations
+
+Use your own color system with Tailwind utilities:
+
+```html
+<div class="bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
+  <h1>Fluid Typography</h1>
+  <p>Text scales automatically based on viewport size.</p>
+</div>
+```
+
+### Typography + Built-in Themes (Optional)
+
+Add automatic light/dark theming:
+
+```css
+@import "tailwindcss";
+@plugin "clampography" {
+  themes: all; /* Loads light, dark, retro, and cyberpunk */
 }
 ```
+
+**What this adds:**
+
+- Automatic light/dark switching based on `prefers-color-scheme`
+- Manual theme switching via `data-theme` attribute
+- Tailwind utilities like `bg-clampography-primary`
+
+```html
+<div class="bg-clampography-background text-clampography-text">
+  <h1 class="text-clampography-heading">Hello World</h1>
+  <button class="bg-clampography-primary">Click Me</button>
+</div>
+
+<!-- Manual theme switching -->
+<body data-theme="dark">...</body>
+```
+
+### Custom Theme (Optional)
+
+Create your own theme with OKLCH colors:
+
+```css
+@import "tailwindcss";
+@plugin "clampography" {
+  themes: false;
+}
+
+@plugin "clampography/theme" {
+  name: "brand";
+  default: true;
+
+  primary: "oklch(60% 0.25 270)";
+  background: "oklch(99% 0.005 270)";
+  text: "oklch(20% 0.02 270)";
+  /* Missing colors auto-filled from fallback */
+}
+```
+
+## Configuration Options
+
+```css
+@plugin "clampography" {
+  themes: "all" | "light, dark" | false;  /* Load themes (optional) */
+  base: true | false;                     /* Typography styles (default: true) */
+  extra: true | false;                    /* Enhanced styling (default: false) */
+  prefix: "clampography" | false;         /* Utility class prefix */
+  root: ":root" | "#app";                 /* Scope to element */
+  logs: true | false;                     /* Console output */
+}
+```
+
+## Learn More
+
+📖 **[Complete Usage Guide](USAGE.md)** - Detailed documentation:
+
+- All configuration options
+- Built-in themes (light, dark, retro, cyberpunk)
+- Creating custom themes
+- Scoped themes for widgets
+- Advanced scenarios
+- Tailwind utilities
+- Troubleshooting
+
+## License
+
+MIT
