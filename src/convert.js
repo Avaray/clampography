@@ -12,51 +12,76 @@ import { basename, resolve } from "path";
 const FILES_TO_CONVERT = ["base.js", "extra.js"];
 const OUTPUT_DIR = "css";
 
+// Options passed to the JS functions (simulating plugin config)
+const DEFAULT_OPTIONS = {
+  root: ":root",
+  prefix: "clampography",
+};
+
 /**
  * Import the JS module dynamically
  */
 async function loadJSModule(filePath) {
   const module = await import(`./${filePath}`);
-  return module.default;
+  const exported = module.default;
+
+  // Check if it's a function (new structure) or object (old structure)
+  if (typeof exported === "function") {
+    // Invoke the function with default options
+    return exported(DEFAULT_OPTIONS);
+  }
+
+  return exported;
 }
 
 /**
  * Convert JS object to CSS string
  */
 function toCSSString(obj, indent = 0) {
-  const spaces = "  ".repeat(indent);
+  const spaces = " ".repeat(indent);
   const lines = [];
 
   for (const [key, value] of Object.entries(obj)) {
-    if (typeof value === "object" && !Array.isArray(value)) {
-      // It's a selector
+    if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+      // It's a selector or nested object
+
+      // Special handling for @layer base wrapper if present in object
       if (key === "@layer base") {
-        // Special handling for @layer
         lines.push(`${spaces}@layer base {`);
         lines.push(toCSSString(value, indent + 1));
         lines.push(`${spaces}}`);
       } else {
-        // Regular selector
         lines.push("");
         lines.push(`${spaces}${key} {`);
 
-        // Process properties
+        // Recursive call for nested properties or media queries
+        // But first, separate properties from nested objects
         const properties = [];
+        const nestedObjects = {};
+
         for (const [prop, val] of Object.entries(value)) {
-          if (typeof val === "object") {
-            // Nested selector - shouldn't happen but handle it
-            lines.push(toCSSString({ [prop]: val }, indent + 1));
+          if (typeof val === "object" && val !== null) {
+            nestedObjects[prop] = val;
           } else {
             properties.push(`${spaces}  ${prop}: ${val};`);
           }
         }
 
+        // Add properties first
         lines.push(...properties);
+
+        // Then process nested objects (like pseudo-elements or media queries inside)
+        if (Object.keys(nestedObjects).length > 0) {
+          // This handles nesting if the JS structure supports it (like SCSS nesting)
+          // Standard CSS doesn't support nesting without post-processing,
+          // but we'll output it as nested blocks for clarity if present.
+          lines.push(toCSSString(nestedObjects, indent + 1));
+        }
+
         lines.push(`${spaces}}`);
       }
     }
   }
-
   return lines.join("\n");
 }
 
@@ -67,30 +92,32 @@ function toMinifiedCSS(obj) {
   const parts = [];
 
   for (const [key, value] of Object.entries(obj)) {
-    if (typeof value === "object" && !Array.isArray(value)) {
+    if (typeof value === "object" && value !== null && !Array.isArray(value)) {
       if (key === "@layer base") {
-        parts.push("@layer base{");
-        parts.push(toMinifiedCSS(value));
-        parts.push("}");
+        parts.push(`@layer base{${toMinifiedCSS(value)}}`);
       } else {
-        // Regular selector
         const properties = [];
+        const nestedParts = [];
+
         for (const [prop, val] of Object.entries(value)) {
-          if (typeof val === "object") {
-            // Nested - handle recursively
-            parts.push(toMinifiedCSS({ [prop]: val }));
+          if (typeof val === "object" && val !== null) {
+            nestedParts.push(toMinifiedCSS({ [prop]: val }));
           } else {
             properties.push(`${prop}:${val}`);
           }
         }
 
-        if (properties.length > 0) {
-          parts.push(`${key}{${properties.join(";")}}`);
+        let blockContent = properties.join(";");
+        if (nestedParts.length > 0) {
+          blockContent += nestedParts.join("");
+        }
+
+        if (blockContent.length > 0) {
+          parts.push(`${key}{${blockContent}}`);
         }
       }
     }
   }
-
   return parts.join("");
 }
 
@@ -117,23 +144,20 @@ async function convertFile(inputFile) {
     console.log(`\n📖 Loading ${inputFile}...`);
     const jsObject = await loadJSModule(inputFile);
 
-    console.log(`⚙️  Converting to CSS...`);
+    console.log(`⚙️ Converting to CSS...`);
     let cssContent = toCSSString(jsObject, 0);
 
-    // Wrap in @layer base
-    cssContent = `@layer base {${cssContent}\n}\n`;
+    // Explicitly wrap in @layer base for the final file
+    // (Assuming the JS object is just the rules, without @layer wrapper)
+    cssContent = `@layer base {\n${cssContent}\n}\n`;
 
     console.log(`💾 Writing ${outputNames.css}...`);
     writeFileSync(outputCSS, cssContent, "utf-8");
 
     // Generate minified version
-    console.log(`⚙️  Generating minified version...`);
+    console.log(`⚙️ Generating minified version...`);
     let minifiedContent = toMinifiedCSS(jsObject);
-
-    // Wrap minified in @layer base
-    minifiedContent = `@layer base{${
-      minifiedContent.replace("@layer base{", "").replace(/}$/, "")
-    }}`;
+    minifiedContent = `@layer base{${minifiedContent}}`;
 
     console.log(`💾 Writing ${outputNames.min}...`);
     writeFileSync(outputMin, minifiedContent, "utf-8");
