@@ -170,23 +170,31 @@ export default plugin.withOptions(
   })(),
   // Theme extension - enables utilities like bg-surface, text-heading, etc.
   (options = {}) => {
+    // ✅ Extract prefix option (default: "clampography")
+    // This prefix is ONLY used for Tailwind utility classes (e.g., bg-clampography-primary)
+    // CSS variables remain unchanged (always --clampography-*)
+    const prefix = options.prefix ?? "clampography";
+
+    // Helper to add prefix with separator
+    const addPrefix = (name) => prefix ? `${prefix}-${name}` : name;
+
     return {
       theme: {
         extend: {
           colors: {
-            background: "var(--clampography-background)",
-            border: "var(--clampography-border)",
-            error: "var(--clampography-error)",
-            heading: "var(--clampography-heading)",
-            info: "var(--clampography-info)",
-            link: "var(--clampography-link)",
-            muted: "var(--clampography-muted)",
-            primary: "var(--clampography-primary)",
-            secondary: "var(--clampography-secondary)",
-            success: "var(--clampography-success)",
-            surface: "var(--clampography-surface)",
-            text: "var(--clampography-text)",
-            warning: "var(--clampography-warning)",
+            [addPrefix("background")]: "var(--clampography-background)",
+            [addPrefix("border")]: "var(--clampography-border)",
+            [addPrefix("error")]: "var(--clampography-error)",
+            [addPrefix("heading")]: "var(--clampography-heading)",
+            [addPrefix("info")]: "var(--clampography-info)",
+            [addPrefix("link")]: "var(--clampography-link)",
+            [addPrefix("muted")]: "var(--clampography-muted)",
+            [addPrefix("primary")]: "var(--clampography-primary)",
+            [addPrefix("secondary")]: "var(--clampography-secondary)",
+            [addPrefix("success")]: "var(--clampography-success)",
+            [addPrefix("surface")]: "var(--clampography-surface)",
+            [addPrefix("text")]: "var(--clampography-text)",
+            [addPrefix("warning")]: "var(--clampography-warning)",
           },
         },
       },
