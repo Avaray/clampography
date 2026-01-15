@@ -1140,6 +1140,5 @@ modifiers:
 
 ## Need Help?
 
-- 📖 [Full Documentation](https://clampography.dev)
-- 🐛 [Report Issues](https://github.com/clampography/issues)
-- 💬 [Discussions](https://github.com/clampography/discussions)
+- 🐛 [Report Issues](https://github.com/Avaray/clampography/issues)
+- 💬 [Discussions](https://github.com/Avaray/clampography/discussions)
