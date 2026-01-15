@@ -2,15 +2,20 @@
 
 Complete guide from basic setup to advanced theming scenarios.
 
+> This file was generated using [Claude](claude.ai) and can be incorrect. I will
+> focus on this file when plugin development is complete.
+
 ---
 
 ## Table of Contents
 
 - [Basic Usage](#basic-usage)
+- [Configuration Options](#configuration-options)
 - [Built-in Themes](#built-in-themes)
 - [Custom Themes](#custom-themes)
 - [Scoped Themes (Custom Root)](#scoped-themes-custom-root)
 - [Advanced Scenarios](#advanced-scenarios)
+- [Tailwind Utilities](#tailwind-utilities)
 - [Color Formats](#color-formats)
 - [Opacity Modifiers](#opacity-modifiers)
 - [Troubleshooting](#troubleshooting)
@@ -37,8 +42,6 @@ Load only typography and spacing styles without any colors.
 
 **Use case:** When you want to use your own color system but need the
 typography.
-
----
 
 ### Basic Setup with Colors
 
@@ -86,10 +89,11 @@ Load default light/dark themes that respect system preferences.
 **Use case:** Most common setup. Automatic light/dark switching + manual theme
 picker.
 
-**Note:** Default theme uses `:where(:root)` for lower specificity, allowing
-`[data-theme]` to easily override it.
+**Note:** When using `themes: all`, the plugin automatically:
 
----
+- Sets `light` as default (if available)
+- Sets `dark` for `prefers-color-scheme: dark` (if available)
+- If light theme doesn't exist, uses the first available theme as default
 
 ### With Extra Opinionated Styles
 
@@ -116,16 +120,164 @@ Add colored borders, backgrounds, and enhanced styling.
 
 ---
 
+## Configuration Options
+
+### Main Plugin Options
+
+```css
+@plugin "clampography" {
+  /* Load built-in themes */
+  themes: "all" | "light, dark" | false;
+  
+  /* Load base typography styles */
+  base: true | false; /* default: true */
+  
+  /* Load extra opinionated styles */
+  extra: true | false; /* default: false */
+  
+  /* Custom root selector for scoping */
+  root: ":root" | "#app" | "body"; /* default: ":root" */
+  
+  /* Customize utility class prefix */
+  prefix: "clampography" | "custom" | false; /* default: "clampography" */
+  
+  /* Enable/disable console logs */
+  logs: true | false; /* default: true */
+}
+```
+
+### Custom Theme Options
+
+```css
+@plugin "clampography/theme" {
+  /* Required: Theme name */
+  name: "brand";
+  
+  /* Set as default theme */
+  default: true | false; /* default: false */
+  
+  /* Use for prefers-color-scheme: dark */
+  prefersdark: true | false; /* default: false */
+  
+  /* Fallback theme for missing colors */
+  color-scheme: "light" | "dark"; /* default: "light" */
+  
+  /* Custom root selector */
+  root: ":root" | "#widget"; /* default: ":root" */
+  
+  /* Enable/disable logs for this theme */
+  logs: true | false; /* default: true */
+  
+  /* Color definitions */
+  primary: "oklch(...)";
+  background: "oklch(...)";
+  /* ... etc */
+}
+```
+
+### Prefix Option
+
+Control the prefix for Tailwind utility classes.
+
+**Default behavior (prefix enabled):**
+
+```css
+@plugin "clampography" {
+  prefix: "clampography"; /* or just: prefix: true */
+}
+```
+
+Utilities generated:
+
+```html
+<div class="bg-clampography-background text-clampography-text">
+  <button class="bg-clampography-primary">Click</button>
+</div>
+```
+
+**Custom prefix:**
+
+```css
+@plugin "clampography" {
+  prefix: "theme";
+}
+```
+
+Utilities generated:
+
+```html
+<div class="bg-theme-background text-theme-text">
+  <button class="bg-theme-primary">Click</button>
+</div>
+```
+
+**No prefix:**
+
+```css
+@plugin "clampography" {
+  prefix: false;
+}
+```
+
+Utilities generated:
+
+```html
+<div class="bg-background text-text">
+  <button class="bg-primary">Click</button>
+</div>
+```
+
+**Note:** CSS variables always keep the `--clampography-` prefix regardless of
+this setting.
+
+### Logs Option
+
+Control console output during build.
+
+**Default (logs enabled):**
+
+```css
+@plugin "clampography" {
+  themes: all;
+  logs: true; /* Shows which themes are loaded */
+}
+```
+
+Console output:
+
+```
+🍀 Clampography v1.0.0 loaded successfully
+🍀 Clampography: Loaded 4 built-in themes: light (default), dark (prefersdark), retro, cyberpunk
+```
+
+**Disable logs:**
+
+```css
+@plugin "clampography" {
+  themes: all;
+  logs: false; /* Silent mode */
+}
+```
+
+**Per-theme logs:**
+
+```css
+@plugin "clampography/theme" {
+  name: "brand";
+  logs: false; /* Don't log this specific theme */
+}
+```
+
+---
+
 ## Built-in Themes
 
 ### Available Themes
 
-- `light` - Clean light theme with blue accents
-- `dark` - Modern dark theme with high contrast
-- `retro` - Warm, vintage-inspired palette (will be removed)
-- `cyberpunk` - Neon colors with dark background (will be removed)
-
----
+- **light** - Clean light theme with blue accents
+- **dark** - Modern dark theme with high contrast
+- **retro** - Warm, vintage-inspired palette
+- **cyberpunk** - Neon colors with dark background
 
 ### Load Specific Themes
 
@@ -161,11 +313,9 @@ Add colored borders, backgrounds, and enhanced styling.
 
 - `light` as default (`:where(:root)`)
 - `dark` for `prefers-color-scheme: dark`
-
-For specific themes without flags, only `[data-theme]` selectors are generated
-(no `:root` colors).
-
----
+- If `light` doesn't exist, the first theme in the list becomes default
+- For specific themes without flags, only `[data-theme]` selectors are generated
+  (no `:root` colors).
 
 ### Customize Default Behavior
 
@@ -207,8 +357,6 @@ Override which theme is default and which responds to `prefers-color-scheme`.
 
 **Use case:** Dark-first website that respects user preferences.
 
----
-
 ### Load Themes Without Default
 
 If you don't specify `--default` or use `themes: all`, themes are only available
@@ -232,7 +380,7 @@ via `data-theme` attribute.
 }
 ```
 
-**Important:** Your page will have **no colors by default** until you add
+**Important:** Your page will have no colors by default until you add
 `data-theme` to an element!
 
 To fix this, explicitly set a default:
@@ -290,8 +438,6 @@ Create your own theme with OKLCH colors.
 **Important:** You don't need to define all 13 colors. Missing colors are
 automatically filled from the fallback theme based on `color-scheme`.
 
----
-
 ### Light + Dark Custom Themes
 
 Create both light and dark versions of your brand.
@@ -344,8 +490,6 @@ Create both light and dark versions of your brand.
 }
 ```
 
----
-
 ### All 13 Available Colors
 
 You can customize any of these colors in your theme:
@@ -373,8 +517,6 @@ You can customize any of these colors in your theme:
 }
 ```
 
----
-
 ### Mix Built-in + Custom Themes
 
 Use built-in themes alongside your custom ones.
@@ -393,9 +535,9 @@ Use built-in themes alongside your custom ones.
 
 **Result:**
 
-- `light` → `:where(:root),[data-theme="light"]` (default)
-- `dark` → `@media (prefers-color-scheme: dark)` + `[data-theme="dark"]`
-- `brand` → `[data-theme="brand"]` (manual switching only)
+- **light** → `:where(:root),[data-theme="light"]` (default)
+- **dark** → `@media (prefers-color-scheme: dark)` + `[data-theme="dark"]`
+- **brand** → `[data-theme="brand"]` (manual switching only)
 
 ---
 
@@ -418,7 +560,8 @@ web components, shadow DOM, or specific sections of your page.
 ```css
 /* Colors scoped to #my-app */
 :where(#my-app),
-[data-theme="light"] {
+#my-app[data-theme="light"],
+#my-app [data-theme="light"] {
   --clampography-background: oklch(100% 0 0);
   /* ... */
 }
@@ -430,22 +573,21 @@ web components, shadow DOM, or specific sections of your page.
   }
 }
 
-/* Base styles remain global (NOT scoped) */
-:root {
+/* Base styles also scoped to #my-app */
+#my-app {
   --spacing-xs: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+  font-family: var(--font-family-base);
   /* ... */
 }
 
-body {
-  font-family: var(--font-family-base);
+#my-app h1 {
+  font-size: clamp(2.25rem, 1.95rem + 1.5vw, 3rem);
   /* ... */
 }
 ```
 
-**Important:** Only theme colors are scoped. Base styles (typography, spacing)
-and extra styles remain global.
-
----
+**Important:** Both theme colors AND base/extra styles are scoped when using
+`root` option.
 
 ### Custom Theme with Custom Root
 
@@ -472,20 +614,18 @@ and extra styles remain global.
 }
 ```
 
-**HTML:**
+HTML:
 
 ```html
 <div id="widget">
   <!-- Widget uses theme colors -->
-  <button class="bg-primary">Button</button>
+  <button class="bg-clampography-primary">Button</button>
 </div>
 
 <div id="main-app">
   <!-- This area doesn't have theme colors -->
 </div>
 ```
-
----
 
 ### Multiple Scoped Sections
 
@@ -523,17 +663,17 @@ Create different themed sections on the same page.
 }
 ```
 
-**HTML:**
+HTML:
 
 ```html
 <header>
   <!-- Uses header theme (blue) -->
-  <button class="bg-primary">Header Button</button>
+  <button class="bg-clampography-primary">Header Button</button>
 </header>
 
 <aside>
   <!-- Uses sidebar theme (green) -->
-  <button class="bg-primary">Sidebar Button</button>
+  <button class="bg-clampography-primary">Sidebar Button</button>
 </aside>
 ```
 
@@ -566,12 +706,10 @@ Perfect for maintaining full brand control.
 
 **What happens:**
 
-1. No built-in themes loaded
-2. Your `corporate` theme becomes `:where(:root),[data-theme="corporate"]`
-3. Missing colors filled from `light` theme
-4. No automatic dark mode (you define it manually if needed)
-
----
+- No built-in themes loaded
+- Your `corporate` theme becomes `:where(:root),[data-theme="corporate"]`
+- Missing colors filled from `light` theme
+- No automatic dark mode (you define it manually if needed)
 
 ### Scenario 2: Partial Color Definition
 
@@ -604,8 +742,6 @@ Define only brand colors, let others fall back.
 }
 ```
 
----
-
 ### Scenario 3: Dark Fallback for Partial Definition
 
 ```css
@@ -623,8 +759,6 @@ Define only brand colors, let others fall back.
 
 - Your 2 custom colors
 - Other 11 colors filled from `dark` theme (dark backgrounds, light text)
-
----
 
 ### Scenario 4: Multiple Custom Themes with Manual Switching
 
@@ -652,7 +786,7 @@ Build a theme switcher for your app.
 }
 ```
 
-**HTML:**
+HTML:
 
 ```html
 <body data-theme="ocean">
@@ -664,15 +798,13 @@ Build a theme switcher for your app.
 </body>
 ```
 
-**JavaScript:**
+JavaScript:
 
 ```javascript
 // Theme switcher
 const themes = ["ocean", "forest", "sunset"];
 document.body.setAttribute("data-theme", themes[selectedIndex]);
 ```
-
----
 
 ### Scenario 5: Respect System + Manual Override
 
@@ -691,7 +823,7 @@ Most flexible setup for users.
 }
 ```
 
-**HTML with theme switcher:**
+HTML with theme switcher:
 
 ```html
 <body>
@@ -706,8 +838,6 @@ Most flexible setup for users.
   <!-- User forced light mode -->
 </body>
 ```
-
----
 
 ### Scenario 6: Isolated Widget with Independent Theme
 
@@ -731,20 +861,19 @@ Create a widget that doesn't inherit page colors.
 }
 ```
 
-**HTML:**
+HTML:
 
 ```html
 <body>
   <!-- Main page uses light/dark system theme -->
-  <main class="bg-background text-text">
-    <h1 class="text-heading">Page Content</h1>
+  <main class="bg-clampography-background text-clampography-text">
+    <h1 class="text-clampography-heading">Page Content</h1>
   </main>
 
-  <!-- Widget has its own independent theme -->
+  <!-- Widget has independent theme -->
   <div id="chat-widget">
-    <div class="bg-background text-text">
-      <h2 class="text-heading">Chat Widget</h2>
-      <button class="bg-primary">Send</button>
+    <div class="bg-clampography-background">
+      <!-- Uses widget's dark theme -->
     </div>
   </div>
 </body>
@@ -752,334 +881,70 @@ Create a widget that doesn't inherit page colors.
 
 ---
 
-## Color Formats
+## Tailwind Utilities
 
-### OKLCH (Recommended)
+### Default (With Prefix)
 
-Modern color space with perceptual uniformity.
-
-```css
-primary: "oklch(70% 0.25 180)";
-```
-
-**Format:** `oklch(lightness chroma hue)`
-
-- **Lightness:** `0%` (black) to `100%` (white)
-- **Chroma:** `0` (gray) to `0.4+` (saturated)
-- **Hue:** `0-360` (color wheel)
-
-**Benefits:**
-
-- ✅ Works with opacity modifiers (`bg-primary/50`)
-- ✅ Perceptually uniform (better gradients)
-- ✅ Wider color gamut than sRGB
-- ✅ Better for accessibility
-
----
-
-### HEX (Supported but Limited)
-
-```css
-primary: "#3b82f6";
-```
-
-**Limitations:**
-
-- ⚠️ Opacity modifiers work but use `color-mix()` (less efficient)
-- ⚠️ Smaller color gamut than OKLCH
-- ⚠️ Non-perceptual (gradients may look uneven)
-
-**You'll see this warning:**
-
-```
-Clampography (mytheme): Color "primary" uses HEX format. 
-Consider using OKLCH format for better color space support and smoother gradients.
-```
-
----
-
-### RGB (Supported but Limited)
-
-```css
-primary: "rgb(59 130 246)";
-```
-
-**Same limitations as HEX.**
-
----
-
-## Opacity Modifiers
-
-Thanks to Tailwind CSS v4's `color-mix()` support, you can use opacity modifiers
-with all color formats.
-
-### Usage
+By default, all utilities use the `clampography-` prefix:
 
 ```html
-<div class="bg-primary">Full opacity</div>
-<div class="bg-primary/80">80% opacity</div>
-<div class="bg-primary/50">50% opacity</div>
-<div class="bg-primary/20">20% opacity</div>
-<div class="bg-primary/10">10% opacity</div>
+<!-- Backgrounds -->
+<div class="bg-clampography-background">...</div>
+<div class="bg-clampography-surface">...</div>
+<div class="bg-clampography-primary">...</div>
 
-<div class="text-heading/70">70% opacity text</div>
-<div class="border-primary/30">30% opacity border</div>
+<!-- Text -->
+<p class="text-clampography-text">...</p>
+<h1 class="text-clampography-heading">...</h1>
+<span class="text-clampography-muted">...</span>
+
+<!-- Borders -->
+<div class="border border-clampography-border">...</div>
+<div class="border-clampography-primary">...</div>
+
+<!-- With opacity -->
+<div class="bg-clampography-primary/20">...</div>
+<div class="text-clampography-error/70">...</div>
 ```
 
-### Generated CSS
-
-```css
-/* Full opacity */
-background-color: var(--clampography-primary);
-
-/* With opacity modifier */
-background-color: color-mix(
-  in oklab,
-  var(--clampography-primary) 50%,
-  transparent
-);
-```
-
----
-
-## Troubleshooting
-
-### No Colors Showing Up
-
-**Problem:** You loaded the plugin but don't see any colors.
-
-**Solution:** Make sure you specified themes:
-
-```css
-/* ❌ Wrong - no themes loaded */
-@plugin "clampography";
-
-/* ✅ Correct - themes loaded */
-@plugin "clampography" {
-  themes: all;
-}
-```
-
-**Also check:** If you loaded specific themes without `--default` flag, you need
-to add `data-theme` attribute:
-
-```css
-/* This won't set default colors */
-@plugin "clampography" {
-  themes: "retro, cyberpunk";
-}
-
-/* Fix: Add --default flag */
-@plugin "clampography" {
-  themes: "retro --default, cyberpunk";
-}
-
-/* Or use data-theme in HTML */
-<body data-theme="retro">
-```
-
----
-
-### Custom Theme Colors Not Applied
-
-**Problem:** Your custom theme doesn't override built-in colors.
-
-**Check:**
-
-1. Is `color-scheme` specified?
-
-```css
-@plugin "clampography/theme" {
-  name: "mytheme";
-  color-scheme: light; /* Add this! */
-  primary: "oklch(70% 0.25 180)";
-}
-```
-
-2. Is the color value valid?
-
-```css
-/* ❌ Wrong format */
-primary: "70% 0.25 180";
-
-/* ✅ Correct format */
-primary: "oklch(70% 0.25 180)";
-```
-
-3. Did you set `default: true` to apply it to `:root`?
-
-```css
-@plugin "clampography/theme" {
-  name: "mytheme";
-  default: true; /* Add this! */
-  primary: "oklch(70% 0.25 180)";
-}
-```
-
----
-
-### Dark Mode Not Working
-
-**Problem:** Light theme always shows, even in dark mode.
-
-**Solution:** Check your configuration:
-
-```css
-/* Make sure you loaded both themes */
-@plugin "clampography" {
-  themes: "light, dark"; /* or themes: all */
-}
-```
-
-Or for custom themes:
-
-```css
-@plugin "clampography/theme" {
-  name: "brand-dark";
-  prefersdark: true; /* Add this! */
-  color-scheme: dark;
-}
-```
-
----
-
-### Scoped Theme Not Working
-
-**Problem:** Colors don't apply when using custom `root` selector.
-
-**Check:**
-
-1. Make sure the element exists in HTML:
+### Custom Prefix
 
 ```css
 @plugin "clampography" {
-  root: "#my-app";
+  prefix: "theme";
 }
 ```
 
 ```html
-<div id="my-app">
-  <!-- Content here -->
+<div class="bg-theme-background text-theme-text">
+  <button class="bg-theme-primary">Click</button>
 </div>
 ```
 
-2. CSS variables must be accessed within the scoped element:
+### No Prefix
 
-```html
-<!-- ✅ Works - inside #my-app -->
-<div id="my-app">
-  <button class="bg-primary">Button</button>
-</div>
-
-<!-- ❌ Doesn't work - outside #my-app -->
-<div id="other-section">
-  <button class="bg-primary">Button</button>
-</div>
-```
-
----
-
-### Opacity Modifiers Not Working
-
-**Problem:** `bg-primary/50` doesn't work.
-
-**Check:**
-
-1. Are you using Tailwind CSS v4?
-
-```json
-{
-  "dependencies": {
-    "tailwindcss": "^4.0.0"
-  }
+```css
+@plugin "clampography" {
+  prefix: false;
 }
 ```
 
-2. Is your color in the correct format?
-
-```css
-/* Make sure colors include oklch() wrapper */
-primary: "oklch(70% 0.25 180)"; /* ✅ Good */
-primary: "70% 0.25 180"; /* ❌ Bad */
+```html
+<div class="bg-background text-text">
+  <button class="bg-primary">Click</button>
+</div>
 ```
 
----
+### Reference
 
-### Warnings About Color Format
+#### Available Theme Names
 
-**Warning:**
+- **light** - Clean light theme with blue accents
+- **dark** - Modern dark theme with high contrast
+- **retro** - Warm, vintage-inspired palette
+- **cyberpunk** - Neon colors with dark background
 
-```
-Clampography (mytheme): Color "primary" uses HEX format.
-```
-
-**This is informational, not an error.** Your theme will work, but consider
-converting to OKLCH for better results:
-
-```css
-/* Before */
-primary: "#3b82f6";
-
-/* After (better) */
-primary: "oklch(63% 0.258 262)";
-```
-
-**Convert HEX to OKLCH:** Use tools like [oklch.com](https://oklch.com) or
-browser DevTools.
-
----
-
-## Best Practices
-
-1. **Always specify a default theme** - Use `themes: all` or add `--default`
-   flag to avoid colorless pages
-2. **Use OKLCH for custom themes** - Better colors, smoother gradients, wider
-   gamut
-3. **Define only colors that differ from default** - Let others auto-fill from
-   fallback
-4. **Set `color-scheme` properly** - Ensures correct fallback colors (light vs
-   dark)
-5. **Test in both light and dark modes** - Use browser DevTools to toggle
-   `prefers-color-scheme`
-6. **Use opacity modifiers liberally** - `bg-primary/10` for subtle backgrounds,
-   overlays, disabled states
-7. **Scope themes when needed** - Use `root` option for widgets, web components,
-   or isolated sections
-8. **Provide manual theme switcher** - Don't rely only on system preferences,
-   let users choose
-
----
-
-## Quick Reference
-
-### Plugin Options
-
-| Option   | Type                | Default     | Description                                         |
-| -------- | ------------------- | ----------- | --------------------------------------------------- |
-| `themes` | `string` or `array` | `undefined` | Which themes to load (`all`, `"light, dark"`, etc.) |
-| `base`   | `boolean`           | `true`      | Load typography/spacing styles                      |
-| `extra`  | `boolean`           | `false`     | Load opinionated colored styles                     |
-| `root`   | `string`            | `":root"`   | Root selector for theme colors (e.g., `"#my-app"`)  |
-
-### Theme Options
-
-| Option                 | Type                  | Default       | Description                                    |
-| ---------------------- | --------------------- | ------------- | ---------------------------------------------- |
-| `name`                 | `string`              | _required_    | Theme name (used in `data-theme` attribute)    |
-| `default`              | `boolean`             | `false`       | Apply to `:where(root)` as default theme       |
-| `prefersdark`          | `boolean`             | `false`       | Apply to `@media (prefers-color-scheme: dark)` |
-| `color-scheme`         | `"light"` or `"dark"` | `"light"`     | Fallback palette for missing colors            |
-| `root`                 | `string`              | `":root"`     | Custom root selector for this theme            |
-| `primary`              | `string`              | from fallback | Main brand color                               |
-| `secondary`            | `string`              | from fallback | Accent color                                   |
-| _(... 11 more colors)_ |                       |               | See [All 13 Colors](#all-13-available-colors)  |
-
-### Available Theme Names
-
-- `light` - Clean light theme with blue accents
-- `dark` - Modern dark theme with high contrast
-
-### Available Color Variables
+#### Available Color Variables
 
 - `--clampography-background`
 - `--clampography-surface`
@@ -1095,31 +960,7 @@ browser DevTools.
 - `--clampography-error`
 - `--clampography-info`
 
-### Tailwind Utilities
-
-All color variables are available as Tailwind utilities:
-
-```html
-<!-- Backgrounds -->
-<div class="bg-background">...</div>
-<div class="bg-surface">...</div>
-<div class="bg-primary">...</div>
-
-<!-- Text -->
-<p class="text-text">...</p>
-<h1 class="text-heading">...</h1>
-<span class="text-muted">...</span>
-
-<!-- Borders -->
-<div class="border border-border">...</div>
-<div class="border-primary">...</div>
-
-<!-- With opacity -->
-<div class="bg-primary/20">...</div>
-<div class="text-error/70">...</div>
-```
-
-### Generated Selectors
+#### Generated Selectors
 
 Understanding what CSS selectors are generated:
 
@@ -1128,17 +969,177 @@ Understanding what CSS selectors are generated:
 | `themes: all`                     | `:where(:root),[data-theme="light"]` for default |
 | `themes: "light --default"`       | `:where(:root),[data-theme="light"]`             |
 | `themes: "dark --prefersdark"`    | `@media (prefers-color-scheme: dark) { :root }`  |
-| `root: "#app"`                    | `:where(#app),[data-theme="..."]`                |
+| `root: "#app"`                    | `:where(#app), #app[data-theme="..."]`           |
 | Custom theme with `default: true` | `:where(:root),[data-theme="custom"]`            |
-| Custom theme without `default`    | `[data-theme="custom"]` only                     |
+| Custom theme without default      | `[data-theme="custom"]` only                     |
 
 **Note:** `:where()` is used for default themes to keep specificity low,
 allowing `[data-theme]` to easily override.
 
 ---
 
+## Color Formats
+
+### OKLCH (Recommended)
+
+```css
+@plugin "clampography/theme" {
+  primary: "oklch(60% 0.25 270)";
+}
+```
+
+**Benefits:**
+
+- Perceptually uniform colors
+- Better gradients
+- Full support for opacity modifiers (`/20`, `/50`, etc.)
+
+### HEX and RGB (Supported)
+
+```css
+@plugin "clampography/theme" {
+  primary: "#3b82f6";
+  secondary: "rgb(59, 130, 246)";
+}
+```
+
+**Note:** Plugin will show an informational message suggesting OKLCH for better
+color space support.
+
+---
+
+## Opacity Modifiers
+
+All colors support Tailwind's opacity modifiers when using OKLCH format:
+
+```html
+<div class="bg-clampography-primary/10">10% opacity</div>
+<div class="bg-clampography-primary/20">20% opacity</div>
+<div class="bg-clampography-primary/50">50% opacity</div>
+<div class="text-clampography-error/70">70% opacity</div>
+```
+
+**Note:** For best compatibility with opacity modifiers, use OKLCH format. HEX
+and RGB colors may not work with opacity modifiers in all cases.
+
+---
+
+## Troubleshooting
+
+### No colors appear on my page
+
+**Problem:** Page has no background/text colors.
+
+**Solution:** Make sure you have:
+
+- Loaded at least one theme with `default: true` or `--default` flag
+- Or manually added `data-theme` attribute to an element
+
+```css
+/* Bad - no default */
+@plugin "clampography" {
+  themes: "retro, cyberpunk";
+}
+
+/* Good - has default */
+@plugin "clampography" {
+  themes: "retro --default, cyberpunk";
+}
+```
+
+### Utilities not working (Class not found)
+
+**Problem:** `bg-background` doesn't work.
+
+**Solution:** By default, utilities have the `clampography-` prefix:
+
+```html
+<!-- Wrong -->
+<div class="bg-background"></div>
+
+<!-- Correct -->
+<div class="bg-clampography-background"></div>
+```
+
+To remove prefix:
+
+```css
+@plugin "clampography" {
+  prefix: false;
+}
+```
+
+### Theme not changing with data-theme
+
+**Problem:** Setting `data-theme` attribute doesn't change colors.
+
+**Solution:** Check if you're using custom `root` option. If `root: "#app"`,
+then `data-theme` must be on `#app` element or its child:
+
+```html
+<!-- If root: "#app" -->
+<div id="app" data-theme="dark">
+  <!-- Theme works here -->
+</div>
+
+<!-- If root: ":root" (default) -->
+<body data-theme="dark">
+  <!-- Theme works here -->
+</body>
+```
+
+### Custom root not working
+
+**Problem:** Set `root: "#my-app"` but styles don't apply.
+
+**Solution:** Make sure the element with that ID exists in your HTML:
+
+```html
+<!-- Required for root: "#my-app" -->
+<div id="my-app">
+  <!-- Styles apply here -->
+</div>
+```
+
+### Opacity modifiers not working
+
+**Problem:** `bg-clampography-primary/20` doesn't work.
+
+**Solution:** Use OKLCH format for colors. HEX and RGB may not support opacity
+modifiers:
+
+```css
+/* Good - supports opacity */
+@plugin "clampography/theme" {
+  primary: "oklch(60% 0.25 270)";
+}
+
+/* May not work with /20, /50, etc. */
+@plugin "clampography/theme" {
+  primary: "#3b82f6";
+}
+```
+
+### Too many console logs
+
+**Problem:** Build output is cluttered with plugin messages.
+
+**Solution:** Disable logs:
+
+```css
+@plugin "clampography" {
+  logs: false;
+}
+
+@plugin "clampography/theme" {
+  logs: false;
+}
+```
+
+---
+
 ## Need Help?
 
-- 📖 [Full Documentation](https://github.com/Avaray/clampography)
-- 🐛 [Report Issues](https://github.com/Avaray/clampography/issues)
-- 💬 [Discussions](https://github.com/Avaray/clampography/discussions)
+- 📖 [Full Documentation](https://clampography.dev)
+- 🐛 [Report Issues](https://github.com/clampography/issues)
+- 💬 [Discussions](https://github.com/clampography/discussions)
