@@ -7,7 +7,7 @@ export default plugin.withOptions((options = {}) => {
     const themeName = options.name;
     const isDefault = options.default ?? false;
     const isPrefersDark = options.prefersdark ?? false;
-    const rootSelector = options.root ?? ":root";
+    const rootSelector = options.root || ":root";
     const colorScheme = options["color-scheme"] ?? "light";
 
     // This option is completely separate from the main plugin's logs option

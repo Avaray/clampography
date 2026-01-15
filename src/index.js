@@ -49,7 +49,7 @@ export default plugin.withOptions(
         let themesToInclude = [];
         let defaultThemeName = null;
         let prefersDarkTheme = false;
-        let rootSelector = options.root ?? ":root";
+        let rootSelector = options.root || ":root";
         let isAllThemes = false; // Track if user specified "all"
 
         // Normalize input to an array of strings
