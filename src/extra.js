@@ -1,164 +1,198 @@
-export default {
-  // --- Basic Coloring (Applying theme variables) ---
-  "body": {
-    "background-color": "var(--clampography-background)",
-    "color": "var(--clampography-text)",
-  },
+export default (options = {}) => {
+  const root = options.root || ":root";
 
-  ":where(h1, h2, h3, h4, h5, h6)": {
-    "color": "var(--clampography-heading)",
-  },
+  // Helper to scope selectors safely
+  const scope = (selector) => {
+    const parts = [];
+    let current = "";
+    let depth = 0;
 
-  // Styled Links (Enhanced)
-  "a": {
-    "color": "var(--clampography-link)",
-    "font-weight": "600",
-    "letter-spacing": "0.025em",
-    "text-decoration-line": "underline",
-    "text-decoration-thickness": "2px",
-    "text-underline-offset": "4px",
-    "text-decoration-color":
-      "color-mix(in oklab, var(--clampography-link) 30%, transparent)",
-    "transition-property": "color, text-decoration-color",
-    "transition-duration": "150ms",
-  },
+    for (let i = 0; i < selector.length; i++) {
+      const char = selector[i];
+      if (char === "(") depth++;
+      if (char === ")") depth--;
 
-  "a:hover": {
-    "text-decoration-color": "var(--clampography-link)",
-  },
+      if (char === "," && depth === 0) {
+        parts.push(current.trim());
+        current = "";
+      } else {
+        current += char;
+      }
+    }
+    parts.push(current.trim());
 
-  // Lists
-  "ul > li::before": {
-    "background-color": "var(--clampography-primary)", // Bullet points
-  },
+    return parts
+      .filter(Boolean)
+      .map((part) => {
+        if (part === ":root" || part === "body") return root;
+        return `${root} ${part}`;
+      })
+      .join(", ");
+  };
 
-  "ol > li::before": {
-    "color": "var(--clampography-primary)", // Numbers
-  },
+  return {
+    // --- Basic Coloring ---
+    [root]: {
+      "background-color": "var(--clampography-background)",
+      "color": "var(--clampography-text)",
+    },
 
-  // Inline Code
-  ":where(code:not(pre code), kbd, samp)": {
-    "background-color": "var(--clampography-surface)",
-    "color": "var(--clampography-heading)",
-    "border": "1px solid var(--clampography-border)",
-    "border-radius": "0.25rem",
-    "padding": "0.125rem var(--spacing-xs)",
-  },
+    [scope(":where(h1, h2, h3, h4, h5, h6)")]: {
+      "color": "var(--clampography-heading)",
+    },
 
-  // Keyboard input - vertical alignment
-  "kbd": {
-    transform: "translateY(-0.15em)",
-  },
+    // Styled Links
+    [scope("a")]: {
+      "color": "var(--clampography-link)",
+      "font-weight": "600",
+      "letter-spacing": "0.025em",
+      "text-decoration-line": "underline",
+      "text-decoration-thickness": "2px",
+      "text-underline-offset": "4px",
+      "text-decoration-color":
+        "color-mix(in oklab, var(--clampography-link) 30%, transparent)",
+      "transition-property": "color, text-decoration-color",
+      "transition-duration": "150ms",
+    },
 
-  // Preformatted Code Blocks
-  "pre": {
-    "background-color": "var(--clampography-surface)",
-    "border": "1px solid var(--clampography-border)",
-    "border-radius": "0.375rem",
-    "padding": "1rem",
-  },
+    [scope("a:hover")]: {
+      "text-decoration-color": "var(--clampography-link)",
+    },
 
-  // Tables
-  "table": {
-    "padding": "var(--spacing-sm)",
-    "border": "1px solid var(--clampography-border)",
-  },
+    // Lists
+    [scope("ul > li::before")]: {
+      "background-color": "var(--clampography-primary)",
+    },
 
-  "th": {
-    "color": "var(--clampography-heading)",
-  },
+    [scope("ol > li::before")]: {
+      "color": "var(--clampography-primary)",
+    },
 
-  "th, td": {
-    "border": "1px solid var(--clampography-border)",
-  },
+    // Inline Code
+    [scope(":where(code:not(pre code), kbd, samp)")]: {
+      "background-color": "var(--clampography-surface)",
+      "color": "var(--clampography-heading)",
+      "border": "1px solid var(--clampography-border)",
+      "border-radius": "0.25rem",
+      "padding": "0.125rem var(--spacing-xs)",
+    },
 
-  "thead th": {
-    "border-bottom-width": "2px",
-  },
+    [scope("kbd")]: {
+      transform: "translateY(-0.15em)",
+    },
 
-  // Zebra striping for table rows
-  "tbody tr:nth-child(even)": {
-    "background-color": "var(--clampography-surface)",
-  },
+    // Preformatted Code Blocks
+    [scope("pre")]: {
+      "background-color": "var(--clampography-surface)",
+      "border": "1px solid var(--clampography-border)",
+      "border-radius": "0.375rem",
+      "padding": "1rem",
+    },
 
-  // Captions & Muted text
-  "caption, figcaption, .muted": {
-    "color": "var(--clampography-muted)",
-  },
+    // Tables
+    [scope("table")]: {
+      "padding": "var(--spacing-sm)",
+      "border": "1px solid var(--clampography-border)",
+    },
 
-  // Horizontal Rule (Thematic)
-  "hr": {
-    "height": "1px",
-    "border-width": "0",
-    "margin-top": "3rem",
-    "margin-bottom": "3rem",
-    "background-color": "var(--clampography-border)",
-  },
+    [scope("th")]: {
+      "color": "var(--clampography-heading)",
+    },
 
-  // Styled Blockquote
-  "blockquote": {
-    "border-left-width": "4px",
-    "border-left-color": "var(--clampography-primary)",
-    "background-color": "var(--clampography-surface)",
-    "padding": "1rem",
-    "border-radius": "0.25rem",
-    "font-style": "italic",
-    "color": "var(--clampography-heading)",
-  },
+    [scope("th, td")]: {
+      "border": "1px solid var(--clampography-border)",
+    },
 
-  // Mark
-  "mark": {
-    "background-color": "var(--clampography-primary)",
-    "color": "var(--clampography-background)",
-    "padding": "0.125rem var(--spacing-xs)",
-    "border-radius": "0.25rem",
-  },
+    [scope("thead th")]: {
+      "border-bottom-width": "2px",
+    },
 
-  // Deleted Text
-  "del": {
-    "text-decoration-color": "var(--clampography-secondary)",
-    "text-decoration-thickness": "2px",
-  },
+    [scope("tbody tr:nth-child(even)")]: {
+      "background-color": "var(--clampography-surface)",
+    },
 
-  // Buttons - All types
-  // WILL BE REMOVED FROM THIS FILE
-  ":where(button, [type='button'], [type='reset'], [type='submit'])": {
-    "padding": "var(--spacing-xs) var(--spacing-sm)",
-    "border": "1px solid var(--clampography-border)",
-    "border-radius": "0.375rem", // ← Rounded corners
-  },
+    // Captions & Muted
+    [scope("caption, figcaption, .muted")]: {
+      "color": "var(--clampography-muted)",
+    },
 
-  // Inputs - All types
-  // WILL BE REMOVED FROM THIS FILE
-  ":where(input:not([type='checkbox'], [type='radio']), textarea, select)": {
-    "padding": "var(--spacing-xs) var(--spacing-sm)",
-    "border": "1px solid var(--clampography-border)",
-    "border-radius": "0.375rem", // ← Rounded corners
-  },
+    // Horizontal Rule
+    [scope("hr")]: {
+      "height": "1px",
+      "border-width": "0",
+      "margin-top": "3rem",
+      "margin-bottom": "3rem",
+      "background-color": "var(--clampography-border)",
+    },
 
-  // Fieldset
-  "fieldset": {
-    "border": "1px solid var(--clampography-border)",
-    "border-radius": "0.375rem",
-  },
+    // Blockquote
+    [scope("blockquote")]: {
+      "border-left-width": "4px",
+      "border-left-color": "var(--clampography-primary)",
+      "background-color": "var(--clampography-surface)",
+      "padding": "1rem",
+      "border-radius": "0.25rem",
+      "font-style": "italic",
+      "color": "var(--clampography-heading)",
+    },
 
-  "legend": {
-    "color": "var(--clampography-heading)",
-  },
+    // Mark
+    [scope("mark")]: {
+      "background-color": "var(--clampography-primary)",
+      "color": "var(--clampography-background)",
+      "padding": "0.125rem var(--spacing-xs)",
+      "border-radius": "0.25rem",
+    },
 
-  // Details
-  "details": {
-    "border": "1px solid var(--clampography-border)",
-    "border-radius": "0.375rem",
-    "padding": "0.5rem",
-  },
+    // Deleted Text
+    [scope("del")]: {
+      "text-decoration-color": "var(--clampography-secondary)",
+      "text-decoration-thickness": "2px",
+    },
 
-  "summary": {
-    "color": "var(--clampography-heading)",
-  },
+    // Buttons
+    [scope(":where(button, [type='button'], [type='reset'], [type='submit'])")]:
+      {
+        "padding": "var(--spacing-xs) var(--spacing-sm)",
+        "border": "1px solid var(--clampography-border)",
+        "border-radius": "0.375rem",
+      },
 
-  "details[open] > summary": {
-    "border-bottom": "1px solid var(--clampography-border)",
-    "padding-bottom": "0.5rem",
-  },
+    // Inputs
+    [
+      scope(
+        ":where(input:not([type='checkbox'], [type='radio']), textarea, select)",
+      )
+    ]: {
+      "padding": "var(--spacing-xs) var(--spacing-sm)",
+      "border": "1px solid var(--clampography-border)",
+      "border-radius": "0.375rem",
+    },
+
+    // Fieldset
+    [scope("fieldset")]: {
+      "border": "1px solid var(--clampography-border)",
+      "border-radius": "0.375rem",
+    },
+
+    [scope("legend")]: {
+      "color": "var(--clampography-heading)",
+    },
+
+    // Details
+    [scope("details")]: {
+      "border": "1px solid var(--clampography-border)",
+      "border-radius": "0.375rem",
+      "padding": "0.5rem",
+    },
+
+    [scope("summary")]: {
+      "color": "var(--clampography-heading)",
+    },
+
+    [scope("details[open] > summary")]: {
+      "border-bottom": "1px solid var(--clampography-border)",
+      "padding-bottom": "0.5rem",
+    },
+  };
 };

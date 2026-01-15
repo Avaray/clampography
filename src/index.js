@@ -41,8 +41,9 @@ export default plugin.withOptions(
         const includeBase = resolveBool(options.base, true); // Default: true
         const includeExtra = resolveBool(options.extra, false); // Default: false
 
-        includeBase && addBase(baseStyles);
-        includeExtra && addBase(extraStyles);
+        // Pass options to the style functions to enable scoping
+        includeBase && addBase(baseStyles(options));
+        includeExtra && addBase(extraStyles(options));
 
         // 2. Parse themes configuration
         let configThemes = options.themes;
@@ -120,13 +121,31 @@ export default plugin.withOptions(
         const themeStyles = {};
 
         // A. Default theme - uses :where() for lower specificity
+        // Helper to combine root and data-theme
+        // If root is ":root", we use "html[data-theme...]" for backwards compatibility.
+        const getThemeSelector = (themeName) => {
+          if (rootSelector === ":root") {
+            return `html[data-theme="${themeName}"], [data-theme="${themeName}"]`;
+          }
+          // For custom root, attach data-theme directly to it
+          // AND allow a nested data-theme inside it (optional, but good for nesting)
+          return `${rootSelector}[data-theme="${themeName}"], ${rootSelector} [data-theme="${themeName}"]`;
+        };
+
+        // A. Default theme
         if (defaultThemeName && builtInThemes[defaultThemeName]) {
-          const defaultSelector =
-            `:where(${rootSelector}),[data-theme="${defaultThemeName}"]`;
-          themeStyles[defaultSelector] = builtInThemes[defaultThemeName];
+          // Default variables applied to the root element itself without data-theme attribute
+          // uses :where() for lower specificity so it can be overridden
+          const defaultSelector = `:where(${rootSelector})`;
+
+          // Also apply if explicitly selected
+          const explicitSelector = getThemeSelector(defaultThemeName);
+
+          themeStyles[`${defaultSelector}, ${explicitSelector}`] =
+            builtInThemes[defaultThemeName];
         }
 
-        // B. Theme for prefers-color-scheme: dark - only applies to root selector
+        // B. Theme for prefers-color-scheme: dark
         if (prefersDarkTheme && builtInThemes[prefersDarkTheme]) {
           themeStyles["@media (prefers-color-scheme: dark)"] = {
             [rootSelector]: builtInThemes[prefersDarkTheme],
@@ -134,31 +153,22 @@ export default plugin.withOptions(
         }
 
         // C. All themes available via [data-theme] attribute
-        // WITH higher specificity to override media query
         themesToInclude.forEach((themeName) => {
-          // Skip if already added as default (to avoid duplication)
           if (themeName === defaultThemeName) return;
-
-          const selector =
-            `html[data-theme="${themeName}"], [data-theme="${themeName}"]`;
+          const selector = getThemeSelector(themeName);
           themeStyles[selector] = builtInThemes[themeName];
         });
 
-        // ✅ D. CRITICAL: Override media query with data-theme selectors
-        // This ensures manual theme selection always wins over system preference
+        // D. Override media query with data-theme selectors
         if (prefersDarkTheme) {
           themeStyles["@media (prefers-color-scheme: dark)"] = {
             ...themeStyles["@media (prefers-color-scheme: dark)"],
           };
 
-          // Add all themes inside media query to override the :root rule
           themesToInclude.forEach((themeName) => {
-            if (themeName === prefersDarkTheme) return; // Skip the prefersDark theme itself
+            if (themeName === prefersDarkTheme) return;
+            const selector = getThemeSelector(themeName);
 
-            const selector =
-              `html[data-theme="${themeName}"], [data-theme="${themeName}"]`;
-
-            // Add inside media query
             if (!themeStyles["@media (prefers-color-scheme: dark)"][selector]) {
               themeStyles["@media (prefers-color-scheme: dark)"][selector] =
                 builtInThemes[themeName];
