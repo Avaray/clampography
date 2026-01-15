@@ -99,23 +99,50 @@ export default plugin.withOptions(
           }
         });
 
-        // If list is empty after filtering, stop here
-        if (
-          themesToInclude.length === 0 && !defaultThemeName && !prefersDarkTheme
-        ) return;
-
         // 4. Auto-configure defaults for "themes: all"
-        // If user didn't specify --default or --prefersdark flags,
-        // automatically set light as default and dark for prefers-color-scheme
         if (isAllThemes) {
-          if (!defaultThemeName && themesToInclude.includes("light")) {
-            defaultThemeName = "light";
+          if (!defaultThemeName) {
+            if (themesToInclude.includes("light")) {
+              defaultThemeName = "light";
+            } else if (themesToInclude.length > 0) {
+              defaultThemeName = themesToInclude[0];
+            }
           }
-
           if (!prefersDarkTheme && themesToInclude.includes("dark")) {
             prefersDarkTheme = "dark";
           }
         }
+
+        // LOGGING: Built-in themes summary
+        if (showLogs) {
+          const explicitlyDisabled = ["false", "no", "none"].includes(
+            String(options.themes).trim(),
+          );
+
+          if (themesToInclude.length > 0) {
+            const themesList = themesToInclude.map((theme) => {
+              const flags = [];
+              if (theme === defaultThemeName) flags.push("default");
+              if (theme === prefersDarkTheme) flags.push("prefersdark");
+
+              const flagStr = flags.length > 0 ? ` (${flags.join(", ")})` : "";
+              return `${theme}${flagStr}`;
+            });
+
+            console.log(
+              `🍀 Clampography: Loaded ${themesToInclude.length} built-in themes: ${
+                themesList.join(", ")
+              }`,
+            );
+          } else if (!explicitlyDisabled) {
+            console.info("ℹ️ Clampography: No built-in themes loaded.");
+          }
+        }
+
+        // Final check before generating CSS
+        if (
+          themesToInclude.length === 0 && !defaultThemeName && !prefersDarkTheme
+        ) return;
 
         // 5. Generate CSS
         const themeStyles = {};

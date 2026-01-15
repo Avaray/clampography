@@ -22,6 +22,18 @@ export default plugin.withOptions((options = {}) => {
       return;
     }
 
+    // LOGGING: Custom theme loaded
+    if (showLogs) {
+      const flags = [];
+      if (isDefault) flags.push("Default");
+      if (isPrefersDark) flags.push("Dark Pref");
+      const flagStr = flags.length > 0 ? ` (${flags.join(", ")})` : "";
+
+      console.log(
+        `✨ Clampography: Loaded custom theme "${themeName}"${flagStr}`,
+      );
+    }
+
     // 2. Prepare Base Colors (Fallback)
     // We fetch the full palette of the requested color scheme (light/dark)
     // to fill in any missing gaps in the user's definition.
