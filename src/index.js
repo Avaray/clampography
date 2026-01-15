@@ -123,6 +123,7 @@ export default plugin.withOptions(
         // A. Default theme - uses :where() for lower specificity
         // Helper to combine root and data-theme
         // If root is ":root", we use "html[data-theme...]" for backwards compatibility.
+        // If root is custom (e.g. "#morda"), we generate "#morda[data-theme...]"
         const getThemeSelector = (themeName) => {
           if (rootSelector === ":root") {
             return `html[data-theme="${themeName}"], [data-theme="${themeName}"]`;
