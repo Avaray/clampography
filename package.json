@@ -1,13 +1,22 @@
 {
   "name": "clampography",
-  "version": "2.0.0-beta.19",
+  "version": "2.0.0-beta.20",
   "description": "Fluid typography system based on CSS clamp() with optional themes and extra styles. A feature-rich alternative to Tailwind CSS Typography plugin.",
   "main": "src/index.js",
   "type": "module",
   "exports": {
-    ".": "./src/index.js",
-    "./theme": "./src/theme-plugin.js",
-    "./themes": "./src/themes.js",
+    ".": {
+      "types": "./src/types/index.d.ts",
+      "import": "./src/index.js"
+    },
+    "./theme": {
+      "types": "./src/types/theme-plugin.d.ts",
+      "import": "./src/theme-plugin.js"
+    },
+    "./themes": {
+      "types": "./src/types/themes.d.ts",
+      "import": "./src/themes.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [
