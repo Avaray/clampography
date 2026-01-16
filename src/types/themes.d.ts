@@ -13,14 +13,6 @@ export interface ThemeColors {
   "--clampography-surface": string;
   "--clampography-text": string;
   "--clampography-warning": string;
+  // Allow index signature
+  [key: string]: string;
 }
-
-export interface Themes {
-  light: ThemeColors;
-  dark: ThemeColors;
-  retro: ThemeColors;
-  cyberpunk: ThemeColors;
-}
-
-export const themes: Themes;
-export const themesList: string[];
