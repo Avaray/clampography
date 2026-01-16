@@ -56,7 +56,7 @@ deno install npm:clampography
 
 ## Quick Start
 
-### Typography Only (Recommended)
+### Typography Only
 
 Load just the typography system without any colors:
 
