@@ -4,8 +4,9 @@
 
 **Clampography** is a pure CSS typography system that uses the
 [clamp()](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/clamp)
-function for fluid, responsive text scaling. Built as a Tailwind CSS plugin, it
-delivers production-ready typography with optional theming support. With
+function for fluid, responsive text scaling. Built as a
+[Tailwind CSS](https://tailwindcss.com/) plugin, it delivers production-ready
+typography with optional theming support. With
 [94% global browser support](https://caniuse.com/css-math-functions), it works
 on nearly all modern devices.
 
@@ -15,16 +16,15 @@ on nearly all modern devices.
   `clamp()` (fluid)
 - **Optional theming:** Built-in light/dark themes or create your own with OKLCH
   colors
-- **Tailwind plugin:** Requires Tailwind CSS v4
 
 ## The purpose
 
 [CSS resets](https://en.wikipedia.org/wiki/Reset_style_sheet) like
 [Tailwind's Preflight](https://tailwindcss.com/docs/preflight) remove all
 browser typography defaults, leaving you with unstyled text. **Clampography**
-delivers production-ready typography that responds to viewport changes
-automatically, while leaving all aesthetic choices to you. Add themes only if
-you need them.
+delivers production-ready typography that responds to
+[viewport](https://en.wikipedia.org/wiki/Viewport) changes automatically, while
+leaving all aesthetic choices to you. Add themes only if you need them.
 
 Visit the temporary [demo page](https://next.dav.one/clampography/) to see how
 it looks.
