@@ -6,7 +6,9 @@
   "type": "module",
   "exports": {
     ".": "./src/index.js",
-    "./theme": "./src/theme-plugin.js"
+    "./theme": "./src/theme-plugin.js",
+    "./themes": "./src/themes.js",
+    "./package.json": "./package.json"
   },
   "files": [
     "src"
