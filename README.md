@@ -69,7 +69,7 @@ Load just the typography system without any colors:
 
 **Result:**
 
-- ✅ Fluid typography (headings, paragraphs, lists)
+- ✅ Fluid typography (headings, paragraphs, lists, etc.)
 - ✅ Responsive spacing system
 - ✅ Structural base styles
 - ❌ No colors, borders, or decorations
