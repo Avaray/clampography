@@ -2,13 +2,14 @@
 
 > **WARNING**: Beta 2.0.0 is in development and currently unstable.
 
-**Clampography** is a pure CSS typography system that uses the
+**Clampography** is a pure CSS typography system designed for blogs and
+documentation sites. It uses the
 [clamp()](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/clamp)
 function for fluid, responsive text scaling. Built as a
 [Tailwind CSS](https://tailwindcss.com/) plugin, it delivers production-ready
-typography with optional theming support. With
-[94% global browser support](https://caniuse.com/css-math-functions), it works
-on nearly all modern devices.
+typography with optional theming support. Basic features work in about 95% of
+browsers using standard CSS `clamp()`. When you enable Themes with `oklch()`
+colors, browser support decreases to around 92%.
 
 - **Typography first:** Fluid, responsive text scaling without any styling
 - **Structure only:** Manages size, spacing, weight, and font-family
