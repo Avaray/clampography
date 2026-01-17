@@ -75,6 +75,7 @@ export default (options = {}) => {
       "border": "1px solid var(--clampography-border)",
       "border-radius": "0.25rem",
       "padding": "0.125rem var(--spacing-xs)",
+      "white-space": "nowrap",
     },
 
     [scope("kbd")]: {
