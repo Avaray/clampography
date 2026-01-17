@@ -90,7 +90,7 @@ Add automatic light/dark theming:
 ```css
 @import "tailwindcss";
 @plugin "clampography" {
-  themes: all; /* Loads light, dark, retro, and cyberpunk */
+  themes: all; /* Loads all built-in themes */
 }
 ```
 
