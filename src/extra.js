@@ -150,35 +150,6 @@ export default (options = {}) => {
       "text-decoration-thickness": "2px",
     },
 
-    // Buttons
-    [scope(":where(button, [type='button'], [type='reset'], [type='submit'])")]:
-      {
-        "padding": "var(--spacing-xs) var(--spacing-sm)",
-        "border": "1px solid var(--clampography-border)",
-        "border-radius": "0.375rem",
-      },
-
-    // Inputs
-    [
-      scope(
-        ":where(input:not([type='checkbox'], [type='radio']), textarea, select)",
-      )
-    ]: {
-      "padding": "var(--spacing-xs) var(--spacing-sm)",
-      "border": "1px solid var(--clampography-border)",
-      "border-radius": "0.375rem",
-    },
-
-    // Fieldset
-    [scope("fieldset")]: {
-      "border": "1px solid var(--clampography-border)",
-      "border-radius": "0.375rem",
-    },
-
-    [scope("legend")]: {
-      "color": "var(--clampography-heading)",
-    },
-
     // Details
     [scope("details")]: {
       "border": "1px solid var(--clampography-border)",
