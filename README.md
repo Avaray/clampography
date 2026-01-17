@@ -15,7 +15,8 @@ about 92%.
 - **Structure only:** Manages size, spacing, weight, and font-family
 - **Smart scaling:** Contextual elements use `em` (relative), blocks use
   `clamp()` (fluid)
-- **Optional theming:** Built-in light/dark themes or create your own with OKLCH
+- **Optional theming:** Built-in light/dark themes or create your own with
+  [OKLCH](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/color_value/oklch)
   colors
 
 ## The purpose
