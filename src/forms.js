@@ -30,6 +30,21 @@ export default (options = {}) => {
   };
 
   return {
+    // Forms
+    [scope("input, button, textarea, select, optgroup")]: {
+      "font-family": "inherit",
+      "font-size": "100%",
+      "line-height": "inherit",
+    },
+
+    [scope("textarea")]: {
+      "line-height": "1.5",
+    },
+
+    [scope("button, [type='button'], [type='reset'], [type='submit']")]: {
+      cursor: "pointer",
+    },
+
     // Buttons
     [scope(":where(button, [type='button'], [type='reset'], [type='submit'])")]:
       {

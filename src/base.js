@@ -379,20 +379,6 @@ export default (options = {}) => {
       "vertical-align": "middle",
     },
 
-    [scope("input, button, textarea, select, optgroup")]: {
-      "font-family": "inherit",
-      "font-size": "100%",
-      "line-height": "inherit",
-    },
-
-    [scope("textarea")]: {
-      "line-height": "1.5",
-    },
-
-    [scope("button, [type='button'], [type='reset'], [type='submit']")]: {
-      cursor: "pointer",
-    },
-
     // MEDIA
     [scope(":where(img, video, canvas, audio, iframe, svg)")]: {
       "max-width": "100%",
