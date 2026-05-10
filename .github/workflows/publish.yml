@@ -1,0 +1,48 @@
+name: Publish to NPM
+
+# Trigger the workflow only when code is pushed to the main branch
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Checkout the repository code
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # 2. Setup Bun (Lightning fast package manager)
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      # 3. Setup Node.js (Specifically for stable NPM publishing)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      # 4. Install dependencies using Bun
+      - name: Install Dependencies
+        run: bun install
+
+      # 5. Run tests - if any fail, the release is aborted
+      - name: Run Test Suite
+        run: bun test
+
+      # 6. Build the CSS files
+      - name: Build CSS
+        run: bun run build
+
+      # 7. Publish to NPM
+      # This command will automatically skip if the version in package.json
+      # is already published (fails safe instead of overwriting)
+      - name: Publish to NPM
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
