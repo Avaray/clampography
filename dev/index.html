@@ -74,8 +74,8 @@
       color: #aaa;
       cursor: pointer;
       user-select: none;
-      line-height: 1;
       white-space: nowrap;
+      height: 28px;
     }
     .toggle-switch {
       position: relative;
@@ -107,13 +107,17 @@
       flex-shrink: 0;
     }
     .pg-version {
+      display: flex;
+      align-items: center;
       background: #2a2a2a;
       color: #888;
-      padding: 0.15rem 0.45rem;
+      padding: 0 0.45rem;
       border-radius: 4px;
       font-size: 0.75rem;
       font-family: monospace;
       border: 1px solid #333;
+      height: 28px;
+      box-sizing: border-box;
     }
     .pg-github {
       display: flex;
@@ -122,11 +126,13 @@
       font-size: 0.8rem;
       color: #aaa;
       text-decoration: none;
-      padding: 0.2rem 0.5rem;
+      padding: 0 0.5rem;
       border-radius: 4px;
       border: 1px solid #333;
       background: #1e1e1e;
       transition: color 0.15s, border-color 0.15s;
+      height: 28px;
+      box-sizing: border-box;
     }
     .pg-github:hover { color: #fff; border-color: #555; }
     /* ── Separator ────────────────────────────────────────────────────────── */
@@ -144,6 +150,7 @@
     /* ── Content ──────────────────────────────────────────────────────────── */
     .content-wrapper {
       margin-top: 4rem;
+      margin-bottom: 4rem;
       max-width: 800px;
       margin-left: auto; margin-right: auto;
       padding: 2rem;
