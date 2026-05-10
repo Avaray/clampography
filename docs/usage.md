@@ -75,12 +75,6 @@ Load default light/dark themes that respect system preferences.
 [data-theme="dark"] {
   /* ... */
 }
-[data-theme="retro"] {
-  /* ... */
-}
-[data-theme="cyberpunk"] {
-  /* ... */
-}
 ```
 
 **Use case:** Most common setup. Automatic light/dark switching + manual theme
@@ -243,8 +237,8 @@ Control console output during build.
 Console output:
 
 ```
-🍀 Clampography v1.0.0 loaded successfully
-🍀 Clampography: Loaded 4 built-in themes: light (default), dark (prefersdark), retro, cyberpunk
+🍀 Clampography v2.0.0 loaded successfully
+🍀 Clampography: Loaded 2 built-in themes: light (default), dark (prefersdark)
 ```
 
 **Disable logs:**
@@ -273,8 +267,6 @@ Console output:
 
 - **light** - Clean light theme with blue accents
 - **dark** - Modern dark theme with high contrast
-- **retro** - Warm, vintage-inspired palette
-- **cyberpunk** - Neon colors with dark background
 
 ### Load Specific Themes
 
@@ -320,7 +312,7 @@ Override which theme is default and which responds to `prefers-color-scheme`.
 
 ```css
 @plugin "clampography" {
-  themes: "dark --default, light --prefersdark, retro, cyberpunk";
+  themes: "dark --default, light --prefersdark";
 }
 ```
 
@@ -344,12 +336,6 @@ Override which theme is default and which responds to `prefers-color-scheme`.
 [data-theme="light"] {
   /* ... */
 }
-[data-theme="retro"] {
-  /* ... */
-}
-[data-theme="cyberpunk"] {
-  /* ... */
-}
 ```
 
 **Use case:** Dark-first website that respects user preferences.
@@ -361,7 +347,7 @@ via `data-theme` attribute.
 
 ```css
 @plugin "clampography" {
-  themes: "retro, cyberpunk";
+  themes: "dark";
 }
 ```
 
@@ -369,10 +355,7 @@ via `data-theme` attribute.
 
 ```css
 /* No :root colors - only data-theme selectors */
-[data-theme="retro"] {
-  /* ... */
-}
-[data-theme="cyberpunk"] {
+[data-theme="dark"] {
   /* ... */
 }
 ```
@@ -384,7 +367,7 @@ To fix this, explicitly set a default:
 
 ```css
 @plugin "clampography" {
-  themes: "retro --default, cyberpunk";
+  themes: "dark --default";
 }
 ```
 
@@ -938,8 +921,6 @@ By default, all utilities use the `clampography-` prefix:
 
 - **light** - Clean light theme with blue accents
 - **dark** - Modern dark theme with high contrast
-- **retro** - Warm, vintage-inspired palette
-- **cyberpunk** - Neon colors with dark background
 
 #### Available Color Variables
 

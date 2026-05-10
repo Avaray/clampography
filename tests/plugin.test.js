@@ -45,7 +45,6 @@ describe("Built-in Themes Data", () => {
     expect(themes).toBeTypeOf("object");
     expect(themes.light).toBeDefined();
     expect(themes.dark).toBeDefined();
-    expect(themes.retro).toBeDefined();
   });
 
   it("should define basic color properties in themes", () => {
