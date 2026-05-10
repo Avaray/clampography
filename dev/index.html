@@ -73,15 +73,51 @@
       <footer>— Robert Bringhurst</footer>
     </blockquote>
 
+    <blockquote>
+      <p>This is a blockquote containing a nested list:</p>
+      <ul>
+        <li>First item in quote</li>
+        <li>
+          Second item with a <strong>nested blockquote</strong>:
+          <blockquote>
+            <p>Even deeper wisdom here.</p>
+          </blockquote>
+        </li>
+      </ul>
+      <p>Followed by a table inside the quote:</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>A</td>
+            <td>100</td>
+          </tr>
+        </tbody>
+      </table>
+    </blockquote>
+
     <div class="section-label">Lists</div>
     <ul>
       <li>First unordered item
         <ul>
-          <li>Nested item A</li>
+          <li>Nested item A
+            <ul>
+              <li>Deeply nested item I</li>
+              <li>Deeply nested item II</li>
+            </ul>
+          </li>
           <li>Nested item B</li>
         </ul>
       </li>
-      <li>Second unordered item</li>
+      <li>
+        <p>Second unordered item with a paragraph.</p>
+        <p>And another paragraph to test margin collapse within list items.</p>
+      </li>
       <li>Third unordered item</li>
     </ul>
 
@@ -135,34 +171,7 @@ console.log(greet("Clampography"));</code></pre>
       <p>This content was hidden inside a details block. Clampography styles the border and summary automatically when 'extra' is enabled.</p>
     </details>
 
-    <div class="section-label">Deeply Nested Elements</div>
-    <blockquote>
-      <p>This is a blockquote containing a nested list:</p>
-      <ul>
-        <li>First item in quote</li>
-        <li>
-          Second item with a <strong>nested blockquote</strong>:
-          <blockquote>
-            <p>Even deeper wisdom here.</p>
-          </blockquote>
-        </li>
-      </ul>
-      <p>Followed by a table inside the quote:</p>
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>A</td>
-            <td>100</td>
-          </tr>
-        </tbody>
-      </table>
-    </blockquote>
+
 
     <div class="section-label">Form Elements (If Enabled)</div>
     <form action="#" style="display: flex; flex-direction: column; gap: 1rem; max-width: 400px;">
