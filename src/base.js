@@ -476,16 +476,6 @@ export default (options = {}) => {
       "line-height": "inherit",
     },
 
-    // TEST!!!!!!!
-    [
-      scope(
-        "input:not([type='checkbox'], [type='radio']), button, textarea, select",
-      )
-    ]: {
-      "background-color": "var(--clampography-background)",
-      "color": "var(--clampography-text)",
-    },
-
     // UTILITIES
     [
       scope(
