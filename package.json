@@ -1,30 +1,28 @@
 {
-  "name": "clampography",
-  "version": "2.0.0-beta.23",
+  "author": "Dawid Wasowski",
   "description": "Fluid typography system based on CSS clamp() with optional themes and extra styles. A feature-rich alternative to Tailwind CSS Typography plugin.",
-  "main": "src/index.js",
-  "type": "module",
-  "scripts": {
-    "build": "bun src/convert.js"
+  "devDependencies": {
+    "tailwindcss": "^4.1.18"
   },
   "exports": {
     ".": {
-      "types": "./src/types/index.d.ts",
-      "import": "./src/index.js"
+      "import": "./src/index.js",
+      "types": "./src/types/index.d.ts"
     },
+    "./package.json": "./package.json",
     "./theme": {
-      "types": "./src/types/theme-plugin.d.ts",
-      "import": "./src/theme-plugin.js"
+      "import": "./src/theme-plugin.js",
+      "types": "./src/types/theme-plugin.d.ts"
     },
     "./themes": {
-      "types": "./src/types/themes.d.ts",
-      "import": "./src/themes.js"
-    },
-    "./package.json": "./package.json"
+      "import": "./src/themes.js",
+      "types": "./src/types/themes.d.ts"
+    }
   },
   "files": [
     "src"
   ],
+  "homepage": "https://next.dav.one/clampography/",
   "keywords": [
     "alternative",
     "blog",
@@ -48,17 +46,20 @@
     "themes",
     "typography"
   ],
+  "license": "MIT",
+  "main": "src/index.js",
+  "name": "clampography",
+  "peerDependencies": {
+    "tailwindcss": ">=4.0.0"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Avaray/clampography.git"
   },
-  "homepage": "https://next.dav.one/clampography/",
-  "author": "Dawid Wąsowski",
-  "license": "MIT",
-  "peerDependencies": {
-    "tailwindcss": ">=4.0.0"
+  "scripts": {
+    "build": "bun src/convert.js",
+    "test": "bun test"
   },
-  "devDependencies": {
-    "tailwindcss": "^4.1.18"
-  }
+  "type": "module",
+  "version": "2.0.0-beta.23"
 }
