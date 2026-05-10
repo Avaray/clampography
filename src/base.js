@@ -288,19 +288,24 @@ export default (options = {}) => {
 
     [scope("ol")]: {
       "counter-reset": "list-counter",
+      "padding-left": "0",
     },
 
     [scope("ol > li")]: {
+      display: "flex",
+      "align-items": "flex-start",
+      gap: "0.5em",
+      "padding-left": "0",
       "counter-increment": "list-counter",
     },
 
     [scope("ol > li::before")]: {
       content: "counter(list-counter) '.'",
-      position: "absolute",
-      left: "-2.5em",
-      width: "1.75em",
+      "min-width": "1.75em",
       "text-align": "right",
+      "flex-shrink": "0",
       "font-weight": "600",
+      "font-variant-numeric": "tabular-nums",
       color: "currentColor",
     },
 
