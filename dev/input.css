@@ -1,0 +1,6 @@
+@import "tailwindcss";
+@plugin "../src/index.js" {
+  themes: all;
+  base: true;
+  extra: true;
+}

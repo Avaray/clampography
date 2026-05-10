@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clampography Playground</title>
+  <link rel="stylesheet" href="/output.css">
+  <style>
+    /* Utility styling just for the playground UI itself */
+    .playground-toolbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: #111; color: #fff;
+      padding: 1rem;
+      display: flex; gap: 1rem; align-items: center;
+      font-family: system-ui, sans-serif;
+      z-index: 1000;
+    }
+    .playground-toolbar select {
+      padding: 0.25rem 0.5rem;
+      background: #333; color: white;
+      border: 1px solid #555; border-radius: 4px;
+    }
+    .content-wrapper {
+      margin-top: 4rem;
+      max-width: 800px;
+      margin-left: auto; margin-right: auto;
+      padding: 2rem;
+    }
+    .section-label {
+      font-family: monospace;
+      color: #888;
+      margin-top: 4rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body class="bg-clampography-background text-clampography-text">
+  
+  <div class="playground-toolbar">
+    <strong>Clampography</strong>
+    <label for="theme-selector">Theme:</label>
+    <select id="theme-selector">
+      <!-- Options injected by JS -->
+    </select>
+  </div>
+
+  <div class="content-wrapper">
+    <h1 class="text-clampography-heading">Typography Specimen</h1>
+    <p class="text-clampography-muted">Test all HTML elements and responsive clamp() scales here.</p>
+
+    <div class="section-label">&lt;h1&gt; to &lt;h6&gt;</div>
+    <h1>The quick brown fox jumps over the lazy dog (H1)</h1>
+    <h2>The quick brown fox jumps over the lazy dog (H2)</h2>
+    <h3>The quick brown fox jumps over the lazy dog (H3)</h3>
+    <h4>The quick brown fox jumps over the lazy dog (H4)</h4>
+    <h5>The quick brown fox jumps over the lazy dog (H5)</h5>
+    <h6>The quick brown fox jumps over the lazy dog (H6)</h6>
+
+    <div class="section-label">Paragraphs & Inline Elements</div>
+    <p>
+      This is a standard paragraph. It contains <strong>bold text</strong>, <em>italic text</em>, and a <a href="#">hyperlink</a> to test link coloring. You can also use <mark>highlighted text</mark> or <del>deleted text</del>.
+    </p>
+    <p>
+      Press <kbd>Ctrl</kbd> + <kbd>C</kbd> to copy text. Sometimes you need a bit of inline <code>code</code> to show an example.
+    </p>
+
+    <div class="section-label">Blockquotes</div>
+    <blockquote>
+      <p>Typography is the craft of endowing human language with a durable visual form.</p>
+      <footer>— Robert Bringhurst</footer>
+    </blockquote>
+
+    <div class="section-label">Lists</div>
+    <ul>
+      <li>First unordered item
+        <ul>
+          <li>Nested item A</li>
+          <li>Nested item B</li>
+        </ul>
+      </li>
+      <li>Second unordered item</li>
+      <li>Third unordered item</li>
+    </ul>
+
+    <ol>
+      <li>First ordered step</li>
+      <li>Second ordered step</li>
+      <li>Third ordered step</li>
+      <li>...</li>
+      <li value="100">Step one hundred!</li>
+    </ol>
+
+    <div class="section-label">Preformatted Code</div>
+    <pre><code>function greet(name) {
+  return `Hello, ${name}!`;
+}
+
+console.log(greet("Clampography"));</code></pre>
+
+    <div class="section-label">Tables</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Plugin</th>
+          <th>Size</th>
+          <th>Features</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Tailwind Typography</td>
+          <td>~65kB</td>
+          <td>Prose classes, strict scoping</td>
+        </tr>
+        <tr>
+          <td>Clampography</td>
+          <td>~10kB</td>
+          <td>Themes, fluid scales, native tags</td>
+        </tr>
+      </tbody>
+      <caption>Comparison of typography plugins</caption>
+    </table>
+
+    <div class="section-label">Horizontal Rule</div>
+    <p>Text before HR.</p>
+    <hr>
+    <p>Text after HR.</p>
+
+    <div class="section-label">Details & Summary</div>
+    <details>
+      <summary>Click to expand more info</summary>
+      <p>This content was hidden inside a details block. Clampography styles the border and summary automatically when 'extra' is enabled.</p>
+    </details>
+
+    <div class="section-label">Tailwind Utility Colors Test</div>
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+      <div class="bg-clampography-primary text-clampography-background" style="padding: 1rem; border-radius: 8px;">Primary</div>
+      <div class="bg-clampography-secondary text-clampography-background" style="padding: 1rem; border-radius: 8px;">Secondary</div>
+      <div class="bg-clampography-surface text-clampography-text" style="padding: 1rem; border-radius: 8px; border: 1px solid var(--clampography-border);">Surface</div>
+      <div class="bg-clampography-success text-clampography-background" style="padding: 1rem; border-radius: 8px;">Success</div>
+      <div class="bg-clampography-error text-clampography-background" style="padding: 1rem; border-radius: 8px;">Error</div>
+      <div class="bg-clampography-warning text-clampography-background" style="padding: 1rem; border-radius: 8px;">Warning</div>
+    </div>
+  </div>
+
+  <script>
+    // This empty array is dynamically replaced by dev/server.js on request!
+    const AVAILABLE_THEMES = [];
+    
+    const selector = document.getElementById('theme-selector');
+    
+    // Auto-populate select dropdown
+    AVAILABLE_THEMES.forEach(theme => {
+      const option = document.createElement('option');
+      option.value = theme;
+      option.textContent = theme;
+      selector.appendChild(option);
+    });
+
+    // Handle switching
+    selector.addEventListener('change', (e) => {
+      const selected = e.target.value;
+      if (selected === 'light' || selected === 'dark') {
+        // Built-in behavior usually respects media queries, but we force it here via data-theme
+        document.body.setAttribute('data-theme', selected);
+      } else {
+        document.body.setAttribute('data-theme', selected);
+      }
+    });
+
+    // Default to first theme (light usually)
+    if (AVAILABLE_THEMES.length > 0) {
+      document.body.setAttribute('data-theme', AVAILABLE_THEMES[0]);
+    }
+  </script>
+</body>
+</html>
