@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Clampography Playground</title>
-  <link rel="stylesheet" href="/output.css" id="main-css">
+  <link rel="stylesheet" href="/css/te.css" id="main-css">
   <style>
     /* Utility styling just for the playground UI itself */
     .playground-toolbar {
@@ -344,51 +344,33 @@ console.log(greet("Clampography"));</code></pre>
     // Init
     applyTheme(0);
 
-    // Live Configurator Logic
-    const toggleExtra = document.getElementById('toggle-extra');
+    // ─── Live Configurator: instant CSS swap ───────────────────────────────
+    // Suffix mapping: t=themes, e=extra, n=neither
+    // Combos served from memory by server.js: /css/te.css | /css/t.css | /css/e.css | /css/n.css
+    const toggleExtra  = document.getElementById('toggle-extra');
     const toggleThemes = document.getElementById('toggle-themes');
     const themeSwitcherWrapper = document.getElementById('theme-switcher-wrapper');
     const cssLink = document.getElementById('main-css');
 
-    function updateConfig() {
-      // Visual UI update immediately
-      document.body.style.opacity = '0.5';
-      document.body.style.pointerEvents = 'none';
+    function updateCSS() {
+      const t = toggleThemes.checked;
+      const e = toggleExtra.checked;
+      const suffix = t && e ? 'te' : t ? 't' : e ? 'e' : 'n';
+      cssLink.href = `/css/${suffix}.css`;
 
-      if (!toggleThemes.checked) {
+      if (!t) {
         themeSwitcherWrapper.style.opacity = '0.3';
         themeSwitcherWrapper.style.pointerEvents = 'none';
-        document.body.removeAttribute('data-theme'); // strip theme attributes visually
+        document.body.removeAttribute('data-theme');
       } else {
         themeSwitcherWrapper.style.opacity = '1';
         themeSwitcherWrapper.style.pointerEvents = 'auto';
         applyTheme(currentThemeIndex);
       }
-
-      // API request to recompile CSS
-      fetch('/api/config', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          extra: toggleExtra.checked,
-          themes: toggleThemes.checked
-        })
-      }).then(() => {
-        // Tailwind watcher takes a fraction of a second to recompile.
-        // On slower machines or Windows it might take up to a second.
-        setTimeout(() => {
-          cssLink.href = `/output.css?t=${Date.now()}`;
-          // Wait for CSS to load before restoring opacity
-          setTimeout(() => {
-            document.body.style.opacity = '1';
-            document.body.style.pointerEvents = 'auto';
-          }, 100);
-        }, 1200);
-      });
     }
 
-    toggleExtra.addEventListener('change', updateConfig);
-    toggleThemes.addEventListener('change', updateConfig);
+    toggleExtra.addEventListener('change', updateCSS);
+    toggleThemes.addEventListener('change', updateCSS);
   </script>
 </body>
 </html>
