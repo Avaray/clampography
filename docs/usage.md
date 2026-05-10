@@ -312,7 +312,16 @@ Override which theme is default and which responds to `prefers-color-scheme`.
 
 ```css
 @plugin "clampography" {
+  /* Using a comma-separated string: */
   themes: "dark --default, light --prefersdark";
+}
+```
+
+Or using an array (if configured via `tailwind.config.js` or modern CSS config):
+
+```js
+@plugin "clampography" {
+  themes: ["dark --default", "light --prefersdark"];
 }
 ```
 
