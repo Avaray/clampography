@@ -26,6 +26,9 @@
       white-space: nowrap;
       overflow: visible;
     }
+    .playground-toolbar-inner * {
+      box-sizing: border-box;
+    }
     /* ── Shared carousel style (used by both font and theme switchers) ────── */
     .pg-carousel {
       display: flex;
@@ -34,7 +37,7 @@
       background: #1e1e1e;
       border-radius: 6px;
       border: 1px solid #333;
-      height: 28px;
+      height: 30px;
       flex-shrink: 0;
     }
     .pg-carousel button {
@@ -75,7 +78,7 @@
       cursor: pointer;
       user-select: none;
       white-space: nowrap;
-      height: 28px;
+      height: 30px;
     }
     .toggle-switch {
       position: relative;
@@ -116,8 +119,7 @@
       font-size: 0.75rem;
       font-family: monospace;
       border: 1px solid #333;
-      height: 28px;
-      box-sizing: border-box;
+      height: 30px;
     }
     .pg-github {
       display: flex;
@@ -131,8 +133,7 @@
       border: 1px solid #333;
       background: #1e1e1e;
       transition: color 0.15s, border-color 0.15s;
-      height: 28px;
-      box-sizing: border-box;
+      height: 30px;
     }
     .pg-github:hover { color: #fff; border-color: #555; }
     /* ── Separator ────────────────────────────────────────────────────────── */
