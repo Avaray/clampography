@@ -433,6 +433,19 @@ console.log(isBeingJudged(myCat)); // true</code></pre>
 
     toggleExtra.addEventListener('change', updateCSS);
     toggleThemes.addEventListener('change', updateCSS);
+
+    // ─── Keyboard Shortcuts ────────────────────────────────────────────────────
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey) {
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          btnPrevTheme.click();
+        } else if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          btnNextTheme.click();
+        }
+      }
+    });
   </script>
 </body>
 </html>
