@@ -43,6 +43,26 @@ serve({
       return new Response("CSS not found. Is Tailwind running?", { status: 404 });
     }
 
+    // API for Live Configurator
+    if (req.method === "POST" && url.pathname === "/api/config") {
+      return req.json().then(data => {
+        const { extra, themes } = data;
+        const inputCssContent = `@import "tailwindcss";
+@plugin "../src/index.js" {
+  themes: ${themes ? 'all' : 'false'};
+  base: true;
+  extra: ${extra ? 'true' : 'false'};
+}
+`;
+        import("fs").then(fs => {
+          fs.writeFileSync(join(import.meta.dir, "input.css"), inputCssContent);
+        });
+        return new Response(JSON.stringify({ success: true }), {
+          headers: { "Content-Type": "application/json" }
+        });
+      }).catch(() => new Response("Bad Request", { status: 400 }));
+    }
+
     return new Response("Not found", { status: 404 });
   },
 });
