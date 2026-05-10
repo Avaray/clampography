@@ -4,107 +4,144 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Clampography Playground</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono&family=Quando&display=swap">
   <link rel="stylesheet" href="/css/te.css" id="main-css">
   <style>
-    /* Utility styling just for the playground UI itself */
+    /* ── Playground-only styles (not part of Clampography) ───────────────── */
     .playground-toolbar {
       position: fixed;
       top: 0; left: 0; right: 0;
       background: #111; color: #fff;
-      padding: 0.75rem 1rem;
+      padding: 0.6rem 1.25rem;
       font-family: system-ui, sans-serif;
       z-index: 1000;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
     }
     .playground-toolbar-inner {
-      max-width: 800px;
-      margin: 0 auto;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      gap: 1.25rem;
+      white-space: nowrap;
+      overflow: visible;
     }
-    .theme-switcher {
+    /* ── Shared carousel style (used by both font and theme switchers) ────── */
+    .pg-carousel {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      background: #222;
+      gap: 0;
+      background: #1e1e1e;
       border-radius: 6px;
-      padding: 0 0.25rem;
       border: 1px solid #333;
       height: 28px;
+      flex-shrink: 0;
     }
-    .theme-switcher button {
+    .pg-carousel button {
       background: transparent;
       border: none;
       color: #aaa;
       cursor: pointer;
-      padding: 0 0.5rem;
+      padding: 0 0.45rem;
       height: 100%;
-      border-radius: 4px;
-      font-size: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .theme-switcher button:hover {
-      background: #333;
-      color: #fff;
-    }
-    .theme-switcher span {
-      text-align: center;
-      font-weight: 500;
-      font-family: monospace;
       font-size: 0.9rem;
-      color: #ddd;
-    }
-    .toggles-container {
       display: flex;
-      gap: 1.5rem;
       align-items: center;
-      height: 100%;
+      border-radius: 5px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .pg-carousel button:hover { background: #2e2e2e; color: #fff; }
+    .pg-carousel span {
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.82rem;
+      color: #ddd;
+      padding: 0 0.25rem;
+      min-width: 7ch;
+    }
+    /* ── Toggle switches ──────────────────────────────────────────────────── */
+    .pg-toggles {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-shrink: 0;
     }
     .toggle-label {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      font-size: 0.85rem;
-      color: #ccc;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      color: #aaa;
       cursor: pointer;
       user-select: none;
       line-height: 1;
-      margin: 0;
+      white-space: nowrap;
     }
     .toggle-switch {
       position: relative;
-      width: 36px;
-      height: 20px;
+      width: 32px;
+      height: 18px;
       background: #444;
-      border-radius: 10px;
-      transition: 0.3s;
+      border-radius: 9px;
+      transition: background 0.25s;
+      flex-shrink: 0;
     }
     .toggle-switch::after {
       content: '';
       position: absolute;
-      top: 2px;
-      left: 2px;
-      width: 16px;
-      height: 16px;
+      top: 2px; left: 2px;
+      width: 14px; height: 14px;
       background: white;
       border-radius: 50%;
-      transition: 0.3s;
+      transition: transform 0.25s;
     }
-    .toggle-label input[type="checkbox"] {
-      display: none;
+    .toggle-label input[type="checkbox"] { display: none; }
+    .toggle-label input[type="checkbox"]:checked + .toggle-switch { background: #3b82f6; }
+    .toggle-label input[type="checkbox"]:checked + .toggle-switch::after { transform: translateX(14px); }
+    /* ── Right side meta ──────────────────────────────────────────────────── */
+    .pg-meta {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-shrink: 0;
     }
-    .toggle-label input[type="checkbox"]:checked + .toggle-switch {
-      background: #3b82f6; /* Hardcoded blue so it works when themes are off */
+    .pg-version {
+      background: #2a2a2a;
+      color: #888;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-family: monospace;
+      border: 1px solid #333;
     }
-    .toggle-label input[type="checkbox"]:checked + .toggle-switch::after {
-      transform: translateX(16px);
+    .pg-github {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.8rem;
+      color: #aaa;
+      text-decoration: none;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      border: 1px solid #333;
+      background: #1e1e1e;
+      transition: color 0.15s, border-color 0.15s;
     }
+    .pg-github:hover { color: #fff; border-color: #555; }
+    /* ── Separator ────────────────────────────────────────────────────────── */
+    .pg-sep {
+      width: 1px;
+      height: 18px;
+      background: #333;
+      flex-shrink: 0;
+    }
+    /* ── Theme carousel wrapper (fades when disabled) ─────────────────────── */
     .theme-switcher-wrapper {
       transition: opacity 0.3s;
+      flex-shrink: 0;
     }
+    /* ── Content ──────────────────────────────────────────────────────────── */
     .content-wrapper {
       margin-top: 4rem;
       max-width: 800px;
@@ -116,7 +153,7 @@
       color: #888;
       margin-top: 4rem;
       margin-bottom: 1rem;
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid #2a2a2a;
       padding-bottom: 0.5rem;
     }
   </style>
@@ -125,32 +162,50 @@
   
   <div class="playground-toolbar">
     <div class="playground-toolbar-inner">
-      <div style="display: flex; align-items: center; gap: 0.5rem; line-height: 1;">
-        <strong style="font-size: 1.1rem; letter-spacing: -0.02em; line-height: 1; margin: 0;">Clampography</strong>
-        <span style="background: #333; color: #aaa; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.75rem; font-family: monospace; line-height: 1; display: flex; align-items: center;">vX.X.X</span>
+
+      <!-- Font Switcher (Left) -->
+      <div class="pg-carousel" id="font-switcher">
+        <button id="prev-font" title="Previous Font">&larr;</button>
+        <span id="current-font-name">System</span>
+        <button id="next-font" title="Next Font">&rarr;</button>
       </div>
-      
-      <div class="toggles-container">
-        <label class="toggle-label" title="Toggle 'extra: true' in Tailwind Plugin">
+
+      <div class="pg-sep"></div>
+
+      <!-- Plugin Toggles (Center) -->
+      <div class="pg-toggles">
+        <label class="toggle-label" title="Toggle 'extra: true'">
           <input type="checkbox" id="toggle-extra" checked>
           <div class="toggle-switch"></div>
-          Extra Styles
+          Extra
         </label>
-        
-        <label class="toggle-label" title="Toggle 'themes: all' in Tailwind Plugin">
+        <label class="toggle-label" title="Toggle 'themes: all'">
           <input type="checkbox" id="toggle-themes" checked>
           <div class="toggle-switch"></div>
           Themes
         </label>
       </div>
-      
-      <div class="theme-switcher-wrapper" id="theme-switcher-wrapper" style="display: flex; align-items: center; height: 100%;">
-        <div class="theme-switcher">
+
+      <div class="pg-sep"></div>
+
+      <!-- Theme Carousel (Center-right, hidden when themes=off) -->
+      <div class="theme-switcher-wrapper" id="theme-switcher-wrapper">
+        <div class="pg-carousel">
           <button id="prev-theme" title="Previous Theme">&larr;</button>
-          <span id="current-theme-name" style="line-height: 1; display: flex; align-items: center; justify-content: center; height: 100%;"></span>
+          <span id="current-theme-name"></span>
           <button id="next-theme" title="Next Theme">&rarr;</button>
         </div>
       </div>
+
+      <!-- Meta: version + GitHub (Right) -->
+      <div class="pg-meta">
+        <span class="pg-version">vX.X.X</span>
+        <a href="https://github.com/Avaray/clampography" target="_blank" class="pg-github">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub
+        </a>
+      </div>
+
     </div>
   </div>
 
@@ -308,16 +363,14 @@ console.log(greet("Clampography"));</code></pre>
   </div>
 
   <script>
-    // This empty array is dynamically replaced by dev/server.js on request!
-    const AVAILABLE_THEMES = [];
-    
+    // ─── Theme Carousel ────────────────────────────────────────────────────────
+    const AVAILABLE_THEMES = []; // replaced by server.js
+
     const themeNameDisplay = document.getElementById('current-theme-name');
-    const btnPrev = document.getElementById('prev-theme');
-    const btnNext = document.getElementById('next-theme');
-    
+    const btnPrevTheme = document.getElementById('prev-theme');
+    const btnNextTheme = document.getElementById('next-theme');
     let currentThemeIndex = 0;
 
-    // Calculate maximum width to prevent jumping layout
     if (AVAILABLE_THEMES.length > 0) {
       const maxLength = Math.max(...AVAILABLE_THEMES.map(t => t.length));
       themeNameDisplay.style.minWidth = `${maxLength}ch`;
@@ -325,28 +378,56 @@ console.log(greet("Clampography"));</code></pre>
 
     function applyTheme(index) {
       if (AVAILABLE_THEMES.length === 0) return;
-      
       const selected = AVAILABLE_THEMES[index];
       themeNameDisplay.textContent = selected;
       document.body.setAttribute('data-theme', selected);
     }
 
-    btnPrev.addEventListener('click', () => {
+    btnPrevTheme.addEventListener('click', () => {
       currentThemeIndex = (currentThemeIndex - 1 + AVAILABLE_THEMES.length) % AVAILABLE_THEMES.length;
       applyTheme(currentThemeIndex);
     });
-
-    btnNext.addEventListener('click', () => {
+    btnNextTheme.addEventListener('click', () => {
       currentThemeIndex = (currentThemeIndex + 1) % AVAILABLE_THEMES.length;
       applyTheme(currentThemeIndex);
     });
 
-    // Init
     applyTheme(0);
 
-    // ─── Live Configurator: instant CSS swap ───────────────────────────────
-    // Suffix mapping: t=themes, e=extra, n=neither
-    // Combos served from memory by server.js: /css/te.css | /css/t.css | /css/e.css | /css/n.css
+    // ─── Font Carousel ─────────────────────────────────────────────────────────
+    const FONTS = [
+      { label: 'System',     stack: 'system-ui, sans-serif' },
+      { label: 'Fira Mono',  stack: "'Fira Mono', monospace" },
+      { label: 'Quando',     stack: "'Quando', serif" },
+    ];
+    const fontNameDisplay = document.getElementById('current-font-name');
+    const btnPrevFont = document.getElementById('prev-font');
+    const btnNextFont = document.getElementById('next-font');
+    let currentFontIndex = 0;
+
+    // Set min-width to widest label to prevent layout shift
+    const maxFontLen = Math.max(...FONTS.map(f => f.label.length));
+    fontNameDisplay.style.minWidth = `${maxFontLen}ch`;
+
+    function applyFont(index) {
+      const { label, stack } = FONTS[index];
+      fontNameDisplay.textContent = label;
+      document.documentElement.style.setProperty('--pg-font', stack);
+      document.querySelector('.content-wrapper').style.fontFamily = stack;
+    }
+
+    btnPrevFont.addEventListener('click', () => {
+      currentFontIndex = (currentFontIndex - 1 + FONTS.length) % FONTS.length;
+      applyFont(currentFontIndex);
+    });
+    btnNextFont.addEventListener('click', () => {
+      currentFontIndex = (currentFontIndex + 1) % FONTS.length;
+      applyFont(currentFontIndex);
+    });
+
+    applyFont(0);
+
+    // ─── CSS Variant Switcher (Extra + Themes toggles) ─────────────────────────
     const toggleExtra  = document.getElementById('toggle-extra');
     const toggleThemes = document.getElementById('toggle-themes');
     const themeSwitcherWrapper = document.getElementById('theme-switcher-wrapper');
