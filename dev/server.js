@@ -19,6 +19,11 @@ serve({
           'const AVAILABLE_THEMES = [];',
           `const AVAILABLE_THEMES = ${JSON.stringify(themesList)};`
         );
+        
+        // Inject package version
+        const pkg = JSON.parse(readFileSync(join(import.meta.dir, "../package.json"), "utf8"));
+        html = html.replace('vX.X.X', `v${pkg.version}`);
+        
         return new Response(html, {
           headers: { "Content-Type": "text/html" },
         });
