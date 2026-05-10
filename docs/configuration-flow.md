@@ -12,16 +12,16 @@ flowchart TD
     Config --> O_Themes{themes?}
 
     %% Base Logic
-    O_Base -- true\n(default) --> B_Yes[Injects Structural CSS\n- clamp() typography\n- root font-size\n- basic margins]
-    O_Base -- false --> B_No[No base styles injected]
+    O_Base -- true\n(default) --> B_Yes["Injects Structural CSS<br>- clamp() typography<br>- root font-size<br>- basic margins"]
+    O_Base -- false --> B_No["No base styles injected"]
 
     %% Extra Logic
-    O_Extra -- true --> E_Yes[Injects Opinionated UI\n- blockquote borders\n- table zebra stripes\n- form inputs styling]
-    O_Extra -- false\n(default) --> E_No[No extra styles injected]
+    O_Extra -- true --> E_Yes["Injects Opinionated UI<br>- blockquote borders<br>- table zebra stripes<br>- form inputs styling"]
+    O_Extra -- false\n(default) --> E_No["No extra styles injected"]
     
     %% Themes Logic
-    O_Themes -- "'all' or ['theme1']" --> T_Yes[Generates Color Variables\n--clampography-primary\n--clampography-surface\netc.]
-    O_Themes -- false\n(default) --> T_No[No colors generated\nBring Your Own Theme mode]
+    O_Themes -- "'all' or ['theme1']" --> T_Yes["Generates Color Variables<br>--clampography-primary<br>--clampography-surface<br>etc."]
+    O_Themes -- false\n(default) --> T_No["No colors generated<br>Bring Your Own Theme mode"]
 
     %% Dependencies & Interactions
     B_Yes -.-> Output((Tailwind AST))
