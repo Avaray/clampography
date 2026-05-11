@@ -270,6 +270,8 @@ export default (options = {}) => {
     },
 
     [scope("li > ul, li > ol")]: {
+      "flex-basis": "100%",
+      "width": "100%",
       "margin-top": "var(--spacing-xs)",
       "margin-bottom": "var(--spacing-sm)",
       "padding-left": "var(--spacing-md)",
@@ -293,8 +295,9 @@ export default (options = {}) => {
 
     [scope("ol > li")]: {
       display: "flex",
+      "flex-wrap": "wrap",
       "align-items": "flex-start",
-      gap: "0.5em",
+      gap: "0 0.5em",
       "padding-left": "0",
       "counter-increment": "list-counter",
     },
