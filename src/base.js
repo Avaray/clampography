@@ -39,6 +39,7 @@ export default (options = {}) => {
       "--spacing-md": "clamp(1rem, 0.75rem + 1.25vw, 1.5rem)",
       "--spacing-lg": "clamp(1.5rem, 1.125rem + 1.875vw, 2.5rem)",
       "--spacing-xl": "clamp(2rem, 1.5rem + 2.5vw, 3rem)",
+      "--list-indent": "clamp(1.5rem, 1.25rem + 1.25vw, 2rem)",
       "--scroll-offset": "5rem",
       "--font-family-base":
         "system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif",
@@ -257,7 +258,7 @@ export default (options = {}) => {
     [scope(":where(ul, ol)")]: {
       "list-style": "none",
       "margin-bottom": "var(--spacing-md)",
-      "padding-left": "clamp(1.5rem, 1.25rem + 1.25vw, 2rem)",
+      "padding-left": "var(--list-indent)",
     },
 
     [scope("li")]: {
@@ -270,18 +271,16 @@ export default (options = {}) => {
     },
 
     [scope("li > ul, li > ol")]: {
-      "flex-basis": "100%",
-      "width": "100%",
       "margin-top": "var(--spacing-xs)",
       "margin-bottom": "var(--spacing-sm)",
-      "padding-left": "var(--spacing-md)",
     },
 
     [scope("ul > li::before")]: {
       content: "''",
       position: "absolute",
-      left: "-1.125em",
-      top: "calc(0.875em - 0.1875em)",
+      right: "100%",
+      "margin-right": "0.75em",
+      top: "0.65em",
       width: "0.375em",
       height: "0.375em",
       "background-color": "currentColor",
@@ -290,25 +289,20 @@ export default (options = {}) => {
 
     [scope("ol")]: {
       "counter-reset": "list-counter",
-      "padding-left": "0",
     },
 
     [scope("ol > li")]: {
-      display: "flex",
-      "flex-wrap": "wrap",
-      "align-items": "flex-start",
-      gap: "0 0.5em",
-      "padding-left": "0",
       "counter-increment": "list-counter",
     },
 
     [scope("ol > li::before")]: {
       content: "counter(list-counter) '.'",
-      "min-width": "1.75em",
-      "text-align": "right",
-      "flex-shrink": "0",
+      position: "absolute",
+      right: "100%",
+      "margin-right": "0.5em",
       "font-weight": "600",
       "font-variant-numeric": "tabular-nums",
+      "text-align": "right",
       color: "currentColor",
     },
 
