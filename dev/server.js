@@ -103,5 +103,5 @@ serve({
 });
 
 console.log(`🚀 Clampography Dev Server running at http://localhost:${PORT}`);
-console.log(`🎨 Themes: ${themesList.join(", ")}`);
+console.log(`🎨 Themes (${themesList.length}): ${themesList.join(", ")}`);
 console.log(`🔀 CSS variants served at /css/te.css | /css/t.css | /css/e.css | /css/n.css`);
