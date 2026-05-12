@@ -364,6 +364,59 @@ console.log(isBeingJudged(myCat)); // true</code></pre>
 
     <hr>
 
+    <hr>
+
+    <h2>Feline Resources & Data</h2>
+    
+    <p>Below is a technical summary and interaction test area for the feline database. Use the form to submit new registry entries.</p>
+
+    <dl>
+      <dt>Vibrissae</dt>
+      <dd>The technical term for a cat's whiskers, used for navigation and sensing in low-light conditions.</dd>
+      <dt>Clowder</dt>
+      <dd>A group of adult cats. Also known as a <em>glaring</em> when they are unfamiliar with each other.</dd>
+      <dt>Kindle</dt>
+      <dd>A group of kittens born to one mother. Not to be confused with the electronic reader.</dd>
+    </dl>
+
+    <h3>Submit Feline Registry Entry</h3>
+    <form onsubmit="return false;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); margin-bottom: var(--spacing-md);">
+        <div>
+          <label for="cat-name" style="display: block; margin-bottom: 0.25rem;">Cat Name:</label>
+          <input type="text" id="cat-name" placeholder="e.g. Luna" style="width: 100%;">
+        </div>
+        <div>
+          <label for="breed" style="display: block; margin-bottom: 0.25rem;">Breed Category:</label>
+          <select id="breed" style="width: 100%;">
+            <option>Domestic Shorthair</option>
+            <option>Maine Coon</option>
+            <option>Siamese</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-bottom: var(--spacing-md);">
+        <label for="notes" style="display: block; margin-bottom: 0.25rem;">Behavioral Notes:</label>
+        <textarea id="notes" rows="3" placeholder="Describe temperament..." style="width: 100%;"></textarea>
+      </div>
+      <p>
+        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+          <input type="checkbox"> Notify me about catnip updates via <abbr title="Electronic Mail">e-mail</abbr>
+        </label>
+      </p>
+      <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-md);">
+        <button type="submit">Register Feline</button>
+        <button type="reset">Clear Form</button>
+      </div>
+    </form>
+
+    <p>
+      <small>Data provided by the <abbr title="Global Feline Authority">GFA</abbr> under the Creative Commons license. System status: <samp>All systems purring...</samp></small>
+    </p>
+
+    <hr>
+
     <h6>Frequently Asked Questions</h6>
     <details>
       <summary>Why do cats bring you dead animals?</summary>
