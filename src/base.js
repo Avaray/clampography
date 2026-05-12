@@ -269,9 +269,13 @@ export default (options = {}) => {
       "margin-top": "var(--spacing-xs)",
     },
 
+    [scope("li > :where(p, ul, ol, blockquote, pre)")]: {
+      "margin-top": "0",
+      "margin-bottom": "var(--spacing-xs)",
+    },
+
     [scope("li > ul, li > ol")]: {
-      "margin-top": "var(--spacing-xs)",
-      "margin-bottom": "var(--spacing-sm)",
+      // Internal margins handled by the rule above
     },
 
     [scope("ul > li::before")]: {
