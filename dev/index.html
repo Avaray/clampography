@@ -249,7 +249,7 @@
       <div class="pg-theme-editor-body">
         <div v-for="item in COLOR_VARS" :key="item.id" class="pg-color-row">
           <label>{{ item.label }}</label>
-          <input type="color" v-model="colors[item.id]">
+          <input type="color" v-model="colors[item.id]" @input="updateVar(item.v, colors[item.id])" style="margin:0;">
         </div>
         <button @click="resetColors"
           style="width:100%;margin-top:0.5rem;cursor:pointer;padding:0.3rem;font-size:0.75rem;border:1px solid var(--clampography-border,#ccc);border-radius:4px;background:transparent;color:var(--clampography-muted,#888);">
@@ -979,17 +979,20 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
 
         // Theme
         watch([currentThemeName, themes], ([name, enabled]) => {
+          COLOR_VARS.forEach(({ v }) => document.body.style.removeProperty(v));
           if (enabled && name) {
             document.body.setAttribute('data-theme', name);
             localStorage.setItem('clampography-dev-theme', name);
             setTimeout(syncColors, 80);
           } else if (!enabled) {
             document.body.removeAttribute('data-theme');
+            setTimeout(syncColors, 80);
           }
         }, { immediate: true });
 
-        // Color pickers → CSS vars
-        COLOR_VARS.forEach(({ id, v }) => watch(() => colors[id], val => document.body.style.setProperty(v, val)));
+        function updateVar(cssVar, val) {
+          document.body.style.setProperty(cssVar, val);
+        }
 
         // Keyboard shortcuts
         onMounted(() => {
@@ -1004,7 +1007,7 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
 
         return { FONTS, COLOR_VARS, extra, forms, kbd, themes,
           currentFont, currentThemeName, colors,
-          prevFont, nextFont, prevTheme, nextTheme, resetColors };
+          prevFont, nextFont, prevTheme, nextTheme, resetColors, updateVar };
       }
     }).mount('#pg-sidebar');
   }
