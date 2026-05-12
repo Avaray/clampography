@@ -102,12 +102,35 @@ Add colored borders, backgrounds, and enhanced styling.
 **Result:**
 
 - ✅ All base styles
-- ✅ Colored elements (tables, code blocks, forms)
-- ✅ Enhanced blockquotes with background
-- ✅ Styled buttons and inputs
+- ✅ Colored elements (tables, code blocks, blockquotes)
+- ✅ Styled links, list markers, inline code
 - ✅ Zebra-striped tables
+- ❌ No styled form elements (use `forms: true` for that)
 
-**Use case:** When you want a complete, ready-to-use styled design system.
+**Use case:** When you need a fully colored document, but manage form styling yourself.
+
+### With Styled Forms (Optional)
+
+Add themed, ready-to-use form elements.
+
+```css
+@import "tailwindcss";
+@plugin "clampography" {
+  themes: all;
+  extra: true;
+  forms: true; /* default: false */
+}
+```
+
+**Result:**
+
+- ✅ All base and extra styles
+- ✅ Styled inputs, textareas, and selects (with focus ring)
+- ✅ Styled buttons (default and primary variant)
+- ✅ Checkbox, radio, range, color picker with `accent-color`
+- ✅ Themed fieldset, legend, label
+
+**Use case:** When you want a complete, ready-to-use design system including forms.
 
 ---
 
@@ -123,8 +146,11 @@ Add colored borders, backgrounds, and enhanced styling.
   /* Load base typography styles */
   base: true | false; /* default: true */
   
-  /* Load extra opinionated styles */
+  /* Load extra opinionated styles (colors, decorations) */
   extra: true | false; /* default: false */
+
+  /* Load styled form elements (inputs, buttons, selects, etc.) */
+  forms: true | false; /* default: false */
   
   /* Custom root selector for scoping */
   root: ":root" | "#app" | "body"; /* default: ":root" */

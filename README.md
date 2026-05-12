@@ -138,6 +138,7 @@ Create your own theme with OKLCH colors:
   themes: "all" | "light, dark" | false;  /* Load themes (optional) */
   base: true | false;                     /* Typography styles (default: true) */
   extra: true | false;                    /* Enhanced styling (default: false) */
+  forms: true | false;                    /* Styled form elements (default: false) */
   prefix: "clampography" | false;         /* Utility class prefix */
   root: ":root" | "#app";                 /* Scope to element */
   logs: true | false;                     /* Console output */
