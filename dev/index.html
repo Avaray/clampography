@@ -260,6 +260,14 @@
             <input type="color" v-model="colors[item.id]" @input="updateVar(item.v, colors[item.id])" style="margin:0;">
           </div>
         </div>
+        <div style="display:flex;gap:0.3rem;margin-top:0.5rem;">
+          <button @click="copyTheme" style="flex:1;cursor:pointer;padding:0.3rem;font-size:0.75rem;border:1px solid var(--clampography-border,#ccc);border-radius:4px;background:transparent;color:var(--clampography-muted,#888);transition:color 0.2s;">
+            {{ isCopied ? 'Copied!' : 'Copy JSON' }}
+          </button>
+          <button @click="downloadTheme" style="flex:1;cursor:pointer;padding:0.3rem;font-size:0.75rem;border:1px solid var(--clampography-border,#ccc);border-radius:4px;background:transparent;color:var(--clampography-muted,#888);transition:color 0.2s;">
+            Download JSON
+          </button>
+        </div>
         <button @click="resetColors"
           style="width:100%;margin-top:0.5rem;cursor:pointer;padding:0.3rem;font-size:0.75rem;border:1px solid var(--clampography-border,#ccc);border-radius:4px;background:transparent;color:var(--clampography-muted,#888);">
           Reset to theme
@@ -1049,6 +1057,35 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
           document.body.style.setProperty(cssVar, hexToOklch(val));
         }
 
+        // ─ Export Theme ─
+        const isCopied = ref(false);
+
+        function generateThemeJson() {
+          const themeObj = { name: currentThemeName.value || 'custom-theme' };
+          COLOR_VARS.forEach(({ id }) => { themeObj[id] = hexToOklch(colors[id]); });
+          return JSON.stringify(themeObj, null, 2);
+        }
+
+        function copyTheme() {
+          navigator.clipboard.writeText(generateThemeJson()).then(() => {
+            isCopied.value = true;
+            setTimeout(() => isCopied.value = false, 2000);
+          });
+        }
+
+        function downloadTheme() {
+          const jsonStr = generateThemeJson();
+          const blob = new Blob([jsonStr], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${currentThemeName.value || 'custom-theme'}.json`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }
+
         // Keyboard shortcuts
         onMounted(() => {
           setTimeout(syncColors, 350);
@@ -1061,8 +1098,9 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
         });
 
         return { FONTS, COLOR_VARS, extra, forms, kbd, themes,
-          currentFont, currentThemeName, colors,
-          prevFont, nextFont, prevTheme, nextTheme, resetColors, updateVar, hexToOklch };
+          currentFont, currentThemeName, colors, isCopied,
+          prevFont, nextFont, prevTheme, nextTheme, resetColors, updateVar, hexToOklch,
+          copyTheme, downloadTheme };
       }
     }).mount('#pg-sidebar');
   }
