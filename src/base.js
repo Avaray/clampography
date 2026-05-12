@@ -39,7 +39,7 @@ export default (options = {}) => {
       "--spacing-md": "clamp(1rem, 0.75rem + 1.25vw, 1.5rem)",
       "--spacing-lg": "clamp(1.5rem, 1.125rem + 1.875vw, 2.5rem)",
       "--spacing-xl": "clamp(2rem, 1.5rem + 2.5vw, 3rem)",
-      "--list-indent": "clamp(0.5rem, 0.25rem + 1vw, 1rem)",
+      "--list-indent": "clamp(0.5rem, 0.2rem + 1.5vw, 2rem)",
       "--scroll-offset": "5rem",
       "--font-family-base":
         "system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif",
