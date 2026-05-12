@@ -914,19 +914,27 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
     const cw = document.getElementById('content-wrapper');
 
     // — Utils —
-    function rgbToHex(rgb) {
-      const m = rgb.match(/(\d+)[,\s]+(\d+)[,\s]+(\d+)/);
-      if (!m) return '#888888';
-      return '#' + [m[1], m[2], m[3]].map(n => (+n).toString(16).padStart(2, '0')).join('');
-    }
+    const canvasCtx = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+    canvasCtx.canvas.width = 1;
+    canvasCtx.canvas.height = 1;
+
     function varToHex(cssVar) {
-      const el = document.createElement('div');
-      el.style.cssText = 'position:absolute;visibility:hidden;';
+      const el = Object.assign(document.createElement('div'), {
+        style: 'position:absolute;visibility:hidden;'
+      });
       el.style.color = `var(${cssVar})`;
       document.body.appendChild(el);
-      const hex = rgbToHex(getComputedStyle(el).color);
+      const comp = getComputedStyle(el).color;
       document.body.removeChild(el);
-      return hex;
+
+      // Bulletproof conversion: Render color to a 1x1 canvas to extract exact sRGB values
+      canvasCtx.clearRect(0, 0, 1, 1);
+      canvasCtx.fillStyle = '#888888'; // fallback
+      if (comp) canvasCtx.fillStyle = comp;
+      canvasCtx.fillRect(0, 0, 1, 1);
+
+      const [r, g, b] = canvasCtx.getImageData(0, 0, 1, 1).data;
+      return '#' + [r, g, b].map(n => n.toString(16).padStart(2, '0')).join('');
     }
 
     // Convert HEX to exact OKLCH string for clampography themes
