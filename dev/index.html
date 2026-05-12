@@ -1010,6 +1010,9 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
           localStorage.setItem('clampography-dev-forms',            forms.value);
           localStorage.setItem('clampography-dev-kbd',              kbd.value);
           localStorage.setItem('clampography-dev-themes-enabled',   themes.value);
+          
+          // Sync colors dynamically when the stylesheet actually finishes loading
+          cssLink.onload = () => setTimeout(syncColors, 50);
         }, { immediate: true });
 
         // Font
