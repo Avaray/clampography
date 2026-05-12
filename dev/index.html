@@ -9,7 +9,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Fira+Mono&family=Inter&family=Josefin+Sans:wght@300&family=Nunito:wght@300&family=Playfair+Display&family=Quando&family=Roboto&display=swap">
-  <link rel="stylesheet" href="/css/te.css" id="main-css">
+  <link rel="stylesheet" href="/css/tefk.css" id="main-css">
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
   <style>
     /* ── Playground structural styles (sidebar only — colors from Clampography vars) ── */
 
@@ -242,25 +243,10 @@
       </div>
     </div>
 
-    <!-- Theme editor -->
+    <!-- Theme editor (Vue 3) -->
     <details class="pg-theme-editor" id="theme-editor">
       <summary>Theme Editor</summary>
-      <div class="pg-theme-editor-body">
-        <div class="pg-color-row"><label for="c-background">Background</label><input type="color" id="c-background"></div>
-        <div class="pg-color-row"><label for="c-surface">Surface</label><input type="color" id="c-surface"></div>
-        <div class="pg-color-row"><label for="c-text">Text</label><input type="color" id="c-text"></div>
-        <div class="pg-color-row"><label for="c-heading">Heading</label><input type="color" id="c-heading"></div>
-        <div class="pg-color-row"><label for="c-primary">Primary</label><input type="color" id="c-primary"></div>
-        <div class="pg-color-row"><label for="c-secondary">Secondary</label><input type="color" id="c-secondary"></div>
-        <div class="pg-color-row"><label for="c-muted">Muted</label><input type="color" id="c-muted"></div>
-        <div class="pg-color-row"><label for="c-border">Border</label><input type="color" id="c-border"></div>
-        <div class="pg-color-row"><label for="c-link">Link</label><input type="color" id="c-link"></div>
-        <div class="pg-color-row"><label for="c-success">Success</label><input type="color" id="c-success"></div>
-        <div class="pg-color-row"><label for="c-warning">Warning</label><input type="color" id="c-warning"></div>
-        <div class="pg-color-row"><label for="c-error">Error</label><input type="color" id="c-error"></div>
-        <div class="pg-color-row"><label for="c-info">Info</label><input type="color" id="c-info"></div>
-        <button id="reset-theme-colors" style="width:100%;margin-top:0.5rem;cursor:pointer;padding:0.3rem;font-size:0.75rem;border:1px solid var(--clampography-border,#ccc);border-radius:4px;background:transparent;color:var(--clampography-muted,#888);">Reset to theme</button>
-      </div>
+      <div id="theme-editor-app"></div>
     </details>
 
     <!-- Footer -->
@@ -897,8 +883,7 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
       themeNameDisplay.textContent = selected;
       document.body.setAttribute('data-theme', selected);
       localStorage.setItem('clampography-dev-theme', selected);
-      // Re-sync color pickers after theme change
-      setTimeout(syncColorPickers, 50);
+      setTimeout(() => window.themeEditor?.sync(), 80);
     }
 
     btnPrevTheme.addEventListener('click', () => {
@@ -977,7 +962,7 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
         themeSwitcherWrapper.style.pointerEvents = 'auto';
         applyTheme(currentThemeIndex);
       }
-      setTimeout(syncColorPickers, 100);
+      setTimeout(() => window.themeEditor?.sync(), 150);
     }
 
     const savedExtra         = localStorage.getItem('clampography-dev-extra');
@@ -996,66 +981,6 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
     toggleThemes.addEventListener('change', updateCSS);
     updateCSS();
 
-    // ─── Theme Editor (color pickers) ─────────────────────────────────────────
-    // Convert rgb(r g b) or rgb(r, g, b) → #rrggbb
-    function rgbToHex(rgb) {
-      const m = rgb.match(/(\d+)[,\s]+(\d+)[,\s]+(\d+)/);
-      if (!m) return '#888888';
-      return '#' + [m[1], m[2], m[3]].map(n => (+n).toString(16).padStart(2, '0')).join('');
-    }
-
-    // Read computed value of a CSS variable by temporarily applying it to a div
-    function varToHex(varName) {
-      const el = document.createElement('div');
-      el.style.position = 'absolute';
-      el.style.visibility = 'hidden';
-      el.style.color = `var(${varName})`;
-      document.body.appendChild(el);
-      const rgb = getComputedStyle(el).color;
-      document.body.removeChild(el);
-      return rgbToHex(rgb);
-    }
-
-    const COLOR_VARS = [
-      ['c-background', '--clampography-background'],
-      ['c-surface',    '--clampography-surface'],
-      ['c-text',       '--clampography-text'],
-      ['c-heading',    '--clampography-heading'],
-      ['c-primary',    '--clampography-primary'],
-      ['c-secondary',  '--clampography-secondary'],
-      ['c-muted',      '--clampography-muted'],
-      ['c-border',     '--clampography-border'],
-      ['c-link',       '--clampography-link'],
-      ['c-success',    '--clampography-success'],
-      ['c-warning',    '--clampography-warning'],
-      ['c-error',      '--clampography-error'],
-      ['c-info',       '--clampography-info'],
-    ];
-
-    function syncColorPickers() {
-      COLOR_VARS.forEach(([id, varName]) => {
-        const el = document.getElementById(id);
-        if (el) el.value = varToHex(varName);
-      });
-    }
-
-    COLOR_VARS.forEach(([id, varName]) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.addEventListener('input', () => {
-        document.documentElement.style.setProperty(varName, el.value);
-      });
-    });
-
-    document.getElementById('reset-theme-colors').addEventListener('click', () => {
-      COLOR_VARS.forEach(([, varName]) => {
-        document.documentElement.style.removeProperty(varName);
-      });
-      setTimeout(syncColorPickers, 50);
-    });
-
-    // Init pickers after a short delay to allow CSS vars to resolve
-    setTimeout(syncColorPickers, 300);
 
     // ─── Keyboard Shortcuts ───────────────────────────────────────────────────
     document.addEventListener('keydown', (e) => {
@@ -1064,6 +989,86 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
         if (e.key === 'ArrowRight') { e.preventDefault(); btnNextTheme.click(); }
       }
     });
+  </script>
+
+  <!-- Vue 3 Theme Editor -->
+  <script>
+    {
+      const { createApp, reactive, watch, onMounted } = Vue;
+
+      const COLOR_VARS = [
+        { id: 'background', label: 'Background', v: '--clampography-background' },
+        { id: 'surface',    label: 'Surface',    v: '--clampography-surface' },
+        { id: 'text',       label: 'Text',       v: '--clampography-text' },
+        { id: 'heading',    label: 'Heading',    v: '--clampography-heading' },
+        { id: 'primary',    label: 'Primary',    v: '--clampography-primary' },
+        { id: 'secondary',  label: 'Secondary',  v: '--clampography-secondary' },
+        { id: 'muted',      label: 'Muted',      v: '--clampography-muted' },
+        { id: 'border',     label: 'Border',     v: '--clampography-border' },
+        { id: 'link',       label: 'Link',       v: '--clampography-link' },
+        { id: 'success',    label: 'Success',    v: '--clampography-success' },
+        { id: 'warning',    label: 'Warning',    v: '--clampography-warning' },
+        { id: 'error',      label: 'Error',      v: '--clampography-error' },
+        { id: 'info',       label: 'Info',       v: '--clampography-info' },
+      ];
+
+      function rgbToHex(rgb) {
+        const m = rgb.match(/(\d+)[,\s]+(\d+)[,\s]+(\d+)/);
+        if (!m) return '#888888';
+        return '#' + [m[1], m[2], m[3]].map(n => (+n).toString(16).padStart(2, '0')).join('');
+      }
+
+      function varToHex(cssVar) {
+        const el = Object.assign(document.createElement('div'), {
+          style: 'position:absolute;visibility:hidden;'
+        });
+        el.style.color = `var(${cssVar})`;
+        document.body.appendChild(el);
+        const hex = rgbToHex(getComputedStyle(el).color);
+        document.body.removeChild(el);
+        return hex;
+      }
+
+      createApp({
+        setup() {
+          const colors = reactive(
+            Object.fromEntries(COLOR_VARS.map(({ id }) => [id, '#888888']))
+          );
+
+          COLOR_VARS.forEach(({ id, v }) => {
+            watch(() => colors[id], val => {
+              document.documentElement.style.setProperty(v, val);
+            });
+          });
+
+          function sync() {
+            COLOR_VARS.forEach(({ id, v }) => { colors[id] = varToHex(v); });
+          }
+
+          function reset() {
+            COLOR_VARS.forEach(({ v }) => document.documentElement.style.removeProperty(v));
+            setTimeout(sync, 60);
+          }
+
+          onMounted(() => setTimeout(sync, 350));
+          window.themeEditor = { sync };
+
+          return { COLOR_VARS, colors, reset };
+        },
+        template: `
+          <div class="pg-theme-editor-body">
+            <div v-for="item in COLOR_VARS" :key="item.id" class="pg-color-row">
+              <label>{{ item.label }}</label>
+              <input type="color" v-model="colors[item.id]">
+            </div>
+            <button @click="reset"
+              style="width:100%;margin-top:0.5rem;cursor:pointer;padding:0.3rem;font-size:0.75rem;border:1px solid var(--clampography-border,#ccc);border-radius:4px;background:transparent;color:var(--clampography-muted,#888);">
+              Reset to theme
+            </button>
+          </div>
+        `
+      }).mount('#theme-editor-app');
+    }
   </script>
 </body>
 
