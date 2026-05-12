@@ -960,7 +960,7 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
 
         function syncColors() { COLOR_VARS.forEach(({ id, v }) => { colors[id] = varToHex(v); }); }
         function resetColors() {
-          COLOR_VARS.forEach(({ v }) => document.documentElement.style.removeProperty(v));
+          COLOR_VARS.forEach(({ v }) => document.body.style.removeProperty(v));
           setTimeout(syncColors, 60);
         }
 
@@ -989,7 +989,7 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
         }, { immediate: true });
 
         // Color pickers → CSS vars
-        COLOR_VARS.forEach(({ id, v }) => watch(() => colors[id], val => document.documentElement.style.setProperty(v, val)));
+        COLOR_VARS.forEach(({ id, v }) => watch(() => colors[id], val => document.body.style.setProperty(v, val)));
 
         // Keyboard shortcuts
         onMounted(() => {
