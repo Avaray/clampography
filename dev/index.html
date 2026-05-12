@@ -190,6 +190,11 @@
           <div class="toggle-switch"></div>
           Extra
         </label>
+        <label class="toggle-label" title="Toggle 'forms: true'">
+          <input type="checkbox" id="toggle-forms" checked>
+          <div class="toggle-switch"></div>
+          Forms
+        </label>
         <label class="toggle-label" title="Toggle 'themes: all'">
           <input type="checkbox" id="toggle-themes" checked>
           <div class="toggle-switch"></div>
@@ -511,8 +516,9 @@ console.log(isBeingJudged(myCat)); // true</code></pre>
 
     applyFont(0);
 
-    // ─── CSS Variant Switcher (Extra + Themes toggles) ─────────────────────────
+    // ─── CSS Variant Switcher (Extra + Forms + Themes toggles) ────────────────
     const toggleExtra  = document.getElementById('toggle-extra');
+    const toggleForms  = document.getElementById('toggle-forms');
     const toggleThemes = document.getElementById('toggle-themes');
     const themeSwitcherWrapper = document.getElementById('theme-switcher-wrapper');
     const cssLink = document.getElementById('main-css');
@@ -520,10 +526,13 @@ console.log(isBeingJudged(myCat)); // true</code></pre>
     function updateCSS() {
       const t = toggleThemes.checked;
       const e = toggleExtra.checked;
-      const suffix = t && e ? 'te' : t ? 't' : e ? 'e' : 'n';
+      const f = toggleForms.checked;
+      // Build suffix: t + e + f flags combined alphabetically
+      const suffix = (t ? 't' : '') + (e ? 'e' : '') + (f ? 'f' : '') || 'n';
       cssLink.href = `/css/${suffix}.css`;
 
       localStorage.setItem('clampography-dev-extra', e);
+      localStorage.setItem('clampography-dev-forms', f);
       localStorage.setItem('clampography-dev-themes-enabled', t);
 
       if (!t) {
@@ -538,12 +547,15 @@ console.log(isBeingJudged(myCat)); // true</code></pre>
     }
 
     const savedExtra = localStorage.getItem('clampography-dev-extra');
+    const savedForms = localStorage.getItem('clampography-dev-forms');
     const savedThemesEnabled = localStorage.getItem('clampography-dev-themes-enabled');
 
     if (savedExtra !== null) toggleExtra.checked = savedExtra === 'true';
+    if (savedForms !== null) toggleForms.checked = savedForms === 'true';
     if (savedThemesEnabled !== null) toggleThemes.checked = savedThemesEnabled === 'true';
 
     toggleExtra.addEventListener('change', updateCSS);
+    toggleForms.addEventListener('change', updateCSS);
     toggleThemes.addEventListener('change', updateCSS);
 
     updateCSS();

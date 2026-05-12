@@ -353,6 +353,22 @@ export default (options = {}) => {
     },
 
     // FORMS
+    // Structural resets — inherit typography from root, no visual styling here.
+    // Visual styling (colors, borders, padding) is handled by forms.js.
+    [scope("input, button, textarea, select, optgroup")]: {
+      "font-family": "inherit",
+      "font-size": "100%",
+      "line-height": "inherit",
+    },
+
+    [scope("textarea")]: {
+      "line-height": "1.5",
+    },
+
+    [scope("button, [type='button'], [type='reset'], [type='submit']")]: {
+      cursor: "pointer",
+    },
+
     [scope("fieldset")]: {
       "margin-top": "var(--spacing-md)",
       "margin-bottom": "var(--spacing-md)",

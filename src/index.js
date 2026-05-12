@@ -2,6 +2,7 @@ import plugin from "tailwindcss/plugin";
 import { themes as builtInThemes } from "./themes.js";
 import baseStyles from "./base.js";
 import extraStyles from "./extra.js";
+import formsStyles from "./forms.js";
 
 // Import version from package.json
 import { version } from "../package.json" with { type: "json" };
@@ -40,10 +41,12 @@ export default plugin.withOptions(
         // We use the helper to correctly parse "false" string from CSS
         const includeBase = resolveBool(options.base, true); // Default: true
         const includeExtra = resolveBool(options.extra, false); // Default: false
+        const includeForms = resolveBool(options.forms, false); // Default: false
 
         // Pass options to the style functions to enable scoping
         includeBase && addBase(baseStyles(options));
         includeExtra && addBase(extraStyles(options));
+        includeForms && addBase(formsStyles(options));
 
         // 2. Parse themes configuration
         let configThemes = options.themes;

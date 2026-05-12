@@ -7,30 +7,35 @@ const PORT = 3000;
 const DIR = import.meta.dir;
 const ROOT = join(DIR, "..");
 
-// 4 pre-built CSS combos: themes x extra
-// suffix: t=themes, e=extra, n=none
+// 8 pre-built CSS combos: themes × extra × forms
+// suffix: t=themes, e=extra, f=forms, n=none
 const COMBOS = [
-  { suffix: "te", themes: "all",   extra: "true"  },
-  { suffix: "t",  themes: "all",   extra: "false" },
-  { suffix: "e",  themes: "false", extra: "true"  },
-  { suffix: "n",  themes: "false", extra: "false" },
+  { suffix: "tef", themes: "all",   extra: "true",  forms: "true"  },
+  { suffix: "te",  themes: "all",   extra: "true",  forms: "false" },
+  { suffix: "tf",  themes: "all",   extra: "false", forms: "true"  },
+  { suffix: "t",   themes: "all",   extra: "false", forms: "false" },
+  { suffix: "ef",  themes: "false", extra: "true",  forms: "true"  },
+  { suffix: "e",   themes: "false", extra: "true",  forms: "false" },
+  { suffix: "f",   themes: "false", extra: "false", forms: "true"  },
+  { suffix: "n",   themes: "false", extra: "false", forms: "false" },
 ];
 
-function makeInputCSS(themes, extra) {
+function makeInputCSS(themes, extra, forms) {
   return `@import "tailwindcss";
 @plugin "../src/index.js" {
   themes: ${themes};
   base: true;
   extra: ${extra};
+  forms: ${forms};
 }
 `;
 }
 
-async function buildCombo({ suffix, themes, extra }) {
+async function buildCombo({ suffix, themes, extra, forms }) {
   const inputPath  = join(DIR, `_input_${suffix}.css`);
   const outputPath = join(DIR, `_output_${suffix}.css`);
 
-  writeFileSync(inputPath, makeInputCSS(themes, extra));
+  writeFileSync(inputPath, makeInputCSS(themes, extra, forms));
 
   // Use the locally installed tailwindcss binary
   const bin = process.platform === "win32"
@@ -51,8 +56,8 @@ async function buildCombo({ suffix, themes, extra }) {
   return outputPath;
 }
 
-// Build all 4 combos in parallel on startup
-console.log("⚙️  Pre-building 4 CSS variants (themes × extra)...");
+// Build all combos in parallel on startup
+console.log(`⚙️  Pre-building ${COMBOS.length} CSS variants (themes × extra × forms)...`);
 const start = Date.now();
 await Promise.all(COMBOS.map(buildCombo));
 console.log(`✅ All variants built in ${Date.now() - start}ms`);
@@ -87,7 +92,7 @@ serve({
       }
     }
 
-    // Serve pre-built CSS variants: /css/te.css, /css/t.css, /css/e.css, /css/n.css
+    // Serve pre-built CSS variants: /css/tef.css, /css/te.css, etc.
     const cssMatch = url.pathname.match(/^\/css\/(\w+)\.css$/);
     if (cssMatch) {
       const suffix = cssMatch[1];
@@ -104,4 +109,4 @@ serve({
 
 console.log(`🚀 Clampography Dev Server running at http://localhost:${PORT}`);
 console.log(`🎨 Themes (${themesList.length}): ${themesList.join(", ")}`);
-console.log(`🔀 CSS variants served at /css/te.css | /css/t.css | /css/e.css | /css/n.css`);
+console.log(`🔀 CSS variants served at /css/{t}{e}{f}.css (8 combos: themes × extra × forms)`);
