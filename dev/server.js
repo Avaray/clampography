@@ -6,6 +6,12 @@ import { themesList } from "../src/themes.js";
 const PORT = 3000;
 const DIR = import.meta.dir;
 const ROOT = join(DIR, "..");
+const CSS_DIR = join(DIR, "css");
+
+// Ensure css dir exists
+if (!existsSync(CSS_DIR)) {
+  import("fs").then(fs => fs.mkdirSync(CSS_DIR, { recursive: true }));
+}
 
 // 16 pre-built CSS combos: themes × extra × forms × kbd
 // suffix letters: t=themes, e=extra, f=forms, k=kbd, n=none (all off)
@@ -40,7 +46,7 @@ const COMBOS = buildCombos();
 
 function makeInputCSS({ themes, extra, forms, kbd }) {
   return `@import "tailwindcss";
-@plugin "../src/index.js" {
+@plugin "../../src/index.js" {
   themes: ${themes};
   base: true;
   extra: ${extra};
@@ -51,8 +57,8 @@ function makeInputCSS({ themes, extra, forms, kbd }) {
 }
 
 async function buildCombo(combo) {
-  const inputPath  = join(DIR, `_input_${combo.suffix}.css`);
-  const outputPath = join(DIR, `_output_${combo.suffix}.css`);
+  const inputPath  = join(CSS_DIR, `_input_${combo.suffix}.css`);
+  const outputPath = join(CSS_DIR, `_output_${combo.suffix}.css`);
 
   writeFileSync(inputPath, makeInputCSS(combo));
 
@@ -83,7 +89,7 @@ console.log(`✅ All variants built in ${Date.now() - start}ms`);
 // Load all variants into memory for zero-latency serving
 const cssCache = {};
 for (const { suffix } of COMBOS) {
-  const p = join(DIR, `_output_${suffix}.css`);
+  const p = join(CSS_DIR, `_output_${suffix}.css`);
   cssCache[suffix] = existsSync(p) ? readFileSync(p, "utf8") : "/* build failed */";
 }
 
