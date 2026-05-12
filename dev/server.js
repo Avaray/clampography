@@ -1,5 +1,5 @@
 import { serve } from "bun";
-import { readFileSync, existsSync, writeFileSync } from "fs";
+import { readFileSync, existsSync, writeFileSync, mkdirSync } from "fs";
 import { join } from "path";
 import { themesList } from "../src/themes.js";
 
@@ -10,7 +10,7 @@ const CSS_DIR = join(DIR, "css");
 
 // Ensure css dir exists
 if (!existsSync(CSS_DIR)) {
-  import("fs").then(fs => fs.mkdirSync(CSS_DIR, { recursive: true }));
+  mkdirSync(CSS_DIR, { recursive: true });
 }
 
 // 16 pre-built CSS combos: themes × extra × forms × kbd
