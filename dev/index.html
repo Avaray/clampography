@@ -239,6 +239,11 @@
           <div class="toggle-switch"></div>
           Forms
         </label>
+        <label class="toggle-label" title="Toggle 'kbd: true'">
+          <input type="checkbox" id="toggle-kbd" checked>
+          <div class="toggle-switch"></div>
+          Kbd
+        </label>
         <label class="toggle-label" title="Toggle 'themes: all'">
           <input type="checkbox" id="toggle-themes" checked>
           <div class="toggle-switch"></div>
@@ -821,9 +826,10 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
 
     applyFont(0);
 
-    // ─── CSS Variant Switcher (Extra + Forms + Themes toggles) ────────────────
-    const toggleExtra = document.getElementById('toggle-extra');
-    const toggleForms = document.getElementById('toggle-forms');
+    // ─── CSS Variant Switcher (Extra + Forms + Kbd + Themes toggles) ────────
+    const toggleExtra  = document.getElementById('toggle-extra');
+    const toggleForms  = document.getElementById('toggle-forms');
+    const toggleKbd    = document.getElementById('toggle-kbd');
     const toggleThemes = document.getElementById('toggle-themes');
     const themeSwitcherWrapper = document.getElementById('theme-switcher-wrapper');
     const cssLink = document.getElementById('main-css');
@@ -832,12 +838,14 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
       const t = toggleThemes.checked;
       const e = toggleExtra.checked;
       const f = toggleForms.checked;
-      // Build suffix: t + e + f flags combined alphabetically
-      const suffix = (t ? 't' : '') + (e ? 'e' : '') + (f ? 'f' : '') || 'n';
+      const k = toggleKbd.checked;
+      // Build suffix: flags in alphabetical order t, e, f, k
+      const suffix = (t ? 't' : '') + (e ? 'e' : '') + (f ? 'f' : '') + (k ? 'k' : '') || 'n';
       cssLink.href = `/css/${suffix}.css`;
 
       localStorage.setItem('clampography-dev-extra', e);
       localStorage.setItem('clampography-dev-forms', f);
+      localStorage.setItem('clampography-dev-kbd', k);
       localStorage.setItem('clampography-dev-themes-enabled', t);
 
       if (!t) {
@@ -851,16 +859,19 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
       }
     }
 
-    const savedExtra = localStorage.getItem('clampography-dev-extra');
-    const savedForms = localStorage.getItem('clampography-dev-forms');
+    const savedExtra  = localStorage.getItem('clampography-dev-extra');
+    const savedForms  = localStorage.getItem('clampography-dev-forms');
+    const savedKbd    = localStorage.getItem('clampography-dev-kbd');
     const savedThemesEnabled = localStorage.getItem('clampography-dev-themes-enabled');
 
-    if (savedExtra !== null) toggleExtra.checked = savedExtra === 'true';
-    if (savedForms !== null) toggleForms.checked = savedForms === 'true';
+    if (savedExtra  !== null) toggleExtra.checked  = savedExtra  === 'true';
+    if (savedForms  !== null) toggleForms.checked  = savedForms  === 'true';
+    if (savedKbd    !== null) toggleKbd.checked    = savedKbd    === 'true';
     if (savedThemesEnabled !== null) toggleThemes.checked = savedThemesEnabled === 'true';
 
     toggleExtra.addEventListener('change', updateCSS);
     toggleForms.addEventListener('change', updateCSS);
+    toggleKbd.addEventListener('change', updateCSS);
     toggleThemes.addEventListener('change', updateCSS);
 
     updateCSS();

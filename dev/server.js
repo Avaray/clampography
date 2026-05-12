@@ -7,37 +7,55 @@ const PORT = 3000;
 const DIR = import.meta.dir;
 const ROOT = join(DIR, "..");
 
-// 8 pre-built CSS combos: themes × extra × forms
-// suffix: t=themes, e=extra, f=forms, n=none
-const COMBOS = [
-  { suffix: "tef", themes: "all",   extra: "true",  forms: "true"  },
-  { suffix: "te",  themes: "all",   extra: "true",  forms: "false" },
-  { suffix: "tf",  themes: "all",   extra: "false", forms: "true"  },
-  { suffix: "t",   themes: "all",   extra: "false", forms: "false" },
-  { suffix: "ef",  themes: "false", extra: "true",  forms: "true"  },
-  { suffix: "e",   themes: "false", extra: "true",  forms: "false" },
-  { suffix: "f",   themes: "false", extra: "false", forms: "true"  },
-  { suffix: "n",   themes: "false", extra: "false", forms: "false" },
-];
+// 16 pre-built CSS combos: themes × extra × forms × kbd
+// suffix letters: t=themes, e=extra, f=forms, k=kbd, n=none (all off)
+function buildCombos() {
+  const flags = [
+    { key: "t", opt: "themes",  on: "all",   off: "false" },
+    { key: "e", opt: "extra",   on: "true",  off: "false" },
+    { key: "f", opt: "forms",   on: "true",  off: "false" },
+    { key: "k", opt: "kbd",     on: "true",  off: "false" },
+  ];
 
-function makeInputCSS(themes, extra, forms) {
+  const combos = [];
+
+  // 2^4 = 16 combinations
+  for (let mask = 0; mask < 16; mask++) {
+    const suffix = flags
+      .filter((_, i) => (mask >> (flags.length - 1 - i)) & 1)
+      .map((f) => f.key)
+      .join("") || "n";
+
+    const opts = Object.fromEntries(
+      flags.map((f, i) => [f.opt, (mask >> (flags.length - 1 - i)) & 1 ? f.on : f.off])
+    );
+
+    combos.push({ suffix, ...opts });
+  }
+
+  return combos;
+}
+
+const COMBOS = buildCombos();
+
+function makeInputCSS({ themes, extra, forms, kbd }) {
   return `@import "tailwindcss";
 @plugin "../src/index.js" {
   themes: ${themes};
   base: true;
   extra: ${extra};
   forms: ${forms};
+  kbd: ${kbd};
 }
 `;
 }
 
-async function buildCombo({ suffix, themes, extra, forms }) {
-  const inputPath  = join(DIR, `_input_${suffix}.css`);
-  const outputPath = join(DIR, `_output_${suffix}.css`);
+async function buildCombo(combo) {
+  const inputPath  = join(DIR, `_input_${combo.suffix}.css`);
+  const outputPath = join(DIR, `_output_${combo.suffix}.css`);
 
-  writeFileSync(inputPath, makeInputCSS(themes, extra, forms));
+  writeFileSync(inputPath, makeInputCSS(combo));
 
-  // Use the locally installed tailwindcss binary
   const bin = process.platform === "win32"
     ? join(ROOT, "node_modules/.bin/tailwindcss.exe")
     : join(ROOT, "node_modules/.bin/tailwindcss");
@@ -51,13 +69,13 @@ async function buildCombo({ suffix, themes, extra, forms }) {
   const exitCode = await proc.exited;
   if (exitCode !== 0) {
     const err = await new Response(proc.stderr).text();
-    console.error(`❌ Failed to build ${suffix}:`, err);
+    console.error(`❌ Failed to build ${combo.suffix}:`, err);
   }
   return outputPath;
 }
 
 // Build all combos in parallel on startup
-console.log(`⚙️  Pre-building ${COMBOS.length} CSS variants (themes × extra × forms)...`);
+console.log(`⚙️  Pre-building ${COMBOS.length} CSS variants (themes × extra × forms × kbd)...`);
 const start = Date.now();
 await Promise.all(COMBOS.map(buildCombo));
 console.log(`✅ All variants built in ${Date.now() - start}ms`);
@@ -92,7 +110,7 @@ serve({
       }
     }
 
-    // Serve pre-built CSS variants: /css/tef.css, /css/te.css, etc.
+    // Serve pre-built CSS variants: /css/tefk.css, /css/te.css, /css/n.css, etc.
     const cssMatch = url.pathname.match(/^\/css\/(\w+)\.css$/);
     if (cssMatch) {
       const suffix = cssMatch[1];
@@ -109,4 +127,4 @@ serve({
 
 console.log(`🚀 Clampography Dev Server running at http://localhost:${PORT}`);
 console.log(`🎨 Themes (${themesList.length}): ${themesList.join(", ")}`);
-console.log(`🔀 CSS variants served at /css/{t}{e}{f}.css (8 combos: themes × extra × forms)`);
+console.log(`🔀 ${COMBOS.length} CSS variants — suffix = t(hemes) e(xtra) f(orms) k(bd), e.g. /css/tefk.css`);

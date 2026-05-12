@@ -132,6 +132,28 @@ Add themed, ready-to-use form elements.
 
 **Use case:** When you want a complete, ready-to-use design system including forms.
 
+### With Styled Keyboard Keys (Optional)
+
+Style `<kbd>` elements as realistic 3D keyboard keys.
+
+```css
+@import "tailwindcss";
+@plugin "clampography" {
+  themes: all;
+  kbd: true; /* default: false */
+}
+```
+
+**Result:**
+
+- ✅ `<kbd>` elements rendered with a 3D isometric key effect
+- ✅ Layered `box-shadow` simulates key depth and cast shadow
+- ✅ Inset highlight on the key face
+- ✅ `:active` state — key visually travels down when pressed
+- ✅ Adapts to any theme via `--clampography-*` variables
+
+**Use case:** Documentation, tutorials, or any content that references keyboard shortcuts.
+
 ---
 
 ## Configuration Options
@@ -151,6 +173,9 @@ Add themed, ready-to-use form elements.
 
   /* Load styled form elements (inputs, buttons, selects, etc.) */
   forms: true | false; /* default: false */
+
+  /* Style <kbd> elements as 3D isometric keyboard keys */
+  kbd: true | false; /* default: false */
   
   /* Custom root selector for scoping */
   root: ":root" | "#app" | "body"; /* default: ":root" */

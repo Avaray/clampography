@@ -139,6 +139,7 @@ Create your own theme with OKLCH colors:
   base: true | false;                     /* Typography styles (default: true) */
   extra: true | false;                    /* Enhanced styling (default: false) */
   forms: true | false;                    /* Styled form elements (default: false) */
+  kbd: true | false;                      /* 3D keyboard key effect on <kbd> (default: false) */
   prefix: "clampography" | false;         /* Utility class prefix */
   root: ":root" | "#app";                 /* Scope to element */
   logs: true | false;                     /* Console output */
