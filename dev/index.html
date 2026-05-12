@@ -121,7 +121,7 @@
       display: flex; align-items: center; justify-content: space-between;
       margin: 0.3rem 0; gap: 0.5rem;
     }
-    .pg-color-row label { font-size: 0.78rem; color: var(--clampography-text, #333); }
+    .pg-color-row span.pg-color-name { font-size: 0.78rem; font-weight: bold; color: var(--clampography-text, #333); }
     .pg-color-row input[type="color"] {
       width: 28px; height: 22px; padding: 1px 2px;
       border: 1px solid var(--clampography-border, #ccc);
@@ -201,26 +201,26 @@
     <div class="pg-sidebar-section">
       <span class="pg-sidebar-label">Plugin Options</span>
       <div class="pg-toggle-row">
-        <label class="pg-toggle-item">
+        <div class="pg-toggle-item" @click="extra = !extra" style="font-weight: bold;">
           Extra
           <input type="checkbox" v-model="extra">
           <div class="pg-switch"></div>
-        </label>
-        <label class="pg-toggle-item">
+        </div>
+        <div class="pg-toggle-item" @click="forms = !forms" style="font-weight: bold;">
           Forms
           <input type="checkbox" v-model="forms">
           <div class="pg-switch"></div>
-        </label>
-        <label class="pg-toggle-item">
+        </div>
+        <div class="pg-toggle-item" @click="kbd = !kbd" style="font-weight: bold;">
           Kbd
           <input type="checkbox" v-model="kbd">
           <div class="pg-switch"></div>
-        </label>
-        <label class="pg-toggle-item">
+        </div>
+        <div class="pg-toggle-item" @click="themes = !themes" style="font-weight: bold;">
           Themes
           <input type="checkbox" v-model="themes">
           <div class="pg-switch"></div>
-        </label>
+        </div>
       </div>
     </div>
 
@@ -250,7 +250,7 @@
       <summary>Theme Editor</summary>
       <div class="pg-theme-editor-body">
         <div v-for="item in COLOR_VARS" :key="item.id" class="pg-color-row">
-          <label>{{ item.label }}</label>
+          <span class="pg-color-name">{{ item.label }}</span>
           <div style="display:flex;align-items:center;gap:0.3rem;">
             <input type="text" readonly :value="hexToOklch(colors[item.id])" style="width:130px;font-size:0.65rem;border:1px solid var(--clampography-border,#ccc);border-radius:3px;padding:2px 4px;background:transparent;color:var(--clampography-muted,#888);font-family:monospace;cursor:copy;" @click="$event.target.select()" title="Click to copy OKLCH">
             <input type="color" v-model="colors[item.id]" @input="updateVar(item.v, colors[item.id])" style="margin:0;">
