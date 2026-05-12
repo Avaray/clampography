@@ -269,7 +269,7 @@ export default (options = {}) => {
       "margin-top": "var(--spacing-xs)",
     },
 
-    [scope("li > :where(p, ul, ol, blockquote, pre)")]: {
+    [scope("li > :where(p, ul, ol, dl, blockquote, figure, table, pre)")]: {
       "margin-top": "0",
       "margin-bottom": "var(--spacing-xs)",
     },
