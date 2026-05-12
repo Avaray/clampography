@@ -171,11 +171,17 @@
     /* ── Content wrapper ─────────────────────────────────────────────────── */
     .content-wrapper {
       margin-left: 270px;
+      flex: 1;
       transition: margin-left 0.25s ease;
-      max-width: 800px;
-      padding: 2rem 1rem 4rem;
+      padding: 2rem 0 4rem;
+      min-width: 0;
     }
-    .content-wrapper.sidebar-closed { margin-left: 0; margin-right: auto; }
+    .content-wrapper.sidebar-closed { margin-left: 0; }
+    .content-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
   </style>
 </head>
 
@@ -271,6 +277,7 @@
   <button class="pg-sidebar-btn" id="pg-sidebar-btn" title="Toggle sidebar">&#8250;</button>
 
   <div class="content-wrapper" id="content-wrapper">
+    <div class="content-inner">
     <h1>The Secret Lives of Cats</h1>
     <p>A typographic specimen exploring <a href="#">feline biology</a>, <a href="#">history</a>, and
       <mark>mysterious behaviour</mark> across all HTML elements styled exclusively by Clampography. Every heading,
@@ -838,6 +845,7 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
         <del>patience</del> <ins>ceramic mug</ins> shattering. Current scientific consensus favours option
         <strong>(3)</strong>. <a href="#">See: Newton&rsquo;s Third Law of Cat Physics.</a></p>
     </details>
+    </div>
   </div>
 
 
