@@ -150,7 +150,7 @@ Create your own theme with OKLCH colors:
 📖 **[Complete Usage Guide](docs/usage.md)** - Detailed documentation:
 
 - All configuration options
-- Built-in themes (light, dark, retro, cyberpunk)
+- Built-in themes
 - Creating custom themes
 - Scoped themes for widgets
 - Advanced scenarios
@@ -159,4 +159,4 @@ Create your own theme with OKLCH colors:
 
 ## License
 
-MIT
+[MIT](LICENSE)
