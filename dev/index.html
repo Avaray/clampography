@@ -188,7 +188,7 @@
 
 <body class="bg-clampography-background text-clampography-text">
 
-  <!-- ── Sidebar ─────────────────────────────────────────────────────────── -->
+  <!-- ── Sidebar (Vue 3 app) ──────────────────────────────────────────────── -->
   <aside class="pg-sidebar" id="pg-sidebar">
 
     <div class="pg-sidebar-section" style="display:flex;align-items:center;justify-content:space-between;">
@@ -202,22 +202,22 @@
       <div class="pg-toggle-row">
         <label class="pg-toggle-item">
           Extra
-          <input type="checkbox" id="toggle-extra" checked>
+          <input type="checkbox" v-model="extra">
           <div class="pg-switch"></div>
         </label>
         <label class="pg-toggle-item">
           Forms
-          <input type="checkbox" id="toggle-forms" checked>
+          <input type="checkbox" v-model="forms">
           <div class="pg-switch"></div>
         </label>
         <label class="pg-toggle-item">
           Kbd
-          <input type="checkbox" id="toggle-kbd" checked>
+          <input type="checkbox" v-model="kbd">
           <div class="pg-switch"></div>
         </label>
         <label class="pg-toggle-item">
           Themes
-          <input type="checkbox" id="toggle-themes" checked>
+          <input type="checkbox" v-model="themes">
           <div class="pg-switch"></div>
         </label>
       </div>
@@ -226,27 +226,36 @@
     <!-- Font switcher -->
     <div class="pg-sidebar-section">
       <span class="pg-sidebar-label">Font</span>
-      <div class="pg-carousel" id="font-switcher">
-        <button id="prev-font" title="Previous Font">&larr;</button>
-        <span id="current-font-name">System</span>
-        <button id="next-font" title="Next Font">&rarr;</button>
+      <div class="pg-carousel">
+        <button @click="prevFont" title="Previous Font">&larr;</button>
+        <span>{{ currentFont.label }}</span>
+        <button @click="nextFont" title="Next Font">&rarr;</button>
       </div>
     </div>
 
     <!-- Theme switcher -->
-    <div class="pg-sidebar-section" id="theme-switcher-wrapper">
+    <div class="pg-sidebar-section" :style="{ opacity: themes ? 1 : 0.4, pointerEvents: themes ? 'auto' : 'none', transition: 'opacity 0.3s' }">
       <span class="pg-sidebar-label">Theme</span>
       <div class="pg-carousel">
-        <button id="prev-theme" title="Previous Theme">&larr;</button>
-        <span id="current-theme-name"></span>
-        <button id="next-theme" title="Next Theme">&rarr;</button>
+        <button @click="prevTheme" title="Previous Theme">&larr;</button>
+        <span>{{ currentThemeName }}</span>
+        <button @click="nextTheme" title="Next Theme">&rarr;</button>
       </div>
     </div>
 
-    <!-- Theme editor (Vue 3) -->
-    <details class="pg-theme-editor" id="theme-editor">
+    <!-- Theme editor -->
+    <details class="pg-theme-editor">
       <summary>Theme Editor</summary>
-      <div id="theme-editor-app"></div>
+      <div class="pg-theme-editor-body">
+        <div v-for="item in COLOR_VARS" :key="item.id" class="pg-color-row">
+          <label>{{ item.label }}</label>
+          <input type="color" v-model="colors[item.id]">
+        </div>
+        <button @click="resetColors"
+          style="width:100%;margin-top:0.5rem;cursor:pointer;padding:0.3rem;font-size:0.75rem;border:1px solid var(--clampography-border,#ccc);border-radius:4px;background:transparent;color:var(--clampography-muted,#888);">
+          Reset to theme
+        </button>
+      </div>
     </details>
 
     <!-- Footer -->
@@ -259,8 +268,10 @@
 
   </aside>
 
+
   <!-- Sidebar toggle tab -->
   <button class="pg-sidebar-btn" id="pg-sidebar-btn" title="Toggle sidebar">&#8250;</button>
+
 
   <div class="content-wrapper" id="content-wrapper">
     <div class="content-inner">
@@ -838,8 +849,8 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
 
 
   <script>
-    // ─── Sidebar toggle ───────────────────────────────────────────────────────
-    const pgSidebar = document.getElementById('pg-sidebar');
+    // ─── Sidebar toggle (vanilla — button is outside Vue scope) ─────────────────────
+    const pgSidebar    = document.getElementById('pg-sidebar');
     const pgSidebarBtn = document.getElementById('pg-sidebar-btn');
     const contentWrapper = document.getElementById('content-wrapper');
 
@@ -849,7 +860,7 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
       sidebarOpen = open;
       pgSidebar.classList.toggle('is-closed', !open);
       pgSidebarBtn.classList.toggle('is-closed', !open);
-      pgSidebarBtn.textContent = open ? '‹' : '›';
+      pgSidebarBtn.textContent = open ? '\u2039' : '\u203a';
       pgSidebarBtn.style.left = open ? '270px' : '0';
       contentWrapper.classList.toggle('sidebar-closed', !open);
       contentWrapper.style.marginLeft = open ? '270px' : '0';
@@ -858,217 +869,145 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
 
     pgSidebarBtn.addEventListener('click', () => setSidebar(!sidebarOpen));
     setSidebar(sidebarOpen);
-
-    // ─── Theme Carousel ───────────────────────────────────────────────────────
-    const AVAILABLE_THEMES = []; // replaced by server.js
-
-    const themeNameDisplay = document.getElementById('current-theme-name');
-    const btnPrevTheme = document.getElementById('prev-theme');
-    const btnNextTheme = document.getElementById('next-theme');
-    let currentThemeIndex = 0;
-
-    if (AVAILABLE_THEMES.length > 0) {
-      const maxLength = Math.max(...AVAILABLE_THEMES.map(t => t.length));
-      themeNameDisplay.style.minWidth = `${maxLength}ch`;
-      const savedTheme = localStorage.getItem('clampography-dev-theme');
-      if (savedTheme) {
-        const foundIndex = AVAILABLE_THEMES.indexOf(savedTheme);
-        if (foundIndex !== -1) currentThemeIndex = foundIndex;
-      }
-    }
-
-    function applyTheme(index) {
-      if (AVAILABLE_THEMES.length === 0) return;
-      const selected = AVAILABLE_THEMES[index];
-      themeNameDisplay.textContent = selected;
-      document.body.setAttribute('data-theme', selected);
-      localStorage.setItem('clampography-dev-theme', selected);
-      setTimeout(() => window.themeEditor?.sync(), 80);
-    }
-
-    btnPrevTheme.addEventListener('click', () => {
-      currentThemeIndex = (currentThemeIndex - 1 + AVAILABLE_THEMES.length) % AVAILABLE_THEMES.length;
-      applyTheme(currentThemeIndex);
-    });
-    btnNextTheme.addEventListener('click', () => {
-      currentThemeIndex = (currentThemeIndex + 1) % AVAILABLE_THEMES.length;
-      applyTheme(currentThemeIndex);
-    });
-
-    applyTheme(currentThemeIndex);
-
-    // ─── Font Carousel ────────────────────────────────────────────────────────
-    const FONTS = [
-      { label: 'System',       stack: 'system-ui, sans-serif' },
-      { label: 'Inter',        stack: "'Inter', sans-serif" },
-      { label: 'Roboto',       stack: "'Roboto', sans-serif" },
-      { label: 'Playfair',     stack: "'Playfair Display', serif" },
-      { label: 'Quando',       stack: "'Quando', serif" },
-      { label: 'Fira Mono',    stack: "'Fira Mono', monospace" },
-      { label: 'Josefin Light',stack: "'Josefin Sans', sans-serif" },
-      { label: 'Nunito Light', stack: "'Nunito', sans-serif" },
-    ];
-    const fontNameDisplay = document.getElementById('current-font-name');
-    const btnPrevFont = document.getElementById('prev-font');
-    const btnNextFont = document.getElementById('next-font');
-    let currentFontIndex = 0;
-
-    const maxFontLen = Math.max(...FONTS.map(f => f.label.length));
-    fontNameDisplay.style.minWidth = `${maxFontLen}ch`;
-
-    function applyFont(index) {
-      const { label, stack } = FONTS[index];
-      fontNameDisplay.textContent = label;
-      contentWrapper.style.fontFamily = stack;
-    }
-
-    btnPrevFont.addEventListener('click', () => {
-      currentFontIndex = (currentFontIndex - 1 + FONTS.length) % FONTS.length;
-      applyFont(currentFontIndex);
-    });
-    btnNextFont.addEventListener('click', () => {
-      currentFontIndex = (currentFontIndex + 1) % FONTS.length;
-      applyFont(currentFontIndex);
-    });
-    applyFont(0);
-
-    // ─── CSS Variant Switcher ─────────────────────────────────────────────────
-    const toggleExtra  = document.getElementById('toggle-extra');
-    const toggleForms  = document.getElementById('toggle-forms');
-    const toggleKbd    = document.getElementById('toggle-kbd');
-    const toggleThemes = document.getElementById('toggle-themes');
-    const themeSwitcherWrapper = document.getElementById('theme-switcher-wrapper');
-    const cssLink = document.getElementById('main-css');
-
-    function updateCSS() {
-      const t = toggleThemes.checked;
-      const e = toggleExtra.checked;
-      const f = toggleForms.checked;
-      const k = toggleKbd.checked;
-      const suffix = (t ? 't' : '') + (e ? 'e' : '') + (f ? 'f' : '') + (k ? 'k' : '') || 'n';
-      cssLink.href = `/css/${suffix}.css`;
-
-      localStorage.setItem('clampography-dev-extra', e);
-      localStorage.setItem('clampography-dev-forms', f);
-      localStorage.setItem('clampography-dev-kbd', k);
-      localStorage.setItem('clampography-dev-themes-enabled', t);
-
-      if (!t) {
-        themeSwitcherWrapper.style.opacity = '0.4';
-        themeSwitcherWrapper.style.pointerEvents = 'none';
-        document.body.removeAttribute('data-theme');
-      } else {
-        themeSwitcherWrapper.style.opacity = '1';
-        themeSwitcherWrapper.style.pointerEvents = 'auto';
-        applyTheme(currentThemeIndex);
-      }
-      setTimeout(() => window.themeEditor?.sync(), 150);
-    }
-
-    const savedExtra         = localStorage.getItem('clampography-dev-extra');
-    const savedForms         = localStorage.getItem('clampography-dev-forms');
-    const savedKbd           = localStorage.getItem('clampography-dev-kbd');
-    const savedThemesEnabled = localStorage.getItem('clampography-dev-themes-enabled');
-
-    if (savedExtra         !== null) toggleExtra.checked  = savedExtra         === 'true';
-    if (savedForms         !== null) toggleForms.checked  = savedForms         === 'true';
-    if (savedKbd           !== null) toggleKbd.checked    = savedKbd           === 'true';
-    if (savedThemesEnabled !== null) toggleThemes.checked = savedThemesEnabled === 'true';
-
-    toggleExtra.addEventListener('change', updateCSS);
-    toggleForms.addEventListener('change', updateCSS);
-    toggleKbd.addEventListener('change', updateCSS);
-    toggleThemes.addEventListener('change', updateCSS);
-    updateCSS();
-
-
-    // ─── Keyboard Shortcuts ───────────────────────────────────────────────────
-    document.addEventListener('keydown', (e) => {
-      if (e.ctrlKey) {
-        if (e.key === 'ArrowLeft')  { e.preventDefault(); btnPrevTheme.click(); }
-        if (e.key === 'ArrowRight') { e.preventDefault(); btnNextTheme.click(); }
-      }
-    });
   </script>
 
-  <!-- Vue 3 Theme Editor -->
+  <!-- ─── Vue 3 — Sidebar app (controls + theme editor) ──────────────────────── -->
   <script>
-    {
-      const { createApp, reactive, watch, onMounted } = Vue;
+  {
+    const { createApp, ref, reactive, computed, watch, onMounted } = Vue;
 
-      const COLOR_VARS = [
-        { id: 'background', label: 'Background', v: '--clampography-background' },
-        { id: 'surface',    label: 'Surface',    v: '--clampography-surface' },
-        { id: 'text',       label: 'Text',       v: '--clampography-text' },
-        { id: 'heading',    label: 'Heading',    v: '--clampography-heading' },
-        { id: 'primary',    label: 'Primary',    v: '--clampography-primary' },
-        { id: 'secondary',  label: 'Secondary',  v: '--clampography-secondary' },
-        { id: 'muted',      label: 'Muted',      v: '--clampography-muted' },
-        { id: 'border',     label: 'Border',     v: '--clampography-border' },
-        { id: 'link',       label: 'Link',       v: '--clampography-link' },
-        { id: 'success',    label: 'Success',    v: '--clampography-success' },
-        { id: 'warning',    label: 'Warning',    v: '--clampography-warning' },
-        { id: 'error',      label: 'Error',      v: '--clampography-error' },
-        { id: 'info',       label: 'Info',       v: '--clampography-info' },
-      ];
+    // — Static data —
+    const AVAILABLE_THEMES = []; // replaced by server.js
 
-      function rgbToHex(rgb) {
-        const m = rgb.match(/(\d+)[,\s]+(\d+)[,\s]+(\d+)/);
-        if (!m) return '#888888';
-        return '#' + [m[1], m[2], m[3]].map(n => (+n).toString(16).padStart(2, '0')).join('');
-      }
+    const FONTS = [
+      { label: 'System',        stack: 'system-ui, sans-serif' },
+      { label: 'Inter',         stack: "'Inter', sans-serif" },
+      { label: 'Roboto',        stack: "'Roboto', sans-serif" },
+      { label: 'Playfair',      stack: "'Playfair Display', serif" },
+      { label: 'Quando',        stack: "'Quando', serif" },
+      { label: 'Fira Mono',     stack: "'Fira Mono', monospace" },
+      { label: 'Josefin Light', stack: "'Josefin Sans', sans-serif" },
+      { label: 'Nunito Light',  stack: "'Nunito', sans-serif" },
+    ];
 
-      function varToHex(cssVar) {
-        const el = Object.assign(document.createElement('div'), {
-          style: 'position:absolute;visibility:hidden;'
-        });
-        el.style.color = `var(${cssVar})`;
-        document.body.appendChild(el);
-        const hex = rgbToHex(getComputedStyle(el).color);
-        document.body.removeChild(el);
-        return hex;
-      }
+    const COLOR_VARS = [
+      { id: 'background', label: 'Background', v: '--clampography-background' },
+      { id: 'surface',    label: 'Surface',    v: '--clampography-surface' },
+      { id: 'text',       label: 'Text',       v: '--clampography-text' },
+      { id: 'heading',    label: 'Heading',    v: '--clampography-heading' },
+      { id: 'primary',    label: 'Primary',    v: '--clampography-primary' },
+      { id: 'secondary',  label: 'Secondary',  v: '--clampography-secondary' },
+      { id: 'muted',      label: 'Muted',      v: '--clampography-muted' },
+      { id: 'border',     label: 'Border',     v: '--clampography-border' },
+      { id: 'link',       label: 'Link',       v: '--clampography-link' },
+      { id: 'success',    label: 'Success',    v: '--clampography-success' },
+      { id: 'warning',    label: 'Warning',    v: '--clampography-warning' },
+      { id: 'error',      label: 'Error',      v: '--clampography-error' },
+      { id: 'info',       label: 'Info',       v: '--clampography-info' },
+    ];
 
-      createApp({
-        setup() {
-          const colors = reactive(
-            Object.fromEntries(COLOR_VARS.map(({ id }) => [id, '#888888']))
-          );
+    // — DOM refs for side effects outside Vue scope —
+    const cssLink = document.getElementById('main-css');
+    const cw = document.getElementById('content-wrapper');
 
-          COLOR_VARS.forEach(({ id, v }) => {
-            watch(() => colors[id], val => {
-              document.documentElement.style.setProperty(v, val);
-            });
-          });
-
-          function sync() {
-            COLOR_VARS.forEach(({ id, v }) => { colors[id] = varToHex(v); });
-          }
-
-          function reset() {
-            COLOR_VARS.forEach(({ v }) => document.documentElement.style.removeProperty(v));
-            setTimeout(sync, 60);
-          }
-
-          onMounted(() => setTimeout(sync, 350));
-          window.themeEditor = { sync };
-
-          return { COLOR_VARS, colors, reset };
-        },
-        template: `
-          <div class="pg-theme-editor-body">
-            <div v-for="item in COLOR_VARS" :key="item.id" class="pg-color-row">
-              <label>{{ item.label }}</label>
-              <input type="color" v-model="colors[item.id]">
-            </div>
-            <button @click="reset"
-              style="width:100%;margin-top:0.5rem;cursor:pointer;padding:0.3rem;font-size:0.75rem;border:1px solid var(--clampography-border,#ccc);border-radius:4px;background:transparent;color:var(--clampography-muted,#888);">
-              Reset to theme
-            </button>
-          </div>
-        `
-      }).mount('#theme-editor-app');
+    // — Utils —
+    function rgbToHex(rgb) {
+      const m = rgb.match(/(\d+)[,\s]+(\d+)[,\s]+(\d+)/);
+      if (!m) return '#888888';
+      return '#' + [m[1], m[2], m[3]].map(n => (+n).toString(16).padStart(2, '0')).join('');
     }
+    function varToHex(cssVar) {
+      const el = document.createElement('div');
+      el.style.cssText = 'position:absolute;visibility:hidden;';
+      el.style.color = `var(${cssVar})`;
+      document.body.appendChild(el);
+      const hex = rgbToHex(getComputedStyle(el).color);
+      document.body.removeChild(el);
+      return hex;
+    }
+
+    // — Restore saved state from localStorage —
+    const ls = k => localStorage.getItem(k);
+    const lsBool = (k, def = true) => ls(k) === null ? def : ls(k) === 'true';
+
+    createApp({
+      setup() {
+        // ─ Reactive state ─
+        const extra  = ref(lsBool('clampography-dev-extra'));
+        const forms  = ref(lsBool('clampography-dev-forms'));
+        const kbd    = ref(lsBool('clampography-dev-kbd'));
+        const themes = ref(lsBool('clampography-dev-themes-enabled'));
+
+        const savedThemeIdx = AVAILABLE_THEMES.indexOf(ls('clampography-dev-theme'));
+        const currentThemeIndex = ref(savedThemeIdx !== -1 ? savedThemeIdx : 0);
+        const currentFontIndex  = ref(0);
+
+        const colors = reactive(Object.fromEntries(COLOR_VARS.map(({ id }) => [id, '#888888'])));
+
+        // ─ Computed ─
+        const currentFont      = computed(() => FONTS[currentFontIndex.value]);
+        const currentThemeName = computed(() => AVAILABLE_THEMES[currentThemeIndex.value] ?? '');
+        const cssSuffix = computed(() =>
+          (themes.value ? 't' : '') + (extra.value ? 'e' : '') +
+          (forms.value  ? 'f' : '') + (kbd.value   ? 'k' : '') || 'n'
+        );
+
+        // ─ Methods ─
+        const prevFont  = () => { currentFontIndex.value  = (currentFontIndex.value  - 1 + FONTS.length)            % FONTS.length; };
+        const nextFont  = () => { currentFontIndex.value  = (currentFontIndex.value  + 1) % FONTS.length; };
+        const prevTheme = () => { if (AVAILABLE_THEMES.length) currentThemeIndex.value = (currentThemeIndex.value - 1 + AVAILABLE_THEMES.length) % AVAILABLE_THEMES.length; };
+        const nextTheme = () => { if (AVAILABLE_THEMES.length) currentThemeIndex.value = (currentThemeIndex.value + 1) % AVAILABLE_THEMES.length; };
+
+        function syncColors() { COLOR_VARS.forEach(({ id, v }) => { colors[id] = varToHex(v); }); }
+        function resetColors() {
+          COLOR_VARS.forEach(({ v }) => document.documentElement.style.removeProperty(v));
+          setTimeout(syncColors, 60);
+        }
+
+        // ─ Side-effect watches ─
+        // CSS variant
+        watch(cssSuffix, s => {
+          cssLink.href = `/css/${s}.css`;
+          localStorage.setItem('clampography-dev-extra',            extra.value);
+          localStorage.setItem('clampography-dev-forms',            forms.value);
+          localStorage.setItem('clampography-dev-kbd',              kbd.value);
+          localStorage.setItem('clampography-dev-themes-enabled',   themes.value);
+        }, { immediate: true });
+
+        // Font
+        watch(currentFont, f => { cw.style.fontFamily = f.stack; }, { immediate: true });
+
+        // Theme
+        watch([currentThemeName, themes], ([name, enabled]) => {
+          if (enabled && name) {
+            document.body.setAttribute('data-theme', name);
+            localStorage.setItem('clampography-dev-theme', name);
+            setTimeout(syncColors, 80);
+          } else if (!enabled) {
+            document.body.removeAttribute('data-theme');
+          }
+        }, { immediate: true });
+
+        // Color pickers → CSS vars
+        COLOR_VARS.forEach(({ id, v }) => watch(() => colors[id], val => document.documentElement.style.setProperty(v, val)));
+
+        // Keyboard shortcuts
+        onMounted(() => {
+          setTimeout(syncColors, 350);
+          document.addEventListener('keydown', e => {
+            if (e.ctrlKey) {
+              if (e.key === 'ArrowLeft')  { e.preventDefault(); prevTheme(); }
+              if (e.key === 'ArrowRight') { e.preventDefault(); nextTheme(); }
+            }
+          });
+        });
+
+        return { FONTS, COLOR_VARS, extra, forms, kbd, themes,
+          currentFont, currentThemeName, colors,
+          prevFont, nextFont, prevTheme, nextTheme, resetColors };
+      }
+    }).mount('#pg-sidebar');
+  }
   </script>
 </body>
 
