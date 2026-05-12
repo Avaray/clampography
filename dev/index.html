@@ -94,12 +94,13 @@
 
     /* ── Plugin toggles ──────────────────────────────────────────────────── */
     .pg-toggle-row {
-      display: flex; flex-direction: column; gap: 0.35rem;
+      display: flex; flex-wrap: wrap; gap: 0.85rem 0.5rem;
     }
     .pg-toggle-item {
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between; gap: 0.35rem;
       cursor: pointer; user-select: none;
       color: var(--clampography-text, #333);
+      flex: 1 1 calc(50% - 0.5rem);
     }
     .pg-toggle-item input[type="checkbox"] { display: none; }
     .pg-switch {
@@ -223,23 +224,24 @@
       </div>
     </div>
 
-    <!-- Font switcher -->
-    <div class="pg-sidebar-section">
-      <span class="pg-sidebar-label">Font</span>
-      <div class="pg-carousel">
-        <button @click="prevFont" title="Previous Font">&larr;</button>
-        <span>{{ currentFont.label }}</span>
-        <button @click="nextFont" title="Next Font">&rarr;</button>
+    <!-- Font & Theme switchers -->
+    <div style="display:flex; border-bottom: 1px solid var(--clampography-border, #d0d0d0);">
+      <div class="pg-sidebar-section" style="flex:1; border-bottom: none; border-right: 1px solid var(--clampography-border, #d0d0d0); padding: 0.75rem 0.5rem 0.75rem 1rem; min-width: 0;">
+        <span class="pg-sidebar-label">Font</span>
+        <div class="pg-carousel">
+          <button @click="prevFont" title="Previous Font">&larr;</button>
+          <span>{{ currentFont.label }}</span>
+          <button @click="nextFont" title="Next Font">&rarr;</button>
+        </div>
       </div>
-    </div>
 
-    <!-- Theme switcher -->
-    <div class="pg-sidebar-section" :style="{ opacity: themes ? 1 : 0.4, pointerEvents: themes ? 'auto' : 'none', transition: 'opacity 0.3s' }">
-      <span class="pg-sidebar-label">Theme</span>
-      <div class="pg-carousel">
-        <button @click="prevTheme" title="Previous Theme">&larr;</button>
-        <span>{{ currentThemeName }}</span>
-        <button @click="nextTheme" title="Next Theme">&rarr;</button>
+      <div class="pg-sidebar-section" style="flex:1; border-bottom: none; padding: 0.75rem 1rem 0.75rem 0.5rem; min-width: 0;" :style="{ opacity: themes ? 1 : 0.4, pointerEvents: themes ? 'auto' : 'none', transition: 'opacity 0.3s' }">
+        <span class="pg-sidebar-label">Theme</span>
+        <div class="pg-carousel">
+          <button @click="prevTheme" title="Previous Theme">&larr;</button>
+          <span>{{ currentThemeName }}</span>
+          <button @click="nextTheme" title="Next Theme">&rarr;</button>
+        </div>
       </div>
     </div>
 
