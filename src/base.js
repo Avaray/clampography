@@ -274,10 +274,6 @@ export default (options = {}) => {
       "margin-bottom": "var(--spacing-xs)",
     },
 
-    [scope("li > ul, li > ol")]: {
-      // Internal margins handled by the rule above
-    },
-
     [scope("ul > li::before")]: {
       content: "''",
       position: "absolute",
