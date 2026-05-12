@@ -11,273 +11,266 @@
     href="https://fonts.googleapis.com/css2?family=Fira+Mono&family=Inter&family=Josefin+Sans:wght@300&family=Nunito:wght@300&family=Playfair+Display&family=Quando&family=Roboto&display=swap">
   <link rel="stylesheet" href="/css/te.css" id="main-css">
   <style>
-    /* ── Playground-only styles (not part of Clampography) ───────────────── */
-    .playground-toolbar {
+    /* ── Playground structural styles (sidebar only — colors from Clampography vars) ── */
+
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; padding: 0; display: flex; min-height: 100vh; }
+
+    /* ── Sidebar ─────────────────────────────────────────────────────────── */
+    .pg-sidebar {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: #111;
-      color: #fff;
-      padding: 0.6rem 1.25rem;
-      font-family: system-ui, sans-serif;
+      top: 0; left: 0; bottom: 0;
+      width: 270px;
+      overflow-y: auto;
+      overflow-x: hidden;
       z-index: 1000;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+      transition: transform 0.25s ease;
+      background: var(--clampography-surface, #f0f0f0);
+      border-right: 1px solid var(--clampography-border, #d0d0d0);
+      font-family: system-ui, sans-serif;
+      font-size: 0.85rem;
+    }
+    .pg-sidebar.is-closed { transform: translateX(-270px); }
+
+    .pg-sidebar-section {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--clampography-border, #d0d0d0);
     }
 
-    .playground-toolbar-inner {
-      display: flex;
-      align-items: center;
-      gap: 1.25rem;
-      white-space: nowrap;
-      overflow: visible;
+    .pg-sidebar-label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--clampography-muted, #888);
+      margin-bottom: 0.5rem;
     }
 
-    .playground-toolbar-inner * {
-      box-sizing: border-box;
+    /* ── Sidebar toggle button (always visible tab on edge) ──────────────── */
+    .pg-sidebar-btn {
+      position: fixed;
+      top: 1rem; left: 270px;
+      z-index: 1001;
+      width: 24px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: left 0.25s ease;
+      background: var(--clampography-surface, #f0f0f0);
+      border: 1px solid var(--clampography-border, #d0d0d0);
+      border-left: none;
+      border-radius: 0 6px 6px 0;
+      color: var(--clampography-muted, #888);
+      font-size: 0.7rem;
+      line-height: 1;
     }
+    .pg-sidebar-btn.is-closed { left: 0; border-left: 1px solid var(--clampography-border, #d0d0d0); border-radius: 6px; }
+    .pg-sidebar-btn:hover { color: var(--clampography-text, #222); }
 
-    /* ── Shared carousel style (used by both font and theme switchers) ────── */
+    /* ── Carousel (font + theme) ─────────────────────────────────────────── */
     .pg-carousel {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      background: #1e1e1e;
+      display: flex; align-items: center;
+      border: 1px solid var(--clampography-border, #d0d0d0);
       border-radius: 6px;
-      border: 1px solid #333;
-      height: 30px;
-      flex-shrink: 0;
+      overflow: hidden;
     }
-
     .pg-carousel button {
-      background: transparent;
-      border: none;
-      color: #aaa;
-      cursor: pointer;
-      padding: 0 0.45rem;
-      height: 100%;
-      font-size: 0.9rem;
-      display: flex;
-      align-items: center;
-      border-radius: 5px;
-      transition: background 0.15s, color 0.15s;
+      background: transparent; border: none;
+      color: var(--clampography-muted, #888);
+      cursor: pointer; padding: 0.25rem 0.5rem;
+      font-size: 0.85rem;
+      transition: color 0.15s;
+      flex-shrink: 0;
     }
-
-    .pg-carousel button:hover {
-      background: #2e2e2e;
-      color: #fff;
-    }
-
+    .pg-carousel button:hover { color: var(--clampography-text, #222); }
     .pg-carousel span {
-      text-align: center;
-      font-family: monospace;
-      font-size: 0.82rem;
-      color: #ddd;
-      padding: 0 0.25rem;
-      min-width: 7ch;
+      flex: 1; text-align: center;
+      font-family: monospace; font-size: 0.78rem;
+      color: var(--clampography-text, #333);
+      padding: 0.25rem 0.25rem;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
-    /* ── Toggle switches ──────────────────────────────────────────────────── */
-    .pg-toggles {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-      flex-shrink: 0;
+    /* ── Plugin toggles ──────────────────────────────────────────────────── */
+    .pg-toggle-row {
+      display: flex; flex-direction: column; gap: 0.35rem;
+    }
+    .pg-toggle-item {
+      display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; user-select: none;
+      color: var(--clampography-text, #333);
+    }
+    .pg-toggle-item input[type="checkbox"] { display: none; }
+    .pg-switch {
+      position: relative; width: 30px; height: 17px;
+      background: var(--clampography-border, #ccc);
+      border-radius: 9px; transition: background 0.2s; flex-shrink: 0;
+    }
+    .pg-switch::after {
+      content: ''; position: absolute;
+      top: 2px; left: 2px; width: 13px; height: 13px;
+      background: #fff; border-radius: 50%; transition: transform 0.2s;
+    }
+    .pg-toggle-item input:checked + .pg-switch { background: #3b82f6; }
+    .pg-toggle-item input:checked + .pg-switch::after { transform: translateX(13px); }
+
+    /* ── Color editor rows ───────────────────────────────────────────────── */
+    .pg-color-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin: 0.3rem 0; gap: 0.5rem;
+    }
+    .pg-color-row label { font-size: 0.78rem; color: var(--clampography-text, #333); }
+    .pg-color-row input[type="color"] {
+      width: 28px; height: 22px; padding: 1px 2px;
+      border: 1px solid var(--clampography-border, #ccc);
+      border-radius: 4px; cursor: pointer;
+      background: var(--clampography-background, #fff);
     }
 
-    .toggle-label {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-size: 0.8rem;
-      color: #aaa;
-      cursor: pointer;
-      user-select: none;
-      white-space: nowrap;
-      height: 30px;
-      margin: 0;
-      padding: 0;
+    /* ── Theme editor details ────────────────────────────────────────────── */
+    .pg-theme-editor { padding: 0; border: none; }
+    .pg-theme-editor summary {
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--clampography-muted, #888);
+      cursor: pointer; list-style: none;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--clampography-border, #d0d0d0);
     }
+    .pg-theme-editor summary::after { content: '▸'; transition: transform 0.2s; }
+    .pg-theme-editor[open] summary::after { transform: rotate(90deg); }
+    .pg-theme-editor summary::-webkit-details-marker { display: none; }
+    .pg-theme-editor-body { padding: 0.75rem 1rem; }
 
-    .toggle-switch {
-      position: relative;
-      width: 32px;
-      height: 18px;
-      background: #444;
-      border-radius: 9px;
-      transition: background 0.25s;
-      flex-shrink: 0;
+    /* ── Sidebar footer ──────────────────────────────────────────────────── */
+    .pg-sidebar-footer {
+      padding: 0.75rem 1rem;
+      display: flex; align-items: center; justify-content: space-between;
+      border-top: 1px solid var(--clampography-border, #d0d0d0);
+      margin-top: auto;
     }
-
-    .toggle-switch::after {
-      content: '';
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      width: 14px;
-      height: 14px;
-      background: white;
-      border-radius: 50%;
-      transition: transform 0.25s;
+    .pg-version-badge {
+      font-family: monospace; font-size: 0.72rem;
+      color: var(--clampography-muted, #888);
     }
-
-    .toggle-label input[type="checkbox"] {
-      display: none;
+    .pg-github-link {
+      display: flex; align-items: center; gap: 0.3rem;
+      font-size: 0.78rem; text-decoration: none;
+      color: var(--clampography-link, var(--clampography-primary, #3b82f6));
     }
+    .pg-github-link:hover { text-decoration: underline; }
 
-    .toggle-label input[type="checkbox"]:checked+.toggle-switch {
-      background: #3b82f6;
-    }
-
-    .toggle-label input[type="checkbox"]:checked+.toggle-switch::after {
-      transform: translateX(14px);
-    }
-
-    /* ── Right side meta ──────────────────────────────────────────────────── */
-    .pg-meta {
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      flex-shrink: 0;
-    }
-
-    .pg-version {
-      display: flex;
-      align-items: center;
-      background: #2a2a2a;
-      color: #888;
-      padding: 0 0.45rem;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      font-family: monospace;
-      border: 1px solid #333;
-      height: 30px;
-    }
-
-    .pg-github {
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-      font-size: 0.8rem;
-      color: #aaa;
-      text-decoration: none;
-      padding: 0 0.5rem;
-      border-radius: 4px;
-      border: 1px solid #333;
-      background: #1e1e1e;
-      transition: color 0.15s, border-color 0.15s;
-      height: 30px;
-    }
-
-    .pg-github:hover {
-      color: #fff;
-      border-color: #555;
-    }
-
-    /* ── Separator ────────────────────────────────────────────────────────── */
-    .pg-sep {
-      width: 1px;
-      height: 18px;
-      background: #333;
-      flex-shrink: 0;
-    }
-
-    /* ── Theme carousel wrapper (fades when disabled) ─────────────────────── */
-    .theme-switcher-wrapper {
-      transition: opacity 0.3s;
-      flex-shrink: 0;
-    }
-
-    body {
-      margin: 0;
-      padding: 0;
-    }
-
-    /* ── Global Theme Transitions ─────────────────────────────────────────── */
-    *,
-    ::before,
-    ::after {
-      transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    /* ── Theme transitions ───────────────────────────────────────────────── */
+    *, ::before, ::after {
+      transition-property: color, background-color, border-color;
       transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
       transition-duration: 200ms;
     }
 
-    /* ── Content ──────────────────────────────────────────────────────────── */
+    /* ── Content wrapper ─────────────────────────────────────────────────── */
     .content-wrapper {
+      margin-left: 270px;
+      transition: margin-left 0.25s ease;
       max-width: 800px;
-      margin: 0 auto;
-      /* 4.5rem top to stay below fixed toolbar, 1rem sides (p-4), 2rem bottom */
-      padding: 4.5rem 1rem 2rem;
+      padding: 2rem 1rem 4rem;
     }
+    .content-wrapper.sidebar-closed { margin-left: 0; margin-right: auto; }
   </style>
 </head>
 
 <body class="bg-clampography-background text-clampography-text">
 
-  <div class="playground-toolbar">
-    <div class="playground-toolbar-inner">
+  <!-- ── Sidebar ─────────────────────────────────────────────────────────── -->
+  <aside class="pg-sidebar" id="pg-sidebar">
 
-      <!-- Font Switcher (Left) -->
+    <div class="pg-sidebar-section" style="display:flex;align-items:center;justify-content:space-between;">
+      <span style="font-weight:700;font-size:0.85rem;color:var(--clampography-heading,#111);">Clampography</span>
+      <span class="pg-version-badge">vX.X.X</span>
+    </div>
+
+    <!-- Plugin options -->
+    <div class="pg-sidebar-section">
+      <span class="pg-sidebar-label">Plugin Options</span>
+      <div class="pg-toggle-row">
+        <label class="pg-toggle-item">
+          Extra
+          <input type="checkbox" id="toggle-extra" checked>
+          <div class="pg-switch"></div>
+        </label>
+        <label class="pg-toggle-item">
+          Forms
+          <input type="checkbox" id="toggle-forms" checked>
+          <div class="pg-switch"></div>
+        </label>
+        <label class="pg-toggle-item">
+          Kbd
+          <input type="checkbox" id="toggle-kbd" checked>
+          <div class="pg-switch"></div>
+        </label>
+        <label class="pg-toggle-item">
+          Themes
+          <input type="checkbox" id="toggle-themes" checked>
+          <div class="pg-switch"></div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Font switcher -->
+    <div class="pg-sidebar-section">
+      <span class="pg-sidebar-label">Font</span>
       <div class="pg-carousel" id="font-switcher">
         <button id="prev-font" title="Previous Font">&larr;</button>
         <span id="current-font-name">System</span>
         <button id="next-font" title="Next Font">&rarr;</button>
       </div>
-
-      <div class="pg-sep"></div>
-
-      <!-- Plugin Toggles (Center) -->
-      <div class="pg-toggles">
-        <label class="toggle-label" title="Toggle 'extra: true'">
-          <input type="checkbox" id="toggle-extra" checked>
-          <div class="toggle-switch"></div>
-          Extra
-        </label>
-        <label class="toggle-label" title="Toggle 'forms: true'">
-          <input type="checkbox" id="toggle-forms" checked>
-          <div class="toggle-switch"></div>
-          Forms
-        </label>
-        <label class="toggle-label" title="Toggle 'kbd: true'">
-          <input type="checkbox" id="toggle-kbd" checked>
-          <div class="toggle-switch"></div>
-          Kbd
-        </label>
-        <label class="toggle-label" title="Toggle 'themes: all'">
-          <input type="checkbox" id="toggle-themes" checked>
-          <div class="toggle-switch"></div>
-          Themes
-        </label>
-      </div>
-
-      <div class="pg-sep"></div>
-
-      <!-- Theme Carousel (Center-right, hidden when themes=off) -->
-      <div class="theme-switcher-wrapper" id="theme-switcher-wrapper">
-        <div class="pg-carousel">
-          <button id="prev-theme" title="Previous Theme">&larr;</button>
-          <span id="current-theme-name"></span>
-          <button id="next-theme" title="Next Theme">&rarr;</button>
-        </div>
-      </div>
-
-      <!-- Meta: version + GitHub (Right) -->
-      <div class="pg-meta">
-        <span class="pg-version">vX.X.X</span>
-        <a href="https://github.com/Avaray/clampography" target="_blank" class="pg-github">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-            <path
-              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
-          </svg>
-          GitHub
-        </a>
-      </div>
-
     </div>
-  </div>
 
-  <div class="content-wrapper">
+    <!-- Theme switcher -->
+    <div class="pg-sidebar-section" id="theme-switcher-wrapper">
+      <span class="pg-sidebar-label">Theme</span>
+      <div class="pg-carousel">
+        <button id="prev-theme" title="Previous Theme">&larr;</button>
+        <span id="current-theme-name"></span>
+        <button id="next-theme" title="Next Theme">&rarr;</button>
+      </div>
+    </div>
+
+    <!-- Theme editor -->
+    <details class="pg-theme-editor" id="theme-editor">
+      <summary>Theme Editor</summary>
+      <div class="pg-theme-editor-body">
+        <div class="pg-color-row"><label for="c-background">Background</label><input type="color" id="c-background"></div>
+        <div class="pg-color-row"><label for="c-surface">Surface</label><input type="color" id="c-surface"></div>
+        <div class="pg-color-row"><label for="c-text">Text</label><input type="color" id="c-text"></div>
+        <div class="pg-color-row"><label for="c-heading">Heading</label><input type="color" id="c-heading"></div>
+        <div class="pg-color-row"><label for="c-primary">Primary</label><input type="color" id="c-primary"></div>
+        <div class="pg-color-row"><label for="c-secondary">Secondary</label><input type="color" id="c-secondary"></div>
+        <div class="pg-color-row"><label for="c-muted">Muted</label><input type="color" id="c-muted"></div>
+        <div class="pg-color-row"><label for="c-border">Border</label><input type="color" id="c-border"></div>
+        <div class="pg-color-row"><label for="c-link">Link</label><input type="color" id="c-link"></div>
+        <div class="pg-color-row"><label for="c-success">Success</label><input type="color" id="c-success"></div>
+        <div class="pg-color-row"><label for="c-warning">Warning</label><input type="color" id="c-warning"></div>
+        <div class="pg-color-row"><label for="c-error">Error</label><input type="color" id="c-error"></div>
+        <div class="pg-color-row"><label for="c-info">Info</label><input type="color" id="c-info"></div>
+        <button id="reset-theme-colors" style="width:100%;margin-top:0.5rem;cursor:pointer;padding:0.3rem;font-size:0.75rem;border:1px solid var(--clampography-border,#ccc);border-radius:4px;background:transparent;color:var(--clampography-muted,#888);">Reset to theme</button>
+      </div>
+    </details>
+
+    <!-- Footer -->
+    <div class="pg-sidebar-footer">
+      <a href="https://github.com/Avaray/clampography" target="_blank" class="pg-github-link">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub
+      </a>
+    </div>
+
+  </aside>
+
+  <!-- Sidebar toggle tab -->
+  <button class="pg-sidebar-btn" id="pg-sidebar-btn" title="Toggle sidebar">&#8250;</button>
+
+  <div class="content-wrapper" id="content-wrapper">
     <h1>The Secret Lives of Cats</h1>
     <p>A typographic specimen exploring <a href="#">feline biology</a>, <a href="#">history</a>, and
       <mark>mysterious behaviour</mark> across all HTML elements styled exclusively by Clampography. Every heading,
@@ -851,7 +844,28 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
 
 
   <script>
-    // ─── Theme Carousel ────────────────────────────────────────────────────────
+    // ─── Sidebar toggle ───────────────────────────────────────────────────────
+    const pgSidebar = document.getElementById('pg-sidebar');
+    const pgSidebarBtn = document.getElementById('pg-sidebar-btn');
+    const contentWrapper = document.getElementById('content-wrapper');
+
+    let sidebarOpen = localStorage.getItem('clampography-sidebar') !== 'closed';
+
+    function setSidebar(open) {
+      sidebarOpen = open;
+      pgSidebar.classList.toggle('is-closed', !open);
+      pgSidebarBtn.classList.toggle('is-closed', !open);
+      pgSidebarBtn.textContent = open ? '‹' : '›';
+      pgSidebarBtn.style.left = open ? '270px' : '0';
+      contentWrapper.classList.toggle('sidebar-closed', !open);
+      contentWrapper.style.marginLeft = open ? '270px' : '0';
+      localStorage.setItem('clampography-sidebar', open ? 'open' : 'closed');
+    }
+
+    pgSidebarBtn.addEventListener('click', () => setSidebar(!sidebarOpen));
+    setSidebar(sidebarOpen);
+
+    // ─── Theme Carousel ───────────────────────────────────────────────────────
     const AVAILABLE_THEMES = []; // replaced by server.js
 
     const themeNameDisplay = document.getElementById('current-theme-name');
@@ -862,7 +876,6 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
     if (AVAILABLE_THEMES.length > 0) {
       const maxLength = Math.max(...AVAILABLE_THEMES.map(t => t.length));
       themeNameDisplay.style.minWidth = `${maxLength}ch`;
-
       const savedTheme = localStorage.getItem('clampography-dev-theme');
       if (savedTheme) {
         const foundIndex = AVAILABLE_THEMES.indexOf(savedTheme);
@@ -876,6 +889,8 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
       themeNameDisplay.textContent = selected;
       document.body.setAttribute('data-theme', selected);
       localStorage.setItem('clampography-dev-theme', selected);
+      // Re-sync color pickers after theme change
+      setTimeout(syncColorPickers, 50);
     }
 
     btnPrevTheme.addEventListener('click', () => {
@@ -889,15 +904,15 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
 
     applyTheme(currentThemeIndex);
 
-    // ─── Font Carousel ─────────────────────────────────────────────────────────
+    // ─── Font Carousel ────────────────────────────────────────────────────────
     const FONTS = [
-      { label: 'System', stack: 'system-ui, sans-serif' },
-      { label: 'Inter', stack: "'Inter', sans-serif" },
-      { label: 'Roboto', stack: "'Roboto', sans-serif" },
-      { label: 'Playfair', stack: "'Playfair Display', serif" },
-      { label: 'Quando', stack: "'Quando', serif" },
-      { label: 'Fira Mono', stack: "'Fira Mono', monospace" },
-      { label: 'Josefin Light', stack: "'Josefin Sans', sans-serif" },
+      { label: 'System',       stack: 'system-ui, sans-serif' },
+      { label: 'Inter',        stack: "'Inter', sans-serif" },
+      { label: 'Roboto',       stack: "'Roboto', sans-serif" },
+      { label: 'Playfair',     stack: "'Playfair Display', serif" },
+      { label: 'Quando',       stack: "'Quando', serif" },
+      { label: 'Fira Mono',    stack: "'Fira Mono', monospace" },
+      { label: 'Josefin Light',stack: "'Josefin Sans', sans-serif" },
       { label: 'Nunito Light', stack: "'Nunito', sans-serif" },
     ];
     const fontNameDisplay = document.getElementById('current-font-name');
@@ -905,15 +920,13 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
     const btnNextFont = document.getElementById('next-font');
     let currentFontIndex = 0;
 
-    // Set min-width to widest label to prevent layout shift
     const maxFontLen = Math.max(...FONTS.map(f => f.label.length));
     fontNameDisplay.style.minWidth = `${maxFontLen}ch`;
 
     function applyFont(index) {
       const { label, stack } = FONTS[index];
       fontNameDisplay.textContent = label;
-      document.documentElement.style.setProperty('--pg-font', stack);
-      document.querySelector('.content-wrapper').style.fontFamily = stack;
+      contentWrapper.style.fontFamily = stack;
     }
 
     btnPrevFont.addEventListener('click', () => {
@@ -924,10 +937,9 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
       currentFontIndex = (currentFontIndex + 1) % FONTS.length;
       applyFont(currentFontIndex);
     });
-
     applyFont(0);
 
-    // ─── CSS Variant Switcher (Extra + Forms + Kbd + Themes toggles) ────────
+    // ─── CSS Variant Switcher ─────────────────────────────────────────────────
     const toggleExtra  = document.getElementById('toggle-extra');
     const toggleForms  = document.getElementById('toggle-forms');
     const toggleKbd    = document.getElementById('toggle-kbd');
@@ -940,7 +952,6 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
       const e = toggleExtra.checked;
       const f = toggleForms.checked;
       const k = toggleKbd.checked;
-      // Build suffix: flags in alphabetical order t, e, f, k
       const suffix = (t ? 't' : '') + (e ? 'e' : '') + (f ? 'f' : '') + (k ? 'k' : '') || 'n';
       cssLink.href = `/css/${suffix}.css`;
 
@@ -950,7 +961,7 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
       localStorage.setItem('clampography-dev-themes-enabled', t);
 
       if (!t) {
-        themeSwitcherWrapper.style.opacity = '0.3';
+        themeSwitcherWrapper.style.opacity = '0.4';
         themeSwitcherWrapper.style.pointerEvents = 'none';
         document.body.removeAttribute('data-theme');
       } else {
@@ -958,35 +969,91 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
         themeSwitcherWrapper.style.pointerEvents = 'auto';
         applyTheme(currentThemeIndex);
       }
+      setTimeout(syncColorPickers, 100);
     }
 
-    const savedExtra  = localStorage.getItem('clampography-dev-extra');
-    const savedForms  = localStorage.getItem('clampography-dev-forms');
-    const savedKbd    = localStorage.getItem('clampography-dev-kbd');
+    const savedExtra         = localStorage.getItem('clampography-dev-extra');
+    const savedForms         = localStorage.getItem('clampography-dev-forms');
+    const savedKbd           = localStorage.getItem('clampography-dev-kbd');
     const savedThemesEnabled = localStorage.getItem('clampography-dev-themes-enabled');
 
-    if (savedExtra  !== null) toggleExtra.checked  = savedExtra  === 'true';
-    if (savedForms  !== null) toggleForms.checked  = savedForms  === 'true';
-    if (savedKbd    !== null) toggleKbd.checked    = savedKbd    === 'true';
+    if (savedExtra         !== null) toggleExtra.checked  = savedExtra         === 'true';
+    if (savedForms         !== null) toggleForms.checked  = savedForms         === 'true';
+    if (savedKbd           !== null) toggleKbd.checked    = savedKbd           === 'true';
     if (savedThemesEnabled !== null) toggleThemes.checked = savedThemesEnabled === 'true';
 
     toggleExtra.addEventListener('change', updateCSS);
     toggleForms.addEventListener('change', updateCSS);
     toggleKbd.addEventListener('change', updateCSS);
     toggleThemes.addEventListener('change', updateCSS);
-
     updateCSS();
 
-    // ─── Keyboard Shortcuts ────────────────────────────────────────────────────
+    // ─── Theme Editor (color pickers) ─────────────────────────────────────────
+    // Convert rgb(r g b) or rgb(r, g, b) → #rrggbb
+    function rgbToHex(rgb) {
+      const m = rgb.match(/(\d+)[,\s]+(\d+)[,\s]+(\d+)/);
+      if (!m) return '#888888';
+      return '#' + [m[1], m[2], m[3]].map(n => (+n).toString(16).padStart(2, '0')).join('');
+    }
+
+    // Read computed value of a CSS variable by temporarily applying it to a div
+    function varToHex(varName) {
+      const el = document.createElement('div');
+      el.style.position = 'absolute';
+      el.style.visibility = 'hidden';
+      el.style.color = `var(${varName})`;
+      document.body.appendChild(el);
+      const rgb = getComputedStyle(el).color;
+      document.body.removeChild(el);
+      return rgbToHex(rgb);
+    }
+
+    const COLOR_VARS = [
+      ['c-background', '--clampography-background'],
+      ['c-surface',    '--clampography-surface'],
+      ['c-text',       '--clampography-text'],
+      ['c-heading',    '--clampography-heading'],
+      ['c-primary',    '--clampography-primary'],
+      ['c-secondary',  '--clampography-secondary'],
+      ['c-muted',      '--clampography-muted'],
+      ['c-border',     '--clampography-border'],
+      ['c-link',       '--clampography-link'],
+      ['c-success',    '--clampography-success'],
+      ['c-warning',    '--clampography-warning'],
+      ['c-error',      '--clampography-error'],
+      ['c-info',       '--clampography-info'],
+    ];
+
+    function syncColorPickers() {
+      COLOR_VARS.forEach(([id, varName]) => {
+        const el = document.getElementById(id);
+        if (el) el.value = varToHex(varName);
+      });
+    }
+
+    COLOR_VARS.forEach(([id, varName]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('input', () => {
+        document.documentElement.style.setProperty(varName, el.value);
+      });
+    });
+
+    document.getElementById('reset-theme-colors').addEventListener('click', () => {
+      COLOR_VARS.forEach(([, varName]) => {
+        document.documentElement.style.removeProperty(varName);
+      });
+      setTimeout(syncColorPickers, 50);
+    });
+
+    // Init pickers after a short delay to allow CSS vars to resolve
+    setTimeout(syncColorPickers, 300);
+
+    // ─── Keyboard Shortcuts ───────────────────────────────────────────────────
     document.addEventListener('keydown', (e) => {
       if (e.ctrlKey) {
-        if (e.key === 'ArrowLeft') {
-          e.preventDefault();
-          btnPrevTheme.click();
-        } else if (e.key === 'ArrowRight') {
-          e.preventDefault();
-          btnNextTheme.click();
-        }
+        if (e.key === 'ArrowLeft')  { e.preventDefault(); btnPrevTheme.click(); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); btnNextTheme.click(); }
       }
     });
   </script>
