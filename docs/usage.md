@@ -265,8 +265,65 @@ Console output:
 
 ### Available Themes
 
-- **light** - Clean light theme with blue accents
-- **dark** - Modern dark theme with high contrast
+Clampography includes over 40 built-in themes categorized by style. You can load all of them using `themes: all`.
+
+#### Core Themes
+- **light** - Clean light theme with blue accents (default)
+- **dark** - Modern dark theme with high contrast (prefersdark)
+
+#### Cyberpunk & Retro
+- **cyber-punk** - Classic neon-on-black aesthetic
+- **retrowave-synth** - 80s synthesizer vibes
+- **retrowave-neon-night** - Midnight neon pink and cyan
+- **vaporwave-chrome** - Metallic silver and lavender
+- **vaporwave-dream** - Soft pastel pinks and purples
+- **outrun-grid** - Deep purple night with laser red
+- **vhs-glitch** - Distorted analog video look
+- **win-95-classic** - Gray taskbars and teal backgrounds
+- **y2k-glacier** - Early 2000s translucent blue aesthetic
+
+#### Nature & Organic
+- **arctic-aurora** - Chilly blues and neon greens
+- **autumn-harvest** - Warm oranges and browns
+- **desert-oasis** - Sandy beiges and deep teals
+- **forest-mist** - Pale greens and foggy grays
+- **forest-night** - Deep woods dark mode
+- **ocean-depths** - Infinite blues and coral accents
+- **lavender-fields** - Soothing purples and soft grays
+- **pastel-sunset** - Soft peach and mint
+
+#### Cinema & Pop Culture
+- **barbie-pink** - Iconic vibrant pink aesthetic
+- **blade-runner** - Gritty futuristic neon
+- **matrix-code** - Digital rain green-on-black
+- **studio-ghibli** - Whimsical hand-painted colors
+- **wes-anderson-hotel** - Pastel symmetry and vintage pinks
+
+#### Art & Design Movements
+- **art-deco-gold** - Elegant gold on dark emerald
+- **bauhaus** - Primary colors and bold geometry
+- **swiss-design** - Functional red, white, and black
+- **aesthetic-breeze** - Minimalist airy vapor-pastels
+
+#### Coding & Tech
+- **dracula-night** - Classic vampire-inspired dark theme
+- **nord-frost** - Clean Arctic-themed palette
+- **solarized-glow** - Optimized contrast and soft tones
+- **vscode-dark-plus** - Familiar editor environment
+- **zenburn** - Low contrast, eye-friendly coding theme
+
+#### Moods & Environments
+- **alien-nebula** - Deep space purples and greens
+- **andromeda** - Intergalactic blues and magentas
+- **coffee-shop** - Warm browns and cream
+- **crimson-velvet** - Rich reds and dark wood
+- **emerald-city** - Brilliant greens and gold
+- **midnight-blue** - Deep oceanic night
+- **space-station** - Clinical grays and neon alerts
+- **sunset-glow** - Golden hour oranges and purples
+- **twilight-haze** - Distant horizon violets
+- **vintage-paper** - Aged parchment and ink
+- **web-2-0-gloss** - Shiny gradients and reflections from 2008
 
 ### Load Specific Themes
 
@@ -928,8 +985,7 @@ By default, all utilities use the `clampography-` prefix:
 
 #### Available Theme Names
 
-- **light** - Clean light theme with blue accents
-- **dark** - Modern dark theme with high contrast
+Please refer to the [Available Themes](#available-themes) section above for the full list of over 40 built-in themes.
 
 #### Available Color Variables
 
