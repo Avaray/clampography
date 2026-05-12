@@ -100,6 +100,35 @@ export default (options = {}) => {
       "padding-right": "2.5rem",
     },
 
+    // ── File Input ────────────────────────────────────────────────────────────
+    [scope("[type='file']")]: {
+      "padding": "0",
+      "background-color": "transparent",
+      "border": "none",
+      "cursor": "pointer",
+    },
+
+    [scope("[type='file']::file-selector-button")]: {
+      "display": "inline-flex",
+      "align-items": "center",
+      "padding": "var(--spacing-xs) var(--spacing-sm)",
+      "margin-right": "var(--spacing-sm)",
+      "background-color": "var(--clampography-surface)",
+      "color": "var(--clampography-text)",
+      "border": "1px solid var(--clampography-border)",
+      "border-radius": "0.375rem",
+      "font-family": "inherit",
+      "font-size": "inherit",
+      "cursor": "pointer",
+      "transition-property": "background-color, border-color",
+      "transition-duration": "150ms",
+    },
+
+    [scope("[type='file']:hover::file-selector-button")]: {
+      "background-color": "var(--clampography-background)",
+      "border-color": "var(--clampography-primary)",
+    },
+
     // ── Checkbox & Radio ──────────────────────────────────────────────────────
     [scope("[type='checkbox'], [type='radio']")]: {
       "width": "1em",

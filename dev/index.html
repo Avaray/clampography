@@ -1,24 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Clampography Playground</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Mono&family=Inter&family=Josefin+Sans:wght@300&family=Nunito:wght@300&family=Playfair+Display&family=Quando&family=Roboto&display=swap">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Fira+Mono&family=Inter&family=Josefin+Sans:wght@300&family=Nunito:wght@300&family=Playfair+Display&family=Quando&family=Roboto&display=swap">
   <link rel="stylesheet" href="/css/te.css" id="main-css">
   <style>
     /* ── Playground-only styles (not part of Clampography) ───────────────── */
     .playground-toolbar {
       position: fixed;
-      top: 0; left: 0; right: 0;
-      background: #111; color: #fff;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: #111;
+      color: #fff;
       padding: 0.6rem 1.25rem;
       font-family: system-ui, sans-serif;
       z-index: 1000;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
     }
+
     .playground-toolbar-inner {
       display: flex;
       align-items: center;
@@ -26,9 +32,11 @@
       white-space: nowrap;
       overflow: visible;
     }
+
     .playground-toolbar-inner * {
       box-sizing: border-box;
     }
+
     /* ── Shared carousel style (used by both font and theme switchers) ────── */
     .pg-carousel {
       display: flex;
@@ -40,6 +48,7 @@
       height: 30px;
       flex-shrink: 0;
     }
+
     .pg-carousel button {
       background: transparent;
       border: none;
@@ -53,7 +62,12 @@
       border-radius: 5px;
       transition: background 0.15s, color 0.15s;
     }
-    .pg-carousel button:hover { background: #2e2e2e; color: #fff; }
+
+    .pg-carousel button:hover {
+      background: #2e2e2e;
+      color: #fff;
+    }
+
     .pg-carousel span {
       text-align: center;
       font-family: monospace;
@@ -62,6 +76,7 @@
       padding: 0 0.25rem;
       min-width: 7ch;
     }
+
     /* ── Toggle switches ──────────────────────────────────────────────────── */
     .pg-toggles {
       display: flex;
@@ -69,6 +84,7 @@
       align-items: center;
       flex-shrink: 0;
     }
+
     .toggle-label {
       display: flex;
       align-items: center;
@@ -82,6 +98,7 @@
       margin: 0;
       padding: 0;
     }
+
     .toggle-switch {
       position: relative;
       width: 32px;
@@ -91,18 +108,31 @@
       transition: background 0.25s;
       flex-shrink: 0;
     }
+
     .toggle-switch::after {
       content: '';
       position: absolute;
-      top: 2px; left: 2px;
-      width: 14px; height: 14px;
+      top: 2px;
+      left: 2px;
+      width: 14px;
+      height: 14px;
       background: white;
       border-radius: 50%;
       transition: transform 0.25s;
     }
-    .toggle-label input[type="checkbox"] { display: none; }
-    .toggle-label input[type="checkbox"]:checked + .toggle-switch { background: #3b82f6; }
-    .toggle-label input[type="checkbox"]:checked + .toggle-switch::after { transform: translateX(14px); }
+
+    .toggle-label input[type="checkbox"] {
+      display: none;
+    }
+
+    .toggle-label input[type="checkbox"]:checked+.toggle-switch {
+      background: #3b82f6;
+    }
+
+    .toggle-label input[type="checkbox"]:checked+.toggle-switch::after {
+      transform: translateX(14px);
+    }
+
     /* ── Right side meta ──────────────────────────────────────────────────── */
     .pg-meta {
       margin-left: auto;
@@ -111,6 +141,7 @@
       gap: 0.6rem;
       flex-shrink: 0;
     }
+
     .pg-version {
       display: flex;
       align-items: center;
@@ -123,6 +154,7 @@
       border: 1px solid #333;
       height: 30px;
     }
+
     .pg-github {
       display: flex;
       align-items: center;
@@ -137,7 +169,12 @@
       transition: color 0.15s, border-color 0.15s;
       height: 30px;
     }
-    .pg-github:hover { color: #fff; border-color: #555; }
+
+    .pg-github:hover {
+      color: #fff;
+      border-color: #555;
+    }
+
     /* ── Separator ────────────────────────────────────────────────────────── */
     .pg-sep {
       width: 1px;
@@ -145,22 +182,27 @@
       background: #333;
       flex-shrink: 0;
     }
+
     /* ── Theme carousel wrapper (fades when disabled) ─────────────────────── */
     .theme-switcher-wrapper {
       transition: opacity 0.3s;
       flex-shrink: 0;
     }
+
     body {
       margin: 0;
       padding: 0;
     }
-    
+
     /* ── Global Theme Transitions ─────────────────────────────────────────── */
-    *, ::before, ::after {
+    *,
+    ::before,
+    ::after {
       transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
       transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
       transition-duration: 200ms;
     }
+
     /* ── Content ──────────────────────────────────────────────────────────── */
     .content-wrapper {
       max-width: 800px;
@@ -169,8 +211,9 @@
     }
   </style>
 </head>
+
 <body class="bg-clampography-background text-clampography-text">
-  
+
   <div class="playground-toolbar">
     <div class="playground-toolbar-inner">
 
@@ -217,7 +260,10 @@
       <div class="pg-meta">
         <span class="pg-version">vX.X.X</span>
         <a href="https://github.com/Avaray/clampography" target="_blank" class="pg-github">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+            <path
+              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+          </svg>
           GitHub
         </a>
       </div>
@@ -227,23 +273,32 @@
 
   <div class="content-wrapper">
     <h1>The Secret Lives of Cats</h1>
-    <p>A typographic specimen exploring feline biology, history, and mysterious behaviour across all HTML elements styled exclusively by Clampography.</p>
+    <p>A typographic specimen exploring feline biology, history, and mysterious behaviour across all HTML elements
+      styled exclusively by Clampography.</p>
 
     <figure>
-      <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=800&q=80" alt="A curious cat looking into the camera">
+      <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=800&q=80"
+        alt="A curious cat looking into the camera">
       <figcaption>Felis catus in its natural environment of observation and judgement.</figcaption>
     </figure>
 
     <h2>Masters of Stealth and Silence</h2>
     <p>
-      Cats (<strong>Felis catus</strong>) have co-habited with humans for roughly <em>10,000 years</em>, yet they remain one of the most <mark>misunderstood</mark> animals on Earth. Unlike dogs, cats were never truly domesticated &mdash; they chose us. You can read more about this <a href="#">feline self-selection</a> in the archaeological record from the Fertile Crescent, where <del>wolves</del> wildcats first began lurking around grain stores.
+      Cats (<strong>Felis catus</strong>) have co-habited with humans for roughly <em>10,000 years</em>, yet they remain
+      one of the most <mark>misunderstood</mark> animals on Earth. Unlike dogs, cats were never truly domesticated
+      &mdash; they chose us. You can read more about this <a href="#">feline self-selection</a> in the archaeological
+      record from the Fertile Crescent, where <del>wolves</del> wildcats first began lurking around grain stores.
     </p>
     <p>
-      A cat&rsquo;s hearing range spans <code>48 Hz&ndash;85 kHz</code>. Press <kbd>Q</kbd> to remind yourself that a cat can hear frequencies <strong>1.6 octaves</strong> higher than any human. Their ears rotate up to <em>180&deg;</em> independently, acting like biological satellite dishes.
+      A cat&rsquo;s hearing range spans <code>48 Hz&ndash;85 kHz</code>. Press <kbd>Q</kbd> to remind yourself that a
+      cat can hear frequencies <strong>1.6 octaves</strong> higher than any human. Their ears rotate up to
+      <em>180&deg;</em> independently, acting like biological satellite dishes.
     </p>
 
     <h3>The Physics of the Righting Reflex</h3>
-    <p>Cats have a specialised collarbone that lets them always land on their feet during a fall &mdash; a phenomenon called <em>aerial righting reflex</em>. They also have <strong>no clavicle attachment</strong> to their spine, allowing them to squeeze through any gap their head fits through.</p>
+    <p>Cats have a specialised collarbone that lets them always land on their feet during a fall &mdash; a phenomenon
+      called <em>aerial righting reflex</em>. They also have <strong>no clavicle attachment</strong> to their spine,
+      allowing them to squeeze through any gap their head fits through.</p>
 
     <blockquote>
       <p>Time spent with cats is never wasted.</p>
@@ -257,7 +312,8 @@
       <li>
         Killing a cat, even <em>accidentally</em>, carried severe punishment:
         <blockquote>
-          <p>According to Diodorus Siculus, Roman soldiers who accidentally killed cats were sometimes lynched by mobs, regardless of diplomatic immunity.</p>
+          <p>According to Diodorus Siculus, Roman soldiers who accidentally killed cats were sometimes lynched by mobs,
+            regardless of diplomatic immunity.</p>
         </blockquote>
       </li>
       <li>Cats were mummified and buried alongside their owners</li>
@@ -265,11 +321,29 @@
     </ul>
 
     <table>
-      <thead><tr><th>Dynasty</th><th>Cat Goddess</th><th>Centre of Worship</th></tr></thead>
+      <thead>
+        <tr>
+          <th>Dynasty</th>
+          <th>Cat Goddess</th>
+          <th>Centre of Worship</th>
+        </tr>
+      </thead>
       <tbody>
-        <tr><td>Old Kingdom</td><td>Mafdet</td><td>Heliopolis</td></tr>
-        <tr><td>Middle Kingdom</td><td>Bastet</td><td>Bubastis</td></tr>
-        <tr><td>New Kingdom</td><td>Sekhmet</td><td>Memphis</td></tr>
+        <tr>
+          <td>Old Kingdom</td>
+          <td>Mafdet</td>
+          <td>Heliopolis</td>
+        </tr>
+        <tr>
+          <td>Middle Kingdom</td>
+          <td>Bastet</td>
+          <td>Bubastis</td>
+        </tr>
+        <tr>
+          <td>New Kingdom</td>
+          <td>Sekhmet</td>
+          <td>Memphis</td>
+        </tr>
       </tbody>
       <caption>Egyptian cat goddesses by dynasty</caption>
     </table>
@@ -277,7 +351,9 @@
     <h2>Feline Biology and Behaviour</h2>
 
     <h4>Whisker Mechanics and Spatial Awareness</h4>
-    <p>Cats spend <strong>70% of their lives sleeping</strong> &mdash; roughly 13&ndash;16 hours a day. During light sleep, their ears still rotate to monitor sounds and whiskers twitch in response to stimuli. In deep REM sleep, paws twitch from vivid dreams.</p>
+    <p>Cats spend <strong>70% of their lives sleeping</strong> &mdash; roughly 13&ndash;16 hours a day. During light
+      sleep, their ears still rotate to monitor sounds and whiskers twitch in response to stimuli. In deep REM sleep,
+      paws twitch from vivid dreams.</p>
 
     <ul>
       <li>Cats cannot taste sweetness &mdash; they lack the <code>Tas1r2</code> gene
@@ -356,24 +432,48 @@ console.log(isBeingJudged(myCat)); // true</code></pre>
     <h2>Popular Domestic Breeds</h2>
     <table>
       <thead>
-        <tr><th>Breed</th><th>Origin</th><th>Avg. Weight</th><th>Known For</th></tr>
+        <tr>
+          <th>Breed</th>
+          <th>Origin</th>
+          <th>Avg. Weight</th>
+          <th>Known For</th>
+        </tr>
       </thead>
       <tbody>
-        <tr><td>Maine Coon</td><td>USA</td><td>5&ndash;8 kg</td><td>Dog-like loyalty, tufted ears</td></tr>
-        <tr><td>Siamese</td><td>Thailand</td><td>3&ndash;5 kg</td><td>Loud opinions, blue eyes</td></tr>
-        <tr><td>Scottish Fold</td><td>Scotland</td><td>3&ndash;6 kg</td><td>Folded ears, owl-like posture</td></tr>
-        <tr><td>Bengal</td><td>USA (hybrid)</td><td>4&ndash;7 kg</td><td>Leopard spots, high energy</td></tr>
+        <tr>
+          <td>Maine Coon</td>
+          <td>USA</td>
+          <td>5&ndash;8 kg</td>
+          <td>Dog-like loyalty, tufted ears</td>
+        </tr>
+        <tr>
+          <td>Siamese</td>
+          <td>Thailand</td>
+          <td>3&ndash;5 kg</td>
+          <td>Loud opinions, blue eyes</td>
+        </tr>
+        <tr>
+          <td>Scottish Fold</td>
+          <td>Scotland</td>
+          <td>3&ndash;6 kg</td>
+          <td>Folded ears, owl-like posture</td>
+        </tr>
+        <tr>
+          <td>Bengal</td>
+          <td>USA (hybrid)</td>
+          <td>4&ndash;7 kg</td>
+          <td>Leopard spots, high energy</td>
+        </tr>
       </tbody>
       <caption>Selected domestic cat breeds and their characteristics</caption>
     </table>
 
     <hr>
 
-    <hr>
-
     <h2>Feline Resources & Data</h2>
-    
-    <p>Below is a technical summary and interaction test area for the feline database. Use the form to submit new registry entries.</p>
+
+    <p>Below is a technical summary and interaction test area for the feline database. Use the form to submit new
+      registry entries.</p>
 
     <dl>
       <dt>Vibrissae</dt>
@@ -386,7 +486,8 @@ console.log(isBeingJudged(myCat)); // true</code></pre>
 
     <h3>Submit Feline Registry Entry</h3>
     <form onsubmit="return false;">
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); margin-bottom: var(--spacing-md);">
+      <div
+        style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); margin-bottom: var(--spacing-md);">
         <div>
           <label for="cat-name" style="display: block; margin-bottom: 0.25rem;">Cat Name:</label>
           <input type="text" id="cat-name" placeholder="e.g. Luna" style="width: 100%;">
@@ -405,6 +506,20 @@ console.log(isBeingJudged(myCat)); // true</code></pre>
         <label for="notes" style="display: block; margin-bottom: 0.25rem;">Behavioral Notes:</label>
         <textarea id="notes" rows="3" placeholder="Describe temperament..." style="width: 100%;"></textarea>
       </div>
+      <div style="margin-bottom: var(--spacing-md);">
+        <label for="cat-photo" style="display: block; margin-bottom: 0.25rem;">Cat Photo:</label>
+        <input type="file" id="cat-photo" accept="image/*">
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); margin-bottom: var(--spacing-md);">
+        <div>
+          <label for="fluffiness" style="display: block; margin-bottom: 0.25rem;">Fluffiness Level:</label>
+          <input type="range" id="fluffiness" min="0" max="100" value="72">
+        </div>
+        <div>
+          <label for="fur-color" style="display: block; margin-bottom: 0.25rem;">Fur Color:</label>
+          <input type="color" id="fur-color" value="#f4a460">
+        </div>
+      </div>
       <p>
         <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
           <input type="checkbox"> Notify me about catnip updates via <abbr title="Electronic Mail">e-mail</abbr>
@@ -417,7 +532,8 @@ console.log(isBeingJudged(myCat)); // true</code></pre>
     </form>
 
     <p>
-      <small>Data provided by the <abbr title="Global Feline Authority">GFA</abbr> under the Creative Commons license. System status: <samp>All systems purring...</samp></small>
+      <small>Data provided by the <abbr title="Global Feline Authority">GFA</abbr> under the Creative Commons license.
+        System status: <samp>All systems purring...</samp></small>
     </p>
 
     <hr>
@@ -425,15 +541,20 @@ console.log(isBeingJudged(myCat)); // true</code></pre>
     <h6>Frequently Asked Questions</h6>
     <details>
       <summary>Why do cats bring you dead animals?</summary>
-      <p>Your cat considers you a <strong>terrible hunter</strong>. By bringing you prey, it is attempting to <em>teach you to survive</em>. This is not a gift &mdash; it is a remedial lesson in basic predator skills. Be grateful. Be humble.</p>
+      <p>Your cat considers you a <strong>terrible hunter</strong>. By bringing you prey, it is attempting to <em>teach
+          you to survive</em>. This is not a gift &mdash; it is a remedial lesson in basic predator skills. Be grateful.
+        Be humble.</p>
     </details>
     <details>
       <summary>Can cats get high on catnip?</summary>
-      <p>Not exactly. <code>Nepetalactone</code>, the active compound in catnip, binds to feline olfactory receptors and mimics a cat pheromone. The reaction &mdash; rolling, drooling, vocalising &mdash; lasts about 10 minutes. Roughly <strong>30% of cats</strong> carry a recessive gene that makes them completely unresponsive to it.</p>
+      <p>Not exactly. <code>Nepetalactone</code>, the active compound in catnip, binds to feline olfactory receptors and
+        mimics a cat pheromone. The reaction &mdash; rolling, drooling, vocalising &mdash; lasts about 10 minutes.
+        Roughly <strong>30% of cats</strong> carry a recessive gene that makes them completely unresponsive to it.</p>
     </details>
     <details>
       <summary>Do cats dream?</summary>
-      <p>Yes. Cats experience REM (Rapid Eye Movement) sleep, during which their brains show activity patterns similar to humans. The twitching paws and whiskers you see are likely responses to a dream-hunt in progress.</p>
+      <p>Yes. Cats experience REM (Rapid Eye Movement) sleep, during which their brains show activity patterns similar
+        to humans. The twitching paws and whiskers you see are likely responses to a dream-hunt in progress.</p>
     </details>
   </div>
 
@@ -480,14 +601,14 @@ console.log(isBeingJudged(myCat)); // true</code></pre>
 
     // ─── Font Carousel ─────────────────────────────────────────────────────────
     const FONTS = [
-      { label: 'System',        stack: 'system-ui, sans-serif' },
-      { label: 'Inter',         stack: "'Inter', sans-serif" },
-      { label: 'Roboto',        stack: "'Roboto', sans-serif" },
-      { label: 'Playfair',      stack: "'Playfair Display', serif" },
-      { label: 'Quando',        stack: "'Quando', serif" },
-      { label: 'Fira Mono',     stack: "'Fira Mono', monospace" },
+      { label: 'System', stack: 'system-ui, sans-serif' },
+      { label: 'Inter', stack: "'Inter', sans-serif" },
+      { label: 'Roboto', stack: "'Roboto', sans-serif" },
+      { label: 'Playfair', stack: "'Playfair Display', serif" },
+      { label: 'Quando', stack: "'Quando', serif" },
+      { label: 'Fira Mono', stack: "'Fira Mono', monospace" },
       { label: 'Josefin Light', stack: "'Josefin Sans', sans-serif" },
-      { label: 'Nunito Light',  stack: "'Nunito', sans-serif" },
+      { label: 'Nunito Light', stack: "'Nunito', sans-serif" },
     ];
     const fontNameDisplay = document.getElementById('current-font-name');
     const btnPrevFont = document.getElementById('prev-font');
@@ -517,8 +638,8 @@ console.log(isBeingJudged(myCat)); // true</code></pre>
     applyFont(0);
 
     // ─── CSS Variant Switcher (Extra + Forms + Themes toggles) ────────────────
-    const toggleExtra  = document.getElementById('toggle-extra');
-    const toggleForms  = document.getElementById('toggle-forms');
+    const toggleExtra = document.getElementById('toggle-extra');
+    const toggleForms = document.getElementById('toggle-forms');
     const toggleThemes = document.getElementById('toggle-themes');
     const themeSwitcherWrapper = document.getElementById('theme-switcher-wrapper');
     const cssLink = document.getElementById('main-css');
@@ -574,4 +695,5 @@ console.log(isBeingJudged(myCat)); // true</code></pre>
     });
   </script>
 </body>
+
 </html>
