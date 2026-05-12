@@ -271,9 +271,14 @@ export default (options = {}) => {
 
     // Collapse margins for text-like block elements inside li
     // to prevent them from creating extra gaps around nested lists.
-    [scope("li > :where(p, dl, blockquote, figure, table, pre)")]: {
+    [scope("li > :where(p, dl, figure, table, pre)")]: {
       "margin-top": "0",
       "margin-bottom": "0",
+    },
+
+    [scope("li > blockquote")]: {
+      "margin-top": "var(--spacing-sm)",
+      "margin-bottom": "var(--spacing-sm)",
     },
 
     // Nested lists: top gap matches sibling spacing (--spacing-xs).
