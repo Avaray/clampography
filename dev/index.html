@@ -393,6 +393,12 @@ console.log(isBeingJudged(myCat)); // true</code></pre>
     if (AVAILABLE_THEMES.length > 0) {
       const maxLength = Math.max(...AVAILABLE_THEMES.map(t => t.length));
       themeNameDisplay.style.minWidth = `${maxLength}ch`;
+
+      const savedTheme = localStorage.getItem('clampography-dev-theme');
+      if (savedTheme) {
+        const foundIndex = AVAILABLE_THEMES.indexOf(savedTheme);
+        if (foundIndex !== -1) currentThemeIndex = foundIndex;
+      }
     }
 
     function applyTheme(index) {
@@ -400,6 +406,7 @@ console.log(isBeingJudged(myCat)); // true</code></pre>
       const selected = AVAILABLE_THEMES[index];
       themeNameDisplay.textContent = selected;
       document.body.setAttribute('data-theme', selected);
+      localStorage.setItem('clampography-dev-theme', selected);
     }
 
     btnPrevTheme.addEventListener('click', () => {
@@ -411,7 +418,7 @@ console.log(isBeingJudged(myCat)); // true</code></pre>
       applyTheme(currentThemeIndex);
     });
 
-    applyTheme(0);
+    applyTheme(currentThemeIndex);
 
     // ─── Font Carousel ─────────────────────────────────────────────────────────
     const FONTS = [
@@ -463,6 +470,9 @@ console.log(isBeingJudged(myCat)); // true</code></pre>
       const suffix = t && e ? 'te' : t ? 't' : e ? 'e' : 'n';
       cssLink.href = `/css/${suffix}.css`;
 
+      localStorage.setItem('clampography-dev-extra', e);
+      localStorage.setItem('clampography-dev-themes-enabled', t);
+
       if (!t) {
         themeSwitcherWrapper.style.opacity = '0.3';
         themeSwitcherWrapper.style.pointerEvents = 'none';
@@ -474,8 +484,16 @@ console.log(isBeingJudged(myCat)); // true</code></pre>
       }
     }
 
+    const savedExtra = localStorage.getItem('clampography-dev-extra');
+    const savedThemesEnabled = localStorage.getItem('clampography-dev-themes-enabled');
+
+    if (savedExtra !== null) toggleExtra.checked = savedExtra === 'true';
+    if (savedThemesEnabled !== null) toggleThemes.checked = savedThemesEnabled === 'true';
+
     toggleExtra.addEventListener('change', updateCSS);
     toggleThemes.addEventListener('change', updateCSS);
+
+    updateCSS();
 
     // ─── Keyboard Shortcuts ────────────────────────────────────────────────────
     document.addEventListener('keydown', (e) => {
