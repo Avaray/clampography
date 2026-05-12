@@ -269,9 +269,18 @@ export default (options = {}) => {
       "margin-top": "var(--spacing-xs)",
     },
 
-    [scope("li > :where(p, ul, ol, dl, blockquote, figure, table, pre)")]: {
+    // Collapse margins for text-like block elements inside li
+    // to prevent them from creating extra gaps around nested lists.
+    [scope("li > :where(p, dl, blockquote, figure, table, pre)")]: {
       "margin-top": "0",
-      "margin-bottom": "var(--spacing-xs)",
+      "margin-bottom": "0",
+    },
+
+    // Nested lists: top gap matches sibling spacing (--spacing-xs).
+    // No bottom margin — the next li already gets margin-top from li+li.
+    [scope("li > :where(ul, ol)")]: {
+      "margin-top": "var(--spacing-xs)",
+      "margin-bottom": "0",
     },
 
     [scope("ul > li::before")]: {
