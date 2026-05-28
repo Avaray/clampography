@@ -128,7 +128,7 @@ function getOutputFileNames(inputFile) {
   const baseNameWithoutExt = basename(inputFile, ".js");
   return {
     css: `${baseNameWithoutExt}.css`,
-    min: `${baseNameWithoutExt}.css.min`,
+    min: `${baseNameWithoutExt}.min.css`,
   };
 }
 
