@@ -2,7 +2,7 @@
 
 > **WARNING**: Beta 2.0.0 is in development and currently unstable.
 
-**Clampography** is a pure CSS typography system designed mainly for blogs and
+**Clampography** is a CSS typography system designed mainly for blogs and
 documentation sites. It uses the CSS `clamp()` function for fluid, responsive
 text scaling. Built as a [Tailwind CSS](https://tailwindcss.com/) plugin, it
 delivers production-ready typography with optional theming support. Basic
@@ -28,12 +28,9 @@ delivers production-ready typography that responds to
 [viewport](https://en.wikipedia.org/wiki/Viewport) changes automatically, while
 leaving all aesthetic choices to you. Add themes only if you need them.
 
-Visit the temporary [demo page](https://next.dav.one/clampography/) to see how
-it looks.
-
 ## Requirements
 
-- **Tailwind CSS v4** (required)
+- **[Tailwind CSS](https://tailwindcss.com/)** v4
 - A build tool like [Vite](https://vitejs.dev/),
   [Webpack](https://webpack.js.org/), or framework with CSS bundling like
   [Astro](https://astro.build/), [Next.js](https://nextjs.org/),
@@ -41,6 +38,8 @@ it looks.
   [SvelteKit](https://svelte.dev/docs/kit/introduction)
 
 ## Installation
+
+### Via Package Manager (Tailwind Plugin)
 
 ```bash
 # Install with NPM
@@ -55,6 +54,7 @@ bun install clampography
 # Install with Deno
 deno install npm:clampography
 ```
+
 
 ## Quick Start
 
@@ -148,15 +148,21 @@ Create your own theme with OKLCH colors:
 
 ## Learn More
 
-📖 **[Complete Usage Guide](docs/usage.md)** - Detailed documentation:
+📖 **[Complete Usage Guide](docs/usage.md)** - Detailed documentation covering:
 
-- All configuration options
+- Installation (NPM & CDN)
+- Basic configuration options
 - Built-in themes
 - Creating custom themes
 - Scoped themes for widgets
-- Advanced scenarios
-- Tailwind utilities
+- Form styles & Tailwind utilities
 - Troubleshooting
+
+## Inspirations
+
+Two main inspirations behind this project were:
+- **daisyUI** created by [Pouya Saadeghi](https://saadeghi.com/)
+- The official **Typography** plugin for Tailwind CSS: [tailwindcss-typography](https://github.com/tailwindlabs/tailwindcss-typography)
 
 ## License
 

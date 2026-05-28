@@ -5,11 +5,11 @@
  * Converts multiple .js files to .css and .css.min
  */
 
-import { existsSync, mkdirSync, statSync, writeFileSync } from "fs";
+import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "fs";
 import { basename, resolve } from "path";
 
 // Configuration
-const FILES_TO_CONVERT = ["base.js", "extra.js"];
+const FILES_TO_CONVERT = ["base.js", "theme.js", "extra.js", "forms.js", "kbd.js"];
 const OUTPUT_DIR = "css";
 
 // Options passed to the JS functions (simulating plugin config)
@@ -128,7 +128,7 @@ function getOutputFileNames(inputFile) {
   const baseNameWithoutExt = basename(inputFile, ".js");
   return {
     css: `${baseNameWithoutExt}.css`,
-    min: `${baseNameWithoutExt}.css.min`,
+    min: `${baseNameWithoutExt}.min.css`,
   };
 }
 
@@ -247,6 +247,27 @@ async function convertAllFiles() {
   });
 
   const totalReduction = ((1 - totalMinSize / totalCSSSize) * 100).toFixed(1);
+
+  // Generate unified bundle
+  console.log("\n📦 Generating unified bundle...");
+  const bundleCSSPath = resolve(OUTPUT_DIR, "clampography.css");
+  const bundleMinPath = resolve(OUTPUT_DIR, "clampography.min.css");
+  
+  let combinedCSS = "/**\n * Clampography CSS Bundle\n * Contains: " + FILES_TO_CONVERT.join(", ") + "\n */\n\n";
+  let combinedMinCSS = "";
+  
+  for (const file of FILES_TO_CONVERT) {
+    const names = getOutputFileNames(file);
+    combinedCSS += `/* --- ${file} --- */\n`;
+    combinedCSS += readFileSync(resolve(OUTPUT_DIR, names.css), "utf-8") + "\n";
+    combinedMinCSS += readFileSync(resolve(OUTPUT_DIR, names.min), "utf-8");
+  }
+  
+  writeFileSync(bundleCSSPath, combinedCSS, "utf-8");
+  writeFileSync(bundleMinPath, combinedMinCSS, "utf-8");
+
+  console.log(`✅ Created clampography.css (${(statSync(bundleCSSPath).size / 1024).toFixed(2)} KB)`);
+  console.log(`✅ Created clampography.min.css (${(statSync(bundleMinPath).size / 1024).toFixed(2)} KB)`);
 
   console.log("\n" + "-".repeat(60));
   console.log(`📊 Total CSS size: ${(totalCSSSize / 1024).toFixed(2)} KB`);

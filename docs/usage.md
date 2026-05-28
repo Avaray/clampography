@@ -6,16 +6,79 @@ Complete guide from basic setup to advanced theming scenarios.
 
 ## Table of Contents
 
+- [Installation](#installation)
 - [Basic Usage](#basic-usage)
 - [Configuration Options](#configuration-options)
 - [Built-in Themes](#built-in-themes)
 - [Custom Themes](#custom-themes)
 - [Scoped Themes (Custom Root)](#scoped-themes-custom-root)
 - [Advanced Scenarios](#advanced-scenarios)
+- [Form Styles](#form-styles)
 - [Tailwind Utilities](#tailwind-utilities)
 - [Color Formats](#color-formats)
 - [Opacity Modifiers](#opacity-modifiers)
 - [Troubleshooting](#troubleshooting)
+
+---
+
+## Installation
+
+### Via Package Manager (Tailwind Plugin)
+
+```bash
+# Install with NPM
+npm install clampography
+
+# Install with PNPM
+pnpm add clampography
+
+# Install with Bun
+bun install clampography
+
+# Install with Deno
+deno install npm:clampography
+```
+
+### Via CDN (Vanilla CSS)
+
+If you aren't using Tailwind CSS, you can drop the pre-built stylesheet into your HTML to get all base typography, extra styles, forms, and keyboard key styling instantly.
+
+This approach gives you production-ready, fluid typography without the need for Node.js, Bun, or any build tools.
+
+#### Option 1: All-in-One (Recommended)
+
+This includes `base`, `extra`, `forms`, and `kbd` in a single file.
+
+```html
+<link rel="stylesheet" href="https://unpkg.com/clampography/css/clampography.min.css" />
+<!-- or -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/clampography/css/clampography.min.css" />
+```
+
+#### Option 2: Modular
+
+If you only want specific modules, you can load them individually. Note that `base.min.css` is required for the fluid typography to work.
+
+```html
+<!-- Required: Fluid typography, spacing, structural base -->
+<link rel="stylesheet" href="https://unpkg.com/clampography/css/base.min.css" />
+
+<!-- Required for Colors: Injects default light/dark themes (needed by extra & forms) -->
+<link rel="stylesheet" href="https://unpkg.com/clampography/css/theme.min.css" />
+
+<!-- Optional additions -->
+<link rel="stylesheet" href="https://unpkg.com/clampography/css/extra.min.css" />
+<link rel="stylesheet" href="https://unpkg.com/clampography/css/forms.min.css" />
+<link rel="stylesheet" href="https://unpkg.com/clampography/css/kbd.min.css" />
+```
+
+#### Version Pinning
+
+In production, it's highly recommended to pin the version to avoid unexpected breaking changes:
+
+```html
+<link rel="stylesheet" href="https://unpkg.com/clampography@2.0.0/css/clampography.min.css" />
+```
 
 ---
 
@@ -125,10 +188,11 @@ Add themed, ready-to-use form elements.
 **Result:**
 
 - ✅ All base and extra styles
-- ✅ Styled inputs, textareas, and selects (with focus ring)
+- ✅ Styled inputs, textareas, and selects (with readonly and user-invalid states)
 - ✅ Styled buttons (default and primary variant)
-- ✅ Checkbox, radio, range, color picker with `accent-color`
+- ✅ Checkbox, radio, range, color picker with `accent-color` and custom focus rings
 - ✅ Themed fieldset, legend, label
+- ✅ WebKit specific resets for search and number inputs
 
 **Use case:** When you want a complete, ready-to-use design system including forms.
 
@@ -921,6 +985,187 @@ HTML:
 
 ---
 
+## Form Styles
+
+Enable with `forms: true` in your plugin configuration. All form elements are
+themed using `--clampography-*` CSS variables, so they automatically adapt to
+any active theme — both built-in and custom.
+
+```css
+@plugin "clampography" {
+  themes: all;
+  forms: true;
+}
+```
+
+### Buttons
+
+Default button style inherits `surface` colors and adds a `border`. A `.primary`
+class (or `[type='submit']`) switches to the primary brand color.
+
+```html
+<!-- Default button -->
+<button>Cancel</button>
+<button type="button">Click me</button>
+
+<!-- Primary button -->
+<button type="submit">Submit</button>
+<button class="primary">Save</button>
+```
+
+**States:**
+- `:hover` — border transitions to `--clampography-primary`
+- `.primary` / `[type='submit']` — background becomes `--clampography-primary`
+- `.primary:hover` — slight `brightness(1.1)` filter lift
+
+---
+
+### Text Inputs, Textarea, Select
+
+All text-accepting controls use `100%` width, padded using `--spacing-*`
+variables, and share the same border + focus ring treatment.
+
+```html
+<input type="text" placeholder="Enter value" />
+<input type="email" placeholder="email@example.com" />
+<textarea rows="4" placeholder="Write something..."></textarea>
+<select>
+  <option>Option A</option>
+  <option>Option B</option>
+</select>
+```
+
+**States:**
+
+| State | Effect |
+|---|---|
+| `:focus` | Border → `primary`, `box-shadow` glow ring (20% opacity) |
+| `:disabled` | `opacity: 0.5`, `cursor: not-allowed` |
+| `[readonly]` | Semi-transparent `surface` background, `cursor: default` |
+| `:user-invalid` | Border → `error` color, red glow ring on focus |
+| `::placeholder` | `muted` color |
+
+**WebKit resets included:**
+- `[type='search']` — removes native cancel button and decoration
+- `[type='number']` — normalizes inner spin button height
+
+---
+
+### Select (Custom Arrow)
+
+The `<select>` element gets a custom SVG chevron arrow and hides the native
+appearance:
+
+```html
+<select>
+  <option>Choose an option</option>
+</select>
+```
+
+The arrow is hardcoded as a gray SVG (`stroke='%236b7280'`). You may override it
+in your own CSS if you need a themed arrow.
+
+---
+
+### File Input
+
+```html
+<input type="file" />
+```
+
+- Background removed, border removed — only the native file button is visible
+- The `::file-selector-button` pseudo-element is styled to match the default
+  button look (surface color, border, border-radius)
+- `:hover::file-selector-button` — same border-to-primary transition as buttons
+
+---
+
+### Checkbox and Radio
+
+```html
+<input type="checkbox" /> Check me
+<input type="radio" name="opt" /> Option A
+```
+
+- Uses `accent-color: var(--clampography-primary)` for native tick/dot color
+- `1em × 1em` dimensions, `vertical-align: middle`
+- `:focus-visible` — `2px solid primary` outline with `2px` offset (keyboard-safe)
+
+---
+
+### Range Slider
+
+```html
+<input type="range" min="0" max="100" />
+```
+
+- Full width (`100%`)
+- Track and thumb use `accent-color: var(--clampography-primary)`
+
+---
+
+### Color Picker
+
+```html
+<input type="color" />
+```
+
+- `2.5rem × 2.5rem` with `0.125rem` inner padding
+- Themed `border` and `background`, `border-radius: 0.375rem`
+
+---
+
+### Fieldset and Legend
+
+```html
+<fieldset>
+  <legend>Personal Info</legend>
+  <input type="text" placeholder="Name" />
+</fieldset>
+```
+
+- `fieldset` — `surface` background with `border` + rounded corners
+- `legend` — uses `--clampography-heading` color
+
+---
+
+### Label
+
+```html
+<label for="name">Full Name</label>
+<input id="name" type="text" />
+```
+
+- Color set to `--clampography-text`
+
+---
+
+### Output
+
+```html
+<form oninput="result.value = parseInt(a.value) + parseInt(b.value)">
+  <input type="range" id="a" /> +
+  <input type="number" id="b" /> =
+  <output name="result">0</output>
+</form>
+```
+
+- Color: `--clampography-primary`
+- Font weight: `600`
+
+---
+
+### Meter and Progress
+
+```html
+<meter value="0.7">70%</meter>
+<progress value="40" max="100">40%</progress>
+```
+
+- Both use `accent-color: var(--clampography-primary)` and `width: 100%`
+
+---
+
 ## Tailwind Utilities
 
 ### Default (With Prefix)
@@ -1074,14 +1319,14 @@ and RGB colors may not work with opacity modifiers in all cases.
 - Or manually added `data-theme` attribute to an element
 
 ```css
-/* Bad - no default */
+/* Bad - no default specified, page will be unstyled by default */
 @plugin "clampography" {
-  themes: "retro, cyberpunk";
+  themes: "dark";
 }
 
 /* Good - has default */
 @plugin "clampography" {
-  themes: "retro --default, cyberpunk";
+  themes: "dark --default";
 }
 ```
 

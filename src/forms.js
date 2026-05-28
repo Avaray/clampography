@@ -86,6 +86,28 @@ export default (options = {}) => {
       "cursor": "not-allowed",
     },
 
+    [scope(":where(input, textarea, select)[readonly]")]: {
+      "background-color": "color-mix(in oklab, var(--clampography-surface) 50%, transparent)",
+      "cursor": "default",
+    },
+
+    [scope(":where(input, textarea, select):user-invalid")]: {
+      "border-color": "var(--clampography-error)",
+    },
+
+    [scope(":where(input, textarea, select):user-invalid:focus")]: {
+      "box-shadow": "0 0 0 3px color-mix(in oklab, var(--clampography-error) 20%, transparent)",
+    },
+
+    [scope("[type='search']::-webkit-search-cancel-button, [type='search']::-webkit-search-decoration")]: {
+      "-webkit-appearance": "none",
+      "appearance": "none",
+    },
+
+    [scope("[type='number']::-webkit-inner-spin-button, [type='number']::-webkit-outer-spin-button")]: {
+      "height": "auto",
+    },
+
     [scope(":where(input, textarea, select)::placeholder")]: {
       "color": "var(--clampography-muted)",
     },
@@ -136,6 +158,11 @@ export default (options = {}) => {
       "accent-color": "var(--clampography-primary)",
       "vertical-align": "middle",
       "cursor": "pointer",
+    },
+
+    [scope("[type='checkbox']:focus-visible, [type='radio']:focus-visible")]: {
+      "outline": "2px solid var(--clampography-primary)",
+      "outline-offset": "2px",
     },
 
     // ── Range ────────────────────────────────────────────────────────────────

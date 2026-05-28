@@ -21,8 +21,11 @@
     }
   },
   "files": [
-    "src"
+    "src",
+    "css"
   ],
+  "unpkg": "css/clampography.min.css",
+  "jsdelivr": "css/clampography.min.css",
   "homepage": "https://next.dav.one/clampography/",
   "keywords": [
     "alternative",
@@ -55,15 +58,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Avaray/clampography.git"
+    "url": "git+https://github.com/Avaray/clampography.git"
   },
   "scripts": {
     "build": "bun src/convert.js",
-    "test": "bun test",
-    "dev:css": "bunx @tailwindcss/cli -i ./dev/input.css -o ./dev/output.css --watch",
-    "dev:server": "bun run dev/server.js",
-    "dev": "bun run dev/server.js"
+    "test": "bun test"
   },
   "type": "module",
-  "version": "2.0.0-beta.24"
+  "version": "2.0.0-beta.25"
 }
