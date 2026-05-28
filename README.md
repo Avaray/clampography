@@ -183,6 +183,12 @@ Create your own theme with OKLCH colors:
 - Tailwind utilities
 - Troubleshooting
 
+## Inspirations
+
+Two main inspirations behind this project were:
+- **daisyUI** created by [Pouya Saadeghi](https://saadeghi.com/)
+- The official **Typography** plugin for Tailwind CSS: [tailwindcss-typography](https://github.com/tailwindlabs/tailwindcss-typography)
+
 ## License
 
 [MIT](LICENSE)
