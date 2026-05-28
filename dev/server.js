@@ -107,7 +107,7 @@ serve({
         let html = readFileSync(join(DIR, "index.html"), "utf8");
         html = html.replace(
           "const AVAILABLE_THEMES = [];",
-          `const AVAILABLE_THEMES = ${JSON.stringify(themesList)};`
+          `const AVAILABLE_THEMES = ["auto", ...${JSON.stringify(themesList)}];`
         );
         html = html.replace("vX.X.X", `v${pkg.version}`);
         return new Response(html, { headers: { "Content-Type": "text/html" } });

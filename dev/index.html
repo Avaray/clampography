@@ -262,16 +262,16 @@
           </div>
         </div>
         <div style="display:flex;gap:0.3rem;margin-top:0.5rem;">
-          <button @click="copyTheme" style="flex:1;cursor:pointer;padding:0.3rem;font-size:0.75rem;border:1px solid var(--clampography-border,#ccc);border-radius:4px;background:transparent;color:var(--clampography-muted,#888);transition:color 0.2s;">
-            {{ isCopied ? 'Copied!' : 'Copy JSON' }}
+          <button @click="copyTheme" style="flex:1;cursor:pointer;padding:0.3rem;font-size:0.75rem;border:1px solid var(--clampography-border,#ccc);border-radius:4px;background:transparent;color:var(--clampography-text,#333);transition:color 0.2s;">
+            {{ isCopied ? 'Copied JSON!' : 'Copy JSON' }}
           </button>
-          <button @click="downloadTheme" style="flex:1;cursor:pointer;padding:0.3rem;font-size:0.75rem;border:1px solid var(--clampography-border,#ccc);border-radius:4px;background:transparent;color:var(--clampography-muted,#888);transition:color 0.2s;">
-            Download JSON
+          <button @click="copyCss" style="flex:1;cursor:pointer;padding:0.3rem;font-size:0.75rem;border:1px solid var(--clampography-border,#ccc);border-radius:4px;background:transparent;color:var(--clampography-text,#333);transition:color 0.2s;">
+            {{ isCopiedCss ? 'Copied CSS!' : 'Copy CSS' }}
           </button>
         </div>
         <button @click="resetColors"
-          style="width:100%;margin-top:0.5rem;cursor:pointer;padding:0.3rem;font-size:0.75rem;border:1px solid var(--clampography-border,#ccc);border-radius:4px;background:transparent;color:var(--clampography-muted,#888);">
-          Reset to theme
+          style="width:100%;margin-top:0.5rem;cursor:pointer;padding:0.3rem;font-size:0.75rem;border:1px solid var(--clampography-border,#ccc);border-radius:4px;background:var(--clampography-surface,#f0f0f0);color:var(--clampography-text,#333);">
+          Reset to defaults
         </button>
       </div>
     </details>
@@ -627,7 +627,20 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
     <p>Use this form to register a new entry in the <abbr title="Global Feline Authority">GFA</abbr> database.
       Fields marked <strong>*</strong> are required. Data is transmitted via
       <abbr title="HyperText Transfer Protocol Secure">HTTPS</abbr> to a server that does not exist.</p>
-    <form onsubmit="return false;">
+      
+    <!-- Developer toggles for form states -->
+    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; padding: 0.5rem; border: 1px dashed var(--clampography-border); border-radius: 4px; background: var(--clampography-surface);">
+      <label style="font-size: 0.8rem; font-family: monospace; display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
+        <input type="checkbox" id="dev-toggle-readonly" onchange="document.querySelectorAll('#feline-form input, #feline-form select, #feline-form textarea').forEach(el => el.readOnly = this.checked)"> 
+        Force <code>readonly</code>
+      </label>
+      <label style="font-size: 0.8rem; font-family: monospace; display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
+        <input type="checkbox" id="dev-toggle-invalid" onchange="document.querySelectorAll('#feline-form input, #feline-form select, #feline-form textarea').forEach(el => this.checked ? el.setCustomValidity('Error') : el.setCustomValidity(''))"> 
+        Force <code>:user-invalid</code>
+      </label>
+    </div>
+
+    <form id="feline-form" onsubmit="return false;">
       <div
         style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); margin-bottom: var(--spacing-md);">
         <div>
@@ -1044,9 +1057,13 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
         // Theme
         watch([currentThemeName, themes], ([name, enabled]) => {
           COLOR_VARS.forEach(({ v }) => document.body.style.removeProperty(v));
-          if (enabled && name) {
+          if (enabled && name && name !== 'auto') {
             document.body.setAttribute('data-theme', name);
             localStorage.setItem('clampography-dev-theme', name);
+            setTimeout(syncColors, 80);
+          } else if (enabled && name === 'auto') {
+            document.body.removeAttribute('data-theme');
+            localStorage.setItem('clampography-dev-theme', 'auto');
             setTimeout(syncColors, 80);
           } else if (!enabled) {
             document.body.removeAttribute('data-theme');
@@ -1071,6 +1088,17 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
           navigator.clipboard.writeText(generateThemeJson()).then(() => {
             isCopied.value = true;
             setTimeout(() => isCopied.value = false, 2000);
+          });
+        }
+
+        const isCopiedCss = ref(false);
+        function copyCss() {
+          let css = ":root {\n";
+          COLOR_VARS.forEach(({ id, v }) => { css += `  ${v}: ${hexToOklch(colors[id])};\n`; });
+          css += "}";
+          navigator.clipboard.writeText(css).then(() => {
+            isCopiedCss.value = true;
+            setTimeout(() => isCopiedCss.value = false, 2000);
           });
         }
 
@@ -1099,9 +1127,9 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
         });
 
         return { FONTS, COLOR_VARS, extra, forms, kbd, themes,
-          currentFont, currentThemeName, colors, isCopied,
+          currentFont, currentThemeName, colors, isCopied, isCopiedCss,
           prevFont, nextFont, prevTheme, nextTheme, resetColors, updateVar, hexToOklch,
-          copyTheme, downloadTheme };
+          copyTheme, copyCss, downloadTheme };
       }
     }).mount('#pg-sidebar');
   }
