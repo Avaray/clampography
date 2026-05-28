@@ -18,57 +18,67 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v6
 
-      # 2. Setup Bun (Lightning fast package manager)
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
-      # 3. Setup Node.js (Specifically for stable NPM publishing)
+      # 2. Setup Node.js (Needed for NPM checks and publishing)
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
 
-      # 4. Install dependencies using Bun
-      - name: Install Dependencies
-        run: bun install
-
-      # 5. Run tests - if any fail, the release is aborted
-      - name: Run Test Suite
-        run: bun test
-
-      # 6. Build the CSS files
-      - name: Build CSS
-        run: bun run build
-
-      # 7. Publish to NPM (only if version changed)
-      # Compares package.json version with the latest version on NPM.
-      # Skips gracefully if the version already exists, instead of failing.
-      # For prerelease versions (e.g. 2.0.0-beta.1, 2.0.0-rc.0), the tag is
-      # automatically extracted from the version string and passed via --tag.
-      - name: Publish to NPM
+      # 3. Early check if version already exists on NPM
+      - name: Check if Version Exists
+        id: version_check
         run: |
           LOCAL_VERSION=$(node -p "require('./package.json').version")
           EXISTS=$(npm view clampography@$LOCAL_VERSION version 2>/dev/null || echo "")
-          if [ -z "$EXISTS" ]; then
-            echo "Publishing version $LOCAL_VERSION..."
-            # Extract prerelease tag using bash string manipulation (no dependencies needed)
-            # e.g. "2.0.0-beta.23" -> "beta", "2.0.0-rc.0" -> "rc", "2.0.0" -> ""
-            PRERELEASE=""
-            if [[ "$LOCAL_VERSION" == *"-"* ]]; then
-              PRERELEASE="${LOCAL_VERSION#*-}"   # strip everything up to and including the first "-"
-              PRERELEASE="${PRERELEASE%%.*}"     # strip from the first "." onwards
-            fi
-            if [ -n "$PRERELEASE" ]; then
-              echo "Prerelease detected, using --tag $PRERELEASE"
-              npm publish --provenance --access public --tag "$PRERELEASE"
-            else
-              npm publish --provenance --access public
-            fi
-          else
+          if [ -n "$EXISTS" ]; then
             echo "Version $LOCAL_VERSION is already published. Skipping."
+            echo "should_publish=false" >> $GITHUB_OUTPUT
+          else
+            echo "Version $LOCAL_VERSION is new. Proceeding..."
+            echo "should_publish=true" >> $GITHUB_OUTPUT
+          fi
+
+      # 4. Setup Bun (Lightning fast package manager)
+      - name: Setup Bun
+        if: steps.version_check.outputs.should_publish == 'true'
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      # 5. Install dependencies using Bun
+      - name: Install Dependencies
+        if: steps.version_check.outputs.should_publish == 'true'
+        run: bun install
+
+      # 6. Run tests - if any fail, the release is aborted
+      - name: Run Test Suite
+        if: steps.version_check.outputs.should_publish == 'true'
+        run: bun test
+
+      # 7. Build the CSS files
+      - name: Build CSS
+        if: steps.version_check.outputs.should_publish == 'true'
+        run: bun run build
+
+      # 8. Publish to NPM
+      - name: Publish to NPM
+        if: steps.version_check.outputs.should_publish == 'true'
+        run: |
+          LOCAL_VERSION=$(node -p "require('./package.json').version")
+          echo "Publishing version $LOCAL_VERSION..."
+          # Extract prerelease tag using bash string manipulation (no dependencies needed)
+          # e.g. "2.0.0-beta.23" -> "beta", "2.0.0-rc.0" -> "rc", "2.0.0" -> ""
+          PRERELEASE=""
+          if [[ "$LOCAL_VERSION" == *"-"* ]]; then
+            PRERELEASE="${LOCAL_VERSION#*-}"   # strip everything up to and including the first "-"
+            PRERELEASE="${PRERELEASE%%.*}"     # strip from the first "." onwards
+          fi
+          if [ -n "$PRERELEASE" ]; then
+            echo "Prerelease detected, using --tag $PRERELEASE"
+            npm publish --provenance --access public --tag "$PRERELEASE"
+          else
+            npm publish --provenance --access public
           fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
