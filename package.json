@@ -58,7 +58,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Avaray/clampography.git"
+    "url": "git+https://github.com/Avaray/clampography.git"
   },
   "scripts": {
     "build": "bun src/convert.js",
