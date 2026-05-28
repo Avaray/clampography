@@ -150,17 +150,15 @@ Create your own theme with OKLCH colors:
 
 ## Learn More
 
-📖 **[Complete Usage Guide](docs/usage.md)** - Detailed documentation for Tailwind CSS plugin:
+📖 **[Complete Usage Guide](docs/usage.md)** - Detailed documentation covering:
 
-- All configuration options
+- Installation (NPM & CDN)
+- Basic configuration options
 - Built-in themes
 - Creating custom themes
 - Scoped themes for widgets
-- Advanced scenarios
-- Tailwind utilities
+- Form styles & Tailwind utilities
 - Troubleshooting
-
-🌍 **[CDN Usage Guide](docs/cdn.md)** - How to use Clampography as pure Vanilla CSS without Tailwind.
 
 ## Inspirations
 
