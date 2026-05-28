@@ -41,7 +41,7 @@ To generate the `.css` and minified `.css.min` files locally:
 bun run build
 ```
 
-This runs `src/convert.js`, which parses `base.js` and `extra.js` into standard CSS files.
+This runs `src/convert.js`, which processes all style modules (`base.js`, `extra.js`, `forms.js`, `kbd.js`) into standard CSS files in the `css/` directory.
 
 ## Testing
 
@@ -61,7 +61,12 @@ bun test --watch
 
 ## Making Changes
 
-1. **JS Source Files:** Most style definitions live in `src/base.js`, `src/extra.js`, and `src/themes.js`. 
+1. **JS Source Files:** Style definitions are split across `src/base.js`, `src/extra.js`, `src/forms.js`, `src/kbd.js`, and `src/themes.js`.
+   - `base.js` — fluid typography, spacing, headings, lists, code blocks
+   - `extra.js` — opinionated decorations (borders, blockquote, table zebra-stripes, links)
+   - `forms.js` — all HTML form elements (inputs, buttons, select, checkbox, range, etc.)
+   - `kbd.js` — 3D isometric keyboard key styling for `<kbd>` elements
+   - `themes.js` — built-in light/dark color palettes
 2. **Themes:** Ensure any new color references use the `oklch` color space format for maximum compatibility and opacity modifier support.
 3. **Docs:** If you add a new feature, document it in `docs/usage.md`.
 4. **Commits:** Use Conventional Commits (`feat:`, `fix:`, `chore:`, etc.).
