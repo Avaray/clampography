@@ -21,8 +21,11 @@
     }
   },
   "files": [
-    "src"
+    "src",
+    "css"
   ],
+  "unpkg": "css/clampography.min.css",
+  "jsdelivr": "css/clampography.min.css",
   "homepage": "https://next.dav.one/clampography/",
   "keywords": [
     "alternative",

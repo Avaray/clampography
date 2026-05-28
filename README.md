@@ -28,8 +28,7 @@ delivers production-ready typography that responds to
 [viewport](https://en.wikipedia.org/wiki/Viewport) changes automatically, while
 leaving all aesthetic choices to you. Add themes only if you need them.
 
-Visit the temporary [demo page](https://next.dav.one/clampography/) to see how
-it looks.
+
 
 ## Requirements
 
@@ -41,6 +40,8 @@ it looks.
   [SvelteKit](https://svelte.dev/docs/kit/introduction)
 
 ## Installation
+
+### Via Package Manager (Tailwind Plugin)
 
 ```bash
 # Install with NPM
@@ -54,6 +55,16 @@ bun install clampography
 
 # Install with Deno
 deno install npm:clampography
+```
+
+### Via CDN (Vanilla CSS)
+
+If you aren't using Tailwind CSS, you can drop the pre-built stylesheet into your HTML to get all base typography, extra styles, forms, and keyboard key styling instantly.
+
+```html
+<link rel="stylesheet" href="https://unpkg.com/clampography/css/clampography.min.css" />
+<!-- or -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/clampography/css/clampography.min.css" />
 ```
 
 ## Quick Start
