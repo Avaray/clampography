@@ -928,6 +928,7 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
 
     // — Static data —
     const AVAILABLE_THEMES = []; // replaced by server.js
+    const THEME_DATA = {};       // replaced by server.js
 
     const FONTS = [
       { label: 'System',        stack: 'system-ui, sans-serif' },
@@ -1093,9 +1094,24 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
         const prevTheme = () => { if (AVAILABLE_THEMES.length) currentThemeIndex.value = (currentThemeIndex.value - 1 + AVAILABLE_THEMES.length) % AVAILABLE_THEMES.length; };
         const nextTheme = () => { if (AVAILABLE_THEMES.length) currentThemeIndex.value = (currentThemeIndex.value + 1) % AVAILABLE_THEMES.length; };
 
-        function syncColors() { COLOR_VARS.forEach(({ id, v }) => { colors[id] = varToHex(v); }); }
+        function syncColors() {
+          const name = currentThemeName.value;
+          const themeObj = THEME_DATA[name]; // direct lookup — no CSS parsing needed
 
-        // Poll with rAF until CSS variables are actually available (non-empty)
+          COLOR_VARS.forEach(({ id, v }) => {
+            if (themeObj && themeObj[v]) {
+              // Parse the known OKLCH value from the JS theme data — always accurate
+              const raw = themeObj[v].trim();
+              const match = raw.match(/oklch\(\s*([\d.]+)%?\s+([\d.e-]+)\s+([\d.e-]+)\s*\)/);
+              colors[id] = match ? oklchToHex(match[1], match[2], match[3]) : '#888888';
+            } else {
+              // 'auto' or unknown theme: fall back to reading from computed styles
+              colors[id] = varToHex(v);
+            }
+          });
+        }
+
+        // Fallback: poll until CSS is loaded (used only for 'auto'/system theme)
         function syncColorsWhenReady(attemptsLeft = 40) {
           const test = getComputedStyle(document.body)
             .getPropertyValue('--clampography-background').trim();

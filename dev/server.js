@@ -1,7 +1,7 @@
 import { serve } from "bun";
 import { readFileSync, existsSync, writeFileSync, mkdirSync } from "fs";
 import { join } from "path";
-import { themesList } from "../src/themes.js";
+import { themes, themesList } from "../src/themes.js";
 
 const PORT = 3000;
 const DIR = import.meta.dir;
@@ -108,6 +108,10 @@ serve({
         html = html.replace(
           "const AVAILABLE_THEMES = [];",
           `const AVAILABLE_THEMES = ["auto", ...${JSON.stringify(themesList)}];`
+        );
+        html = html.replace(
+          "const THEME_DATA = {};",
+          `const THEME_DATA = ${JSON.stringify(themes)};`
         );
         html = html.replace("vX.X.X", `v${pkg.version}`);
         return new Response(html, { headers: { "Content-Type": "text/html" } });
