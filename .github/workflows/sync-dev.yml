@@ -1,6 +1,5 @@
 name: Sync Dev Branch
 
-# Uruchamia się automatycznie po każdym pushu (lub merge'u) do gałęzi v2
 on:
   push:
     branches:
@@ -11,13 +10,13 @@ jobs:
     name: Merge v2 into dev
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Wymagane, aby bot mógł wypchnąć zmiany
+      contents: write
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0 # Pobiera całą historię dla wszystkich gałęzi
-          ref: dev       # Od razu pobiera gałąź dev
+          fetch-depth: 0
+          ref: dev
 
       - name: Configure Git
         run: |
