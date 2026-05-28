@@ -20,8 +20,6 @@ declare module "clampography/themes" {
   export interface Themes {
     light: ThemeColors;
     dark: ThemeColors;
-    retro: ThemeColors;
-    cyberpunk: ThemeColors;
   }
 
   export const themes: Themes;
