@@ -968,7 +968,13 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
 
     // Convert OKLCH to HEX precisely (reverse engineering)
     function oklchToHex(l, c, h) {
-      l = parseFloat(l) / 100;
+      let lVal = parseFloat(l);
+      if (typeof l === 'string' && l.includes('%')) {
+        lVal /= 100;
+      } else if (lVal > 1.0) {
+        lVal /= 100;
+      }
+      l = lVal;
       c = parseFloat(c);
       h = parseFloat(h) * Math.PI / 180;
 
@@ -1005,7 +1011,7 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
       if (!raw) return '#888888'; // CSS not loaded yet — caller should retry
 
       if (raw.startsWith('oklch(')) {
-        const match = raw.match(/oklch\(\s*([\d.]+)%?\s+([\d.e-]+)\s+([\d.e-]+)\s*\)/);
+        const match = raw.match(/oklch\(\s*([\d.]+%?)\s+([\d.e-]+)\s+([\d.e-]+)/);
         if (match) return oklchToHex(match[1], match[2], match[3]);
       }
 
@@ -1102,7 +1108,7 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
             if (themeObj && themeObj[v]) {
               // Parse the known OKLCH value from the JS theme data — always accurate
               const raw = themeObj[v].trim();
-              const match = raw.match(/oklch\(\s*([\d.]+)%?\s+([\d.e-]+)\s+([\d.e-]+)\s*\)/);
+              const match = raw.match(/oklch\(\s*([\d.]+%?)\s+([\d.e-]+)\s+([\d.e-]+)/);
               colors[id] = match ? oklchToHex(match[1], match[2], match[3]) : '#888888';
             } else {
               // 'auto' or unknown theme: fall back to reading from computed styles
