@@ -125,10 +125,11 @@ Add themed, ready-to-use form elements.
 **Result:**
 
 - ✅ All base and extra styles
-- ✅ Styled inputs, textareas, and selects (with focus ring)
+- ✅ Styled inputs, textareas, and selects (with readonly and user-invalid states)
 - ✅ Styled buttons (default and primary variant)
-- ✅ Checkbox, radio, range, color picker with `accent-color`
+- ✅ Checkbox, radio, range, color picker with `accent-color` and custom focus rings
 - ✅ Themed fieldset, legend, label
+- ✅ WebKit specific resets for search and number inputs
 
 **Use case:** When you want a complete, ready-to-use design system including forms.
 
@@ -1074,14 +1075,14 @@ and RGB colors may not work with opacity modifiers in all cases.
 - Or manually added `data-theme` attribute to an element
 
 ```css
-/* Bad - no default */
+/* Bad - no default specified, page will be unstyled by default */
 @plugin "clampography" {
-  themes: "retro, cyberpunk";
+  themes: "dark";
 }
 
 /* Good - has default */
 @plugin "clampography" {
-  themes: "retro --default, cyberpunk";
+  themes: "dark --default";
 }
 ```
 
