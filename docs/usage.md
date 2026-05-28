@@ -63,6 +63,9 @@ If you only want specific modules, you can load them individually. Note that `ba
 <!-- Required: Fluid typography, spacing, structural base -->
 <link rel="stylesheet" href="https://unpkg.com/clampography/css/base.min.css" />
 
+<!-- Required for Colors: Injects default light/dark themes (needed by extra & forms) -->
+<link rel="stylesheet" href="https://unpkg.com/clampography/css/theme.min.css" />
+
 <!-- Optional additions -->
 <link rel="stylesheet" href="https://unpkg.com/clampography/css/extra.min.css" />
 <link rel="stylesheet" href="https://unpkg.com/clampography/css/forms.min.css" />

@@ -9,7 +9,7 @@ import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "fs
 import { basename, resolve } from "path";
 
 // Configuration
-const FILES_TO_CONVERT = ["base.js", "extra.js", "forms.js", "kbd.js"];
+const FILES_TO_CONVERT = ["base.js", "theme.js", "extra.js", "forms.js", "kbd.js"];
 const OUTPUT_DIR = "css";
 
 // Options passed to the JS functions (simulating plugin config)
