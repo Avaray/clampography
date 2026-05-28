@@ -998,8 +998,9 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
     }
 
     function varToHex(cssVar) {
-      // Read directly from :root (documentElement) — that's where the vars are defined
-      const raw = getComputedStyle(document.documentElement).getPropertyValue(cssVar).trim();
+      // Read from body — data-theme is on body, so vars cascade there
+      // (documentElement only has :root defaults, ignoring active data-theme)
+      const raw = getComputedStyle(document.body).getPropertyValue(cssVar).trim();
       if (!raw) return '#888888'; // CSS not loaded yet — caller should retry
 
       if (raw.startsWith('oklch(')) {
@@ -1096,7 +1097,7 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
 
         // Poll with rAF until CSS variables are actually available (non-empty)
         function syncColorsWhenReady(attemptsLeft = 40) {
-          const test = getComputedStyle(document.documentElement)
+          const test = getComputedStyle(document.body)
             .getPropertyValue('--clampography-background').trim();
           if (test) {
             syncColors();
