@@ -202,6 +202,7 @@ export default (options = {}) => {
 
     [scope("abbr[title]")]: {
       "text-decoration": "underline dotted",
+      "text-underline-offset": "4px",
       cursor: "help",
     },
 
