@@ -998,25 +998,26 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
     }
 
     function varToHex(cssVar) {
-      // First try to read the exact variable value and parse it if it's oklch
-      const raw = getComputedStyle(document.body).getPropertyValue(cssVar).trim();
+      // Read directly from :root (documentElement) — that's where the vars are defined
+      const raw = getComputedStyle(document.documentElement).getPropertyValue(cssVar).trim();
+      if (!raw) return '#888888'; // CSS not loaded yet — caller should retry
+
       if (raw.startsWith('oklch(')) {
-        const match = raw.match(/oklch\(\s*([\d.]+)%\s+([\d.]+)\s+([\d.]+)\s*\)/);
+        const match = raw.match(/oklch\(\s*([\d.]+)%?\s+([\d.e-]+)\s+([\d.e-]+)\s*\)/);
         if (match) return oklchToHex(match[1], match[2], match[3]);
       }
 
-      // Fallback: render in browser using canvas
+      // Fallback: resolve through the browser using canvas (for non-oklch values)
       const el = Object.assign(document.createElement('div'), {
         style: 'position:absolute;visibility:hidden;'
       });
-      el.style.color = `var(${cssVar})`;
+      el.style.color = raw; // use the raw value directly, not var()
       document.body.appendChild(el);
       const comp = getComputedStyle(el).color;
       document.body.removeChild(el);
 
-      // Bulletproof conversion: Render color to a 1x1 canvas to extract exact sRGB values
       canvasCtx.clearRect(0, 0, 1, 1);
-      canvasCtx.fillStyle = '#888888'; // fallback
+      canvasCtx.fillStyle = '#888888';
       if (comp) canvasCtx.fillStyle = comp;
       canvasCtx.fillRect(0, 0, 1, 1);
 
@@ -1092,9 +1093,21 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
         const nextTheme = () => { if (AVAILABLE_THEMES.length) currentThemeIndex.value = (currentThemeIndex.value + 1) % AVAILABLE_THEMES.length; };
 
         function syncColors() { COLOR_VARS.forEach(({ id, v }) => { colors[id] = varToHex(v); }); }
+
+        // Poll with rAF until CSS variables are actually available (non-empty)
+        function syncColorsWhenReady(attemptsLeft = 40) {
+          const test = getComputedStyle(document.documentElement)
+            .getPropertyValue('--clampography-background').trim();
+          if (test) {
+            syncColors();
+          } else if (attemptsLeft > 0) {
+            requestAnimationFrame(() => syncColorsWhenReady(attemptsLeft - 1));
+          }
+        }
+
         function resetColors() {
           COLOR_VARS.forEach(({ v }) => document.body.style.removeProperty(v));
-          setTimeout(syncColors, 60);
+          requestAnimationFrame(syncColors);
         }
 
         // ─ Side-effect watches ─
@@ -1106,8 +1119,8 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
           localStorage.setItem('clampography-dev-kbd',              kbd.value);
           localStorage.setItem('clampography-dev-themes-enabled',   themes.value);
           
-          // Sync colors dynamically when the stylesheet actually finishes loading
-          cssLink.onload = () => setTimeout(syncColors, 50);
+          // Wait for the new stylesheet to actually apply its CSS variables
+          cssLink.onload = () => requestAnimationFrame(syncColors);
         }, { immediate: true });
 
         // Font
@@ -1119,15 +1132,14 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
           if (enabled && name && name !== 'auto') {
             document.body.setAttribute('data-theme', name);
             localStorage.setItem('clampography-dev-theme', name);
-            setTimeout(syncColors, 80);
           } else if (enabled && name === 'auto') {
             document.body.removeAttribute('data-theme');
             localStorage.setItem('clampography-dev-theme', 'auto');
-            setTimeout(syncColors, 80);
           } else if (!enabled) {
             document.body.removeAttribute('data-theme');
-            setTimeout(syncColors, 80);
           }
+          // After any theme change, wait for a paint cycle then sync
+          requestAnimationFrame(() => requestAnimationFrame(syncColors));
         }, { immediate: true });
 
         function updateVar(cssVar, val) {
@@ -1176,7 +1188,9 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
 
         // Keyboard shortcuts
         onMounted(() => {
-          setTimeout(syncColors, 350);
+          // On mount: poll until CSS is ready (handles cold cache and cached loads alike)
+          syncColorsWhenReady();
+
           document.addEventListener('keydown', e => {
             if (e.ctrlKey) {
               if (e.key === 'ArrowLeft')  { e.preventDefault(); prevTheme(); }
