@@ -8,24 +8,21 @@ on:
       - v2
 
 jobs:
-  publish:
+  check-version:
+    name: Check Version
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write # Required for NPM Provenance attestation
+    outputs:
+      should_publish: ${{ steps.version_check.outputs.should_publish }}
     steps:
-      # 1. Checkout the repository code
       - name: Checkout Repository
         uses: actions/checkout@v6
 
-      # 2. Setup Node.js (Needed for NPM checks and publishing)
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
 
-      # 3. Early check if version already exists on NPM
       - name: Check if Version Exists
         id: version_check
         run: |
@@ -39,40 +36,47 @@ jobs:
             echo "should_publish=true" >> $GITHUB_OUTPUT
           fi
 
-      # 4. Setup Bun (Lightning fast package manager)
+  publish:
+    name: Build and Publish
+    needs: check-version
+    # This 'if' condition is what makes GitHub UI show this job as "Skipped" (szary status)
+    if: needs.check-version.outputs.should_publish == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # Required for NPM Provenance attestation
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+
       - name: Setup Bun
-        if: steps.version_check.outputs.should_publish == 'true'
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
-      # 5. Install dependencies using Bun
       - name: Install Dependencies
-        if: steps.version_check.outputs.should_publish == 'true'
         run: bun install
 
-      # 6. Run tests - if any fail, the release is aborted
       - name: Run Test Suite
-        if: steps.version_check.outputs.should_publish == 'true'
         run: bun test
 
-      # 7. Build the CSS files
       - name: Build CSS
-        if: steps.version_check.outputs.should_publish == 'true'
         run: bun run build
 
-      # 8. Publish to NPM
       - name: Publish to NPM
-        if: steps.version_check.outputs.should_publish == 'true'
         run: |
           LOCAL_VERSION=$(node -p "require('./package.json').version")
           echo "Publishing version $LOCAL_VERSION..."
-          # Extract prerelease tag using bash string manipulation (no dependencies needed)
-          # e.g. "2.0.0-beta.23" -> "beta", "2.0.0-rc.0" -> "rc", "2.0.0" -> ""
           PRERELEASE=""
           if [[ "$LOCAL_VERSION" == *"-"* ]]; then
-            PRERELEASE="${LOCAL_VERSION#*-}"   # strip everything up to and including the first "-"
-            PRERELEASE="${PRERELEASE%%.*}"     # strip from the first "." onwards
+            PRERELEASE="${LOCAL_VERSION#*-}"
+            PRERELEASE="${PRERELEASE%%.*}"
           fi
           if [ -n "$PRERELEASE" ]; then
             echo "Prerelease detected, using --tag $PRERELEASE"
