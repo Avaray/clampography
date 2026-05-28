@@ -19,5 +19,3 @@ All notable changes to this project will be documented in this file.
 - **Scoped Theming**: Added the `root` configuration option to scope theme variables to specific selectors (e.g., `#app` instead of `:root`).
 - **Utility Prefixing**: Introduced the `prefix` option to namespace generated utility classes (e.g., `bg-clampography-primary`), preventing collisions with other tailwind utilities.
 - **Theme Support**: Includes robust support for configuring themes (defaulting to light and dark modes) alongside options to inject custom OKLCH-based palettes via `@plugin "clampography/theme"`.
-
-*(Note: Internal changes regarding the development playground and the full list of extended themes are omitted from this summary).*
