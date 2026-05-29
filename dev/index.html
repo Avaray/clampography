@@ -692,7 +692,7 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
         <div>
           <label for="fluffiness">Fluffiness Level: <output for="fluffiness" id="fluff-out">72</output>%</label>
           <input type="range" id="fluffiness" min="0" max="100" value="72"
-            oninput="document.getElementById('fluff-out').value = this.value">
+            oninput="document.getElementById('fluff-out').value = this.value; document.getElementById('progress-demo').value = this.value; document.getElementById('progress-demo').textContent = this.value + '%'; document.getElementById('meter-demo').value = this.value; document.getElementById('meter-demo').textContent = this.value + '%'">
         </div>
         <div>
           <label for="fur-color">Primary Fur Color</label>
@@ -701,11 +701,11 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
       </div>
       <div style="margin-bottom: var(--spacing-md);">
         <label for="progress-demo">Registration Progress</label>
-        <progress id="progress-demo" value="65" max="100">65%</progress>
+        <progress id="progress-demo" value="72" max="100">72%</progress>
       </div>
       <div style="margin-bottom: var(--spacing-md);">
         <label for="meter-demo">Cat Energy Level</label>
-        <meter id="meter-demo" min="0" max="10" value="8" optimum="10" high="7" low="3">8/10</meter>
+        <meter id="meter-demo" min="0" max="100" value="72" optimum="100" high="70" low="30">72%</meter>
       </div>
       <fieldset>
         <legend>Notification Preferences</legend>
