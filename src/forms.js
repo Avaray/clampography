@@ -207,8 +207,32 @@ export default (options = {}) => {
 
     // ── Progress ──────────────────────────────────────────────────────────────
     [scope("progress")]: {
-      "accent-color": "var(--clampography-primary)",
+      "-webkit-appearance": "none",
+      "-moz-appearance": "none",
+      "appearance": "none",
       "width": "100%",
+      "background": "color-mix(in oklab, var(--clampography-text) 15%, transparent)",
+      "border-radius": "0.25rem",
+      "height": "0.75rem",
+      "border": "none",
+    },
+
+    // WebKit progress track
+    [scope("progress::-webkit-progress-bar")]: {
+      "background": "color-mix(in oklab, var(--clampography-text) 15%, transparent)",
+      "border-radius": "0.25rem",
+    },
+
+    // WebKit progress value
+    [scope("progress::-webkit-progress-value")]: {
+      "background": "var(--clampography-success)",
+      "border-radius": "0.25rem",
+    },
+
+    // Firefox progress value
+    [scope("progress::-moz-progress-bar")]: {
+      "background": "var(--clampography-success)",
+      "border-radius": "0.25rem",
     },
 
     // ── Meter ─────────────────────────────────────────────────────────────────
