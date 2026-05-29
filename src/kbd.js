@@ -44,7 +44,7 @@ export default (options = {}) => {
     [scope("kbd")]: {
       "display": "inline-block",
       "padding": "0.1em 0.45em",
-      "min-width": "1.7em",
+      "min-width": "2.1em",
       "text-align": "center",
       "font-size": "0.8em",
       "font-weight": "700",
