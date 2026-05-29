@@ -268,6 +268,7 @@ export default (options = {}) => {
       "border": "none",
       "border-radius": "0",
       "box-shadow": "none",
+      "height": "100%",
     },
 
     // 1. Optimum (Success)
@@ -275,6 +276,7 @@ export default (options = {}) => {
       "background": "var(--clampography-success)",
       "border-radius": "0",
       "box-shadow": "none",
+      "height": "100%",
     },
     [scope("meter:-moz-meter-optimum::-moz-meter-bar")]: {
       "background": "var(--clampography-success)",
@@ -286,6 +288,7 @@ export default (options = {}) => {
       "background": "var(--clampography-warning)",
       "border-radius": "0",
       "box-shadow": "none",
+      "height": "100%",
     },
     [scope("meter:-moz-meter-sub-optimum::-moz-meter-bar")]: {
       "background": "var(--clampography-warning)",
@@ -297,6 +300,7 @@ export default (options = {}) => {
       "background": "var(--clampography-error)",
       "border-radius": "0",
       "box-shadow": "none",
+      "height": "100%",
     },
     [scope("meter:-moz-meter-sub-sub-optimum::-moz-meter-bar")]: {
       "background": "var(--clampography-error)",
