@@ -211,28 +211,28 @@ export default (options = {}) => {
       "-moz-appearance": "none",
       "appearance": "none",
       "width": "100%",
+      "height": "0.5em",
       "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
-      "border-radius": "0.25rem",
-      "height": "0.75rem",
+      "border-radius": "9999px",
       "border": "none",
     },
 
     // WebKit progress track
     [scope("progress::-webkit-progress-bar")]: {
       "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
-      "border-radius": "0.25rem",
+      "border-radius": "9999px",
     },
 
     // WebKit progress value
     [scope("progress::-webkit-progress-value")]: {
       "background": "var(--clampography-success)",
-      "border-radius": "0.25rem",
+      "border-radius": "9999px",
     },
 
     // Firefox progress value
     [scope("progress::-moz-progress-bar")]: {
       "background": "var(--clampography-success)",
-      "border-radius": "0.25rem",
+      "border-radius": "9999px",
     },
 
     // ── Meter ─────────────────────────────────────────────────────────────────
@@ -242,9 +242,9 @@ export default (options = {}) => {
       "-moz-appearance": "none",
       "appearance": "none",
       "width": "100%",
+      "height": "0.5em",
       "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
-      "border-radius": "0.25rem",
-      "height": "0.75rem",
+      "border-radius": "9999px",
       "border": "none",
     },
 
@@ -252,37 +252,37 @@ export default (options = {}) => {
     [scope("meter::-webkit-meter-bar")]: {
       "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
       "border": "none",
-      "border-radius": "0.25rem",
+      "border-radius": "9999px",
     },
 
     // 1. Optimum (Success)
     [scope("meter::-webkit-meter-optimum-value")]: {
       "background": "var(--clampography-success)",
-      "border-radius": "0.25rem",
+      "border-radius": "9999px",
     },
     [scope("meter:-moz-meter-optimum::-moz-meter-bar")]: {
       "background": "var(--clampography-success)",
-      "border-radius": "0.25rem",
+      "border-radius": "9999px",
     },
 
     // 2. Sub-optimum (Warning)
     [scope("meter::-webkit-meter-suboptimum-value")]: {
       "background": "var(--clampography-warning)",
-      "border-radius": "0.25rem",
+      "border-radius": "9999px",
     },
     [scope("meter:-moz-meter-sub-optimum::-moz-meter-bar")]: {
       "background": "var(--clampography-warning)",
-      "border-radius": "0.25rem",
+      "border-radius": "9999px",
     },
 
     // 3. Even less good (Error)
     [scope("meter::-webkit-meter-even-less-good-value")]: {
       "background": "var(--clampography-error)",
-      "border-radius": "0.25rem",
+      "border-radius": "9999px",
     },
     [scope("meter:-moz-meter-sub-sub-optimum::-moz-meter-bar")]: {
       "background": "var(--clampography-error)",
-      "border-radius": "0.25rem",
+      "border-radius": "9999px",
     },
   };
 };
