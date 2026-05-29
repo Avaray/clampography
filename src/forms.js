@@ -212,20 +212,10 @@ export default (options = {}) => {
       "appearance": "none",
       "width": "100%",
       "height": "1em",
-      "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
+      "background": "transparent",
       "border-radius": "0",
       "border": "none",
       "box-shadow": "none",
-    },
-
-    // WebKit-only reset: Strip outer container background to prevent double-background bleeding
-    "@media screen and (-webkit-min-device-pixel-ratio:0)": {
-      [scope("progress")]: {
-        "background": "transparent !important",
-      },
-      [scope("meter")]: {
-        "background": "transparent !important",
-      },
     },
 
     // WebKit progress track
@@ -233,10 +223,6 @@ export default (options = {}) => {
       "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
       "border-radius": "0",
       "box-shadow": "none",
-      "overflow": "hidden",
-      "height": "100%",
-      "margin": "0",
-      "padding": "0",
     },
 
     // WebKit progress value
@@ -244,9 +230,6 @@ export default (options = {}) => {
       "background": "var(--clampography-success)",
       "border-radius": "0",
       "box-shadow": "none",
-      "height": "100%",
-      "margin": "0",
-      "padding": "0",
     },
 
     // Firefox progress value
@@ -263,24 +246,20 @@ export default (options = {}) => {
       "appearance": "none",
       "width": "100%",
       "height": "1em",
-      "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
+      "background": "transparent",
       "border-radius": "0",
       "border": "none",
       "box-shadow": "none",
     },
 
-    // WebKit inner element wrapper
-    [scope("meter::-webkit-meter-inner-element")]: {
-      "-webkit-appearance": "none",
-      "appearance": "none",
-      "background": "transparent",
-      "border": "none",
-      "box-shadow": "none",
-      "overflow": "hidden",
-      "height": "100%",
-      "margin": "0",
-      "padding": "0",
-      "display": "block",
+    // Firefox track backgrounds (restored for Firefox only)
+    "@supports (-moz-appearance: none)": {
+      [scope("progress")]: {
+        "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
+      },
+      [scope("meter")]: {
+        "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
+      },
     },
 
     // WebKit inner track
@@ -289,10 +268,6 @@ export default (options = {}) => {
       "border": "none",
       "border-radius": "0",
       "box-shadow": "none",
-      "overflow": "hidden",
-      "height": "100%",
-      "margin": "0",
-      "padding": "0",
     },
 
     // 1. Optimum (Success)
@@ -300,7 +275,6 @@ export default (options = {}) => {
       "background": "var(--clampography-success)",
       "border-radius": "0",
       "box-shadow": "none",
-      "height": "100%",
     },
     [scope("meter:-moz-meter-optimum::-moz-meter-bar")]: {
       "background": "var(--clampography-success)",
@@ -312,7 +286,6 @@ export default (options = {}) => {
       "background": "var(--clampography-warning)",
       "border-radius": "0",
       "box-shadow": "none",
-      "height": "100%",
     },
     [scope("meter:-moz-meter-sub-optimum::-moz-meter-bar")]: {
       "background": "var(--clampography-warning)",
@@ -324,7 +297,6 @@ export default (options = {}) => {
       "background": "var(--clampography-error)",
       "border-radius": "0",
       "box-shadow": "none",
-      "height": "100%",
     },
     [scope("meter:-moz-meter-sub-sub-optimum::-moz-meter-bar")]: {
       "background": "var(--clampography-error)",
