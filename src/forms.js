@@ -208,51 +208,39 @@ export default (options = {}) => {
     // ── Progress ──────────────────────────────────────────────────────────────
     [scope("progress")]: {
       "-webkit-appearance": "none",
-      "-moz-appearance": "none",
       "appearance": "none",
       "width": "100%",
       "height": "1em",
       "background": "transparent",
-      "border-radius": "0",
-      "border": "none",
-      "box-shadow": "none",
     },
 
     // WebKit progress track
     [scope("progress::-webkit-progress-bar")]: {
       "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
-      "border-radius": "0",
-      "box-shadow": "none",
     },
 
     // WebKit progress value
     [scope("progress::-webkit-progress-value")]: {
       "background": "var(--clampography-success)",
-      "border-radius": "0",
-      "box-shadow": "none",
     },
 
     // Firefox progress value
     [scope("progress::-moz-progress-bar")]: {
       "background": "var(--clampography-success)",
-      "border-radius": "0",
     },
 
     // ── Meter ─────────────────────────────────────────────────────────────────
     // Custom styling for <meter> (accent-color does not work on meter)
     [scope("meter")]: {
       "-webkit-appearance": "none",
-      "-moz-appearance": "none",
       "appearance": "none",
       "width": "100%",
       "height": "1em",
       "background": "transparent",
-      "border-radius": "0",
-      "border": "none",
-      "box-shadow": "none",
     },
 
-    // Firefox track backgrounds (restored for Firefox only)
+    // Firefox track (restored via Firefox-only feature query)
+    // @supports (-moz-appearance: none) is ignored by all WebKit/Blink browsers
     "@supports (-moz-appearance: none)": {
       [scope("progress")]: {
         "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
@@ -262,8 +250,9 @@ export default (options = {}) => {
       },
     },
 
-    // WebKit inner element: re-establish height context lost when appearance:none is set
-    // Without an explicit height here, height:100% on child pseudo-elements is unresolvable
+    // Re-establish height context for WebKit shadow DOM
+    // appearance:none breaks Chrome's flex layout; inner elements can't resolve height:100%
+    // without a concrete parent height set here
     [scope("meter::-webkit-meter-inner-element")]: {
       "display": "block",
       "height": "1em",
@@ -272,46 +261,35 @@ export default (options = {}) => {
     // WebKit inner track
     [scope("meter::-webkit-meter-bar")]: {
       "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
-      "border": "none",
-      "border-radius": "0",
-      "box-shadow": "none",
       "height": "100%",
     },
 
     // 1. Optimum (Success)
     [scope("meter::-webkit-meter-optimum-value")]: {
       "background": "var(--clampography-success)",
-      "border-radius": "0",
-      "box-shadow": "none",
       "height": "100%",
     },
     [scope("meter:-moz-meter-optimum::-moz-meter-bar")]: {
       "background": "var(--clampography-success)",
-      "border-radius": "0",
     },
 
     // 2. Sub-optimum (Warning)
     [scope("meter::-webkit-meter-suboptimum-value")]: {
       "background": "var(--clampography-warning)",
-      "border-radius": "0",
-      "box-shadow": "none",
       "height": "100%",
     },
     [scope("meter:-moz-meter-sub-optimum::-moz-meter-bar")]: {
       "background": "var(--clampography-warning)",
-      "border-radius": "0",
     },
 
     // 3. Even less good (Error)
     [scope("meter::-webkit-meter-even-less-good-value")]: {
       "background": "var(--clampography-error)",
-      "border-radius": "0",
-      "box-shadow": "none",
       "height": "100%",
     },
     [scope("meter:-moz-meter-sub-sub-optimum::-moz-meter-bar")]: {
       "background": "var(--clampography-error)",
-      "border-radius": "0",
     },
+
   };
 };
