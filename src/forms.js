@@ -205,17 +205,19 @@ export default (options = {}) => {
       "font-weight": "600",
     },
 
-    // ── Meter & Progress ──────────────────────────────────────────────────────
-    [scope(":where(meter, progress)")]: {
+    // ── Progress ──────────────────────────────────────────────────────────────
+    [scope("progress")]: {
       "accent-color": "var(--clampography-primary)",
       "width": "100%",
     },
 
+    // ── Meter ─────────────────────────────────────────────────────────────────
     // Custom styling for <meter> (accent-color does not work on meter)
     [scope("meter")]: {
       "-webkit-appearance": "none",
       "-moz-appearance": "none",
       "appearance": "none",
+      "width": "100%",
       "background-color": "color-mix(in oklab, var(--clampography-text) 15%, transparent)",
       "border-radius": "0.25rem",
       "height": "0.75rem",
