@@ -218,7 +218,7 @@ export default (options = {}) => {
       "-moz-appearance": "none",
       "appearance": "none",
       "width": "100%",
-      "background-color": "color-mix(in oklab, var(--clampography-text) 15%, transparent)",
+      "background-color": "transparent",
       "border-radius": "0.25rem",
       "height": "0.75rem",
       "border": "none",
@@ -231,33 +231,34 @@ export default (options = {}) => {
       "border-radius": "0.25rem",
     },
 
-    // Common border-radius for values
-    [scope("meter::-webkit-meter-optimum-value, meter::-webkit-meter-suboptimum-value, meter::-webkit-meter-even-less-good-value, meter::-moz-meter-bar")]: {
-      "border-radius": "0.25rem",
-    },
-
     // 1. Optimum (Success)
     [scope("meter::-webkit-meter-optimum-value")]: {
       "background-color": "var(--clampography-success)",
+      "border-radius": "0.25rem",
     },
     [scope("meter:-moz-meter-optimum::-moz-meter-bar")]: {
       "background-color": "var(--clampography-success)",
+      "border-radius": "0.25rem",
     },
 
     // 2. Sub-optimum (Warning)
     [scope("meter::-webkit-meter-suboptimum-value")]: {
       "background-color": "var(--clampography-warning)",
+      "border-radius": "0.25rem",
     },
     [scope("meter:-moz-meter-sub-optimum::-moz-meter-bar")]: {
       "background-color": "var(--clampography-warning)",
+      "border-radius": "0.25rem",
     },
 
     // 3. Even less good (Error)
     [scope("meter::-webkit-meter-even-less-good-value")]: {
       "background-color": "var(--clampography-error)",
+      "border-radius": "0.25rem",
     },
     [scope("meter:-moz-meter-sub-sub-optimum::-moz-meter-bar")]: {
       "background-color": "var(--clampography-error)",
+      "border-radius": "0.25rem",
     },
   };
 };
