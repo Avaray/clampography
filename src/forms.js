@@ -218,13 +218,25 @@ export default (options = {}) => {
       "box-shadow": "none",
     },
 
+    // WebKit-only reset: Strip outer container background to prevent double-background bleeding
+    "@media screen and (-webkit-min-device-pixel-ratio:0)": {
+      [scope("progress")]: {
+        "background": "transparent !important",
+      },
+      [scope("meter")]: {
+        "background": "transparent !important",
+      },
+    },
+
     // WebKit progress track
     [scope("progress::-webkit-progress-bar")]: {
-      "background": "transparent",
+      "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
       "border-radius": "0",
       "box-shadow": "none",
       "overflow": "hidden",
       "height": "100%",
+      "margin": "0",
+      "padding": "0",
     },
 
     // WebKit progress value
@@ -233,6 +245,8 @@ export default (options = {}) => {
       "border-radius": "0",
       "box-shadow": "none",
       "height": "100%",
+      "margin": "0",
+      "padding": "0",
     },
 
     // Firefox progress value
@@ -264,16 +278,21 @@ export default (options = {}) => {
       "box-shadow": "none",
       "overflow": "hidden",
       "height": "100%",
+      "margin": "0",
+      "padding": "0",
+      "display": "block",
     },
 
     // WebKit inner track
     [scope("meter::-webkit-meter-bar")]: {
-      "background": "transparent",
+      "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
       "border": "none",
       "border-radius": "0",
       "box-shadow": "none",
       "overflow": "hidden",
       "height": "100%",
+      "margin": "0",
+      "padding": "0",
     },
 
     // 1. Optimum (Success)
