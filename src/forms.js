@@ -231,16 +231,33 @@ export default (options = {}) => {
       "border-radius": "0.25rem",
     },
 
-    // WebKit values (optimum, suboptimum, even-less-good)
-    [scope("meter::-webkit-meter-optimum-value, meter::-webkit-meter-suboptimum-value, meter::-webkit-meter-even-less-good-value")]: {
-      "background-color": "var(--clampography-success)",
+    // Common border-radius for values
+    [scope("meter::-webkit-meter-optimum-value, meter::-webkit-meter-suboptimum-value, meter::-webkit-meter-even-less-good-value, meter::-moz-meter-bar")]: {
       "border-radius": "0.25rem",
     },
 
-    // Firefox value
-    [scope("meter::-moz-meter-bar")]: {
+    // 1. Optimum (Success)
+    [scope("meter::-webkit-meter-optimum-value")]: {
       "background-color": "var(--clampography-success)",
-      "border-radius": "0.25rem",
+    },
+    [scope("meter:-moz-meter-optimum::-moz-meter-bar")]: {
+      "background-color": "var(--clampography-success)",
+    },
+
+    // 2. Sub-optimum (Warning)
+    [scope("meter::-webkit-meter-suboptimum-value")]: {
+      "background-color": "var(--clampography-warning)",
+    },
+    [scope("meter:-moz-meter-sub-optimum::-moz-meter-bar")]: {
+      "background-color": "var(--clampography-warning)",
+    },
+
+    // 3. Even less good (Error)
+    [scope("meter::-webkit-meter-even-less-good-value")]: {
+      "background-color": "var(--clampography-error)",
+    },
+    [scope("meter:-moz-meter-sub-sub-optimum::-moz-meter-bar")]: {
+      "background-color": "var(--clampography-error)",
     },
   };
 };
