@@ -34,11 +34,11 @@ export default (options = {}) => {
   return {
     // ROOT CONFIGURATION
     [root]: {
-      "--spacing-xs": "clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem)",
-      "--spacing-sm": "clamp(0.75rem, 0.5625rem + 0.9375vw, 1.25rem)",
-      "--spacing-md": "clamp(1rem, 0.75rem + 1.25vw, 1.5rem)",
-      "--spacing-lg": "clamp(1.5rem, 1.125rem + 1.875vw, 2.5rem)",
-      "--spacing-xl": "clamp(2rem, 1.5rem + 2.5vw, 3rem)",
+      "--spacing-xs": "clamp(0.25rem, 1.25vw, 0.75rem)",
+      "--spacing-sm": "clamp(0.375rem, -0.0625rem + 2.1875vw, 1.25rem)",
+      "--spacing-md": "clamp(0.5rem, 2.5vw, 1.5rem)",
+      "--spacing-lg": "clamp(0.75rem, -0.125rem + 4.375vw, 2.5rem)",
+      "--spacing-xl": "clamp(1rem, 5vw, 3rem)",
       "--list-indent": "clamp(1.5rem, 1.25rem + 1.25vw, 2rem)",
       "--scroll-offset": "5rem",
       "--font-family-base":
