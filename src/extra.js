@@ -87,7 +87,7 @@ export default (options = {}) => {
       "background-color": "var(--clampography-surface)",
       "border": "1px solid var(--clampography-border)",
       "border-radius": "0.375rem",
-      "padding": "1rem",
+      "padding": "var(--spacing-md)",
     },
 
     // Tables
@@ -121,8 +121,8 @@ export default (options = {}) => {
     [scope("hr")]: {
       "height": "1px",
       "border-width": "0",
-      "margin-top": "3rem",
-      "margin-bottom": "3rem",
+      "margin-top": "var(--spacing-xl)",
+      "margin-bottom": "var(--spacing-xl)",
       "background-color": "var(--clampography-border)",
     },
 
@@ -131,7 +131,7 @@ export default (options = {}) => {
       "border-left-width": "4px",
       "border-left-color": "var(--clampography-primary)",
       "background-color": "var(--clampography-surface)",
-      "padding": "1rem",
+      "padding": "var(--spacing-md)",
       "border-radius": "0.25rem",
       "font-style": "italic",
       "color": "var(--clampography-heading)",
@@ -155,16 +155,17 @@ export default (options = {}) => {
     [scope("details")]: {
       "border": "1px solid var(--clampography-border)",
       "border-radius": "0.375rem",
-      "padding": "0.5rem",
+      "padding": "var(--spacing-sm)",
     },
 
     [scope("summary")]: {
       "color": "var(--clampography-heading)",
+      "border-bottom": "0px solid var(--clampography-border)",
     },
 
     [scope("details[open] > summary")]: {
-      "border-bottom": "1px solid var(--clampography-border)",
-      "padding-bottom": "0.5rem",
+      "border-bottom-width": "1px",
+      "padding-bottom": "var(--spacing-sm)",
     },
   };
 };

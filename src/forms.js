@@ -205,10 +205,94 @@ export default (options = {}) => {
       "font-weight": "600",
     },
 
-    // ── Meter & Progress ──────────────────────────────────────────────────────
-    [scope(":where(meter, progress)")]: {
-      "accent-color": "var(--clampography-primary)",
+    // ── Progress ──────────────────────────────────────────────────────────────
+    [scope("progress")]: {
+      "-webkit-appearance": "none",
+      "appearance": "none",
       "width": "100%",
+      "height": "1em",
+      "background": "transparent",
     },
+
+    // WebKit progress track
+    [scope("progress::-webkit-progress-bar")]: {
+      "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
+    },
+
+    // WebKit progress value
+    [scope("progress::-webkit-progress-value")]: {
+      "background": "var(--clampography-success)",
+    },
+
+    // Firefox progress value
+    [scope("progress::-moz-progress-bar")]: {
+      "background": "var(--clampography-success)",
+    },
+
+    // ── Meter ─────────────────────────────────────────────────────────────────
+    // Custom styling for <meter> (accent-color does not work on meter)
+    [scope("meter")]: {
+      "-webkit-appearance": "none",
+      "appearance": "none",
+      "width": "100%",
+      "height": "1em",
+      "background": "transparent",
+    },
+
+    // Firefox track (restored via Firefox-only feature query)
+    // @supports (-moz-appearance: none) is ignored by all WebKit/Blink browsers
+    "@supports (-moz-appearance: none)": {
+      [scope("progress")]: {
+        "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
+      },
+      [scope("meter")]: {
+        "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
+      },
+    },
+
+    // Re-establish height context for WebKit shadow DOM
+    // appearance:none breaks Chrome's flex layout; inner elements can't resolve height:100%
+    // without a concrete parent height set here.
+    // display:flex + align-items:stretch forces the child bar to fill the full height
+    // without top-anchoring it the way display:block would.
+    [scope("meter::-webkit-meter-inner-element")]: {
+      "display": "flex",
+      "align-items": "stretch",
+      "height": "1em",
+    },
+
+    // WebKit inner track
+    [scope("meter::-webkit-meter-bar")]: {
+      "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
+      "height": "100%",
+    },
+
+    // 1. Optimum (Success)
+    [scope("meter::-webkit-meter-optimum-value")]: {
+      "background": "var(--clampography-success)",
+      "height": "100%",
+    },
+    [scope("meter:-moz-meter-optimum::-moz-meter-bar")]: {
+      "background": "var(--clampography-success)",
+    },
+
+    // 2. Sub-optimum (Warning)
+    [scope("meter::-webkit-meter-suboptimum-value")]: {
+      "background": "var(--clampography-warning)",
+      "height": "100%",
+    },
+    [scope("meter:-moz-meter-sub-optimum::-moz-meter-bar")]: {
+      "background": "var(--clampography-warning)",
+    },
+
+    // 3. Even less good (Error)
+    [scope("meter::-webkit-meter-even-less-good-value")]: {
+      "background": "var(--clampography-error)",
+      "height": "100%",
+    },
+    [scope("meter:-moz-meter-sub-sub-optimum::-moz-meter-bar")]: {
+      "background": "var(--clampography-error)",
+    },
+
   };
 };
