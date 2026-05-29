@@ -387,7 +387,7 @@ export default (options = {}) => {
     [scope("fieldset")]: {
       "margin-top": "var(--spacing-md)",
       "margin-bottom": "var(--spacing-md)",
-      padding: "var(--spacing-md)",
+      padding: "var(--spacing-sm)",
     },
 
     [scope("legend")]: {
