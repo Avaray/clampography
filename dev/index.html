@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clampography Playground</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Fira+Mono&family=Inter&family=Josefin+Sans:wght@300&family=Nunito:wght@300&family=Playfair+Display&family=Quando&family=Roboto&display=swap">
+  <link rel="stylesheet" href="/css/tefk.css" id="main-css">
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <style>
+    /* ── Playground structural styles (sidebar only — colors from Clampography vars) ── */
+
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; padding: 0; display: flex; min-height: 100vh; }
+
+    :root {
+      --sidebar-width: max-content;
+    }
+
+    /* ── Sidebar ─────────────────────────────────────────────────────────── */
+    .pg-sidebar {
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      width: var(--sidebar-width);
+      min-width: 280px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      overscroll-behavior: contain;
+      z-index: 1000;
+      transition: transform 0.25s ease;
+      background: var(--clampography-surface, #f0f0f0);
+      border-right: 1px solid var(--clampography-border, #d0d0d0);
+      font-family: system-ui, sans-serif;
+      font-size: 0.85rem;
+    }
+    .pg-sidebar.is-closed { transform: translateX(-100%); }
+
+    .pg-sidebar-section {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--clampography-border, #d0d0d0);
+    }
+
+    .pg-sidebar-label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--clampography-muted, #888);
+      margin-bottom: 0.5rem;
+    }
+
+    /* ── Sidebar toggle button (always visible tab on edge) ──────────────── */
+    .pg-sidebar-btn {
+      position: fixed;
+      top: 1rem; left: 270px;
+      z-index: 1001;
+      width: 24px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: left 0.25s ease;
+      background: var(--clampography-surface, #f0f0f0);
+      border: 1px solid var(--clampography-border, #d0d0d0);
+      border-left: none;
+      border-radius: 0 6px 6px 0;
+      color: var(--clampography-muted, #888);
+      font-size: 0.7rem;
+      line-height: 1;
+    }
+    .pg-sidebar-btn.is-closed { left: 0; border-left: 1px solid var(--clampography-border, #d0d0d0); border-radius: 6px; }
+    .pg-sidebar-btn:hover { color: var(--clampography-text, #222); }
+
+    /* ── Carousel (font + theme) ─────────────────────────────────────────── */
+    .pg-carousel {
+      display: flex; align-items: center;
+      border: 1px solid var(--clampography-border, #d0d0d0);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .pg-carousel button {
+      background: transparent; border: none;
+      color: var(--clampography-muted, #888);
+      cursor: pointer; padding: 0.25rem 0.5rem;
+      font-size: 0.85rem;
+      transition: color 0.15s;
+      flex-shrink: 0;
+    }
+    .pg-carousel button:hover { color: var(--clampography-text, #222); }
+    .pg-carousel span {
+      flex: 1; text-align: center;
+      font-family: monospace; font-size: 0.78rem;
+      color: var(--clampography-text, #333);
+      padding: 0.25rem 0.25rem;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* ── Plugin toggles ──────────────────────────────────────────────────── */
+    .pg-toggle-row {
+      display: flex; flex-wrap: wrap; gap: 0.85rem 0.5rem;
+    }
+    .pg-toggle-item {
+      display: flex; align-items: center; justify-content: space-between; gap: 0.35rem;
+      cursor: pointer; user-select: none;
+      color: var(--clampography-text, #333);
+      flex: 1 1 calc(50% - 0.5rem);
+    }
+    .pg-toggle-item input[type="checkbox"] { display: none; }
+    .pg-switch {
+      position: relative; width: 30px; height: 17px;
+      background: var(--clampography-border, #ccc);
+      border-radius: 9px; transition: background 0.2s; flex-shrink: 0;
+    }
+    .pg-switch::after {
+      content: ''; position: absolute;
+      top: 2px; left: 2px; width: 13px; height: 13px;
+      background: #fff; border-radius: 50%; transition: transform 0.2s;
+    }
+    .pg-toggle-item input:checked + .pg-switch { background: #3b82f6; }
+    .pg-toggle-item input:checked + .pg-switch::after { transform: translateX(13px); }
+
+    /* ── Color editor rows ───────────────────────────────────────────────── */
+    .pg-color-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin: 0.3rem 0; gap: 0.5rem;
+    }
+    .pg-color-row span.pg-color-name { font-size: 0.78rem; font-weight: bold; color: var(--clampography-text, #333); }
+    .pg-color-row input[type="color"] {
+      width: 28px; height: 22px; padding: 0;
+      border: 1px solid var(--clampography-border, #ccc);
+      border-radius: 4px; cursor: pointer;
+      background: var(--clampography-background, #fff);
+      overflow: hidden;
+    }
+    .pg-color-row input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+    .pg-color-row input[type="color"]::-webkit-color-swatch { border: none; }
+    .pg-color-row input[type="color"]::-moz-color-swatch { border: none; }
+
+    /* ── Theme editor details ────────────────────────────────────────────── */
+    .pg-theme-editor { padding: 0; border: none; }
+    .pg-theme-editor summary {
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--clampography-muted, #888);
+      cursor: pointer; list-style: none;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--clampography-border, #d0d0d0);
+    }
+    .pg-theme-editor summary::after { content: '▸'; transition: transform 0.2s; }
+    .pg-theme-editor[open] summary::after { transform: rotate(90deg); }
+    .pg-theme-editor summary::-webkit-details-marker { display: none; }
+    .pg-theme-editor-body { padding: 0.75rem 1rem; }
+
+    /* ── Sidebar footer ──────────────────────────────────────────────────── */
+    .pg-sidebar-footer {
+      padding: 0.75rem 1rem;
+      display: flex; align-items: center; justify-content: space-between;
+      border-top: 1px solid var(--clampography-border, #d0d0d0);
+      margin-top: auto;
+    }
+    .pg-version-badge {
+      font-family: monospace; font-size: 0.72rem;
+      color: var(--clampography-muted, #888);
+    }
+    .pg-github-link {
+      display: flex; align-items: center; gap: 0.3rem;
+      font-size: 0.78rem; text-decoration: none;
+      color: var(--clampography-link, var(--clampography-primary, #3b82f6));
+    }
+    .pg-github-link:hover { text-decoration: underline; }
+
+    /* ── Theme transitions ───────────────────────────────────────────────── */
+    *, ::before, ::after {
+      transition-property: color, background-color, border-color;
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      transition-duration: 200ms;
+    }
+
+    /* ── Content wrapper ─────────────────────────────────────────────────── */
+    .content-wrapper {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      transition: margin-left 0.25s ease;
+      padding: 2rem 0 4rem;
+      min-width: 0;
+    }
+    .content-wrapper.sidebar-closed { margin-left: 0; }
+    .content-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+  </style>
+</head>
+
+<body class="bg-clampography-background text-clampography-text">
+
+  <!-- ── Sidebar (Vue 3 app) ──────────────────────────────────────────────── -->
+  <aside class="pg-sidebar" id="pg-sidebar" data-theme="dark">
+
+    <div class="pg-sidebar-section" style="display:flex;align-items:center;justify-content:space-between;">
+      <span style="font-weight:700;font-size:0.85rem;color:var(--clampography-heading,#111);">Clampography</span>
+      <span class="pg-version-badge">vX.X.X</span>
+    </div>
+
+    <!-- Plugin options -->
+    <div class="pg-sidebar-section">
+      <span class="pg-sidebar-label">Plugin Options</span>
+      <div class="pg-toggle-row">
+        <div class="pg-toggle-item" @click="extra = !extra" style="font-weight: bold;">
+          Extra
+          <input type="checkbox" v-model="extra">
+          <div class="pg-switch"></div>
+        </div>
+        <div class="pg-toggle-item" @click="forms = !forms" style="font-weight: bold;">
+          Forms
+          <input type="checkbox" v-model="forms">
+          <div class="pg-switch"></div>
+        </div>
+        <div class="pg-toggle-item" @click="kbd = !kbd" style="font-weight: bold;">
+          Kbd
+          <input type="checkbox" v-model="kbd">
+          <div class="pg-switch"></div>
+        </div>
+        <div class="pg-toggle-item" @click="themes = !themes" style="font-weight: bold;">
+          Themes
+          <input type="checkbox" v-model="themes">
+          <div class="pg-switch"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Font & Theme switchers -->
+    <div style="display:flex; border-bottom: 1px solid var(--clampography-border, #d0d0d0);">
+      <div class="pg-sidebar-section" style="flex:1; border-bottom: none; border-right: 1px solid var(--clampography-border, #d0d0d0); padding: 0.75rem 0.5rem 0.75rem 1rem; min-width: 0;">
+        <span class="pg-sidebar-label">Font</span>
+        <div class="pg-carousel">
+          <button @click="prevFont" title="Previous Font">&larr;</button>
+          <span>{{ currentFont.label }}</span>
+          <button @click="nextFont" title="Next Font">&rarr;</button>
+        </div>
+      </div>
+
+      <div class="pg-sidebar-section" style="flex:1; border-bottom: none; padding: 0.75rem 1rem 0.75rem 0.5rem; min-width: 0;" :style="{ opacity: themes ? 1 : 0.4, pointerEvents: themes ? 'auto' : 'none', transition: 'opacity 0.3s' }">
+        <span class="pg-sidebar-label">Theme</span>
+        <div class="pg-carousel">
+          <button @click="prevTheme" title="Previous Theme">&larr;</button>
+          <span>{{ currentThemeName }}</span>
+          <button @click="nextTheme" title="Next Theme">&rarr;</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Theme editor -->
+    <details class="pg-theme-editor">
+      <summary>Theme Editor</summary>
+      <div class="pg-theme-editor-body">
+        <div v-for="item in COLOR_VARS" :key="item.id" class="pg-color-row">
+          <span class="pg-color-name">{{ item.label }}</span>
+          <div style="display:flex;align-items:center;gap:0.3rem;">
+            <input type="text" readonly :value="hexToOklch(colors[item.id])" style="width:130px;font-size:0.65rem;border:1px solid var(--clampography-border,#ccc);border-radius:3px;padding:2px 4px;background:transparent;color:var(--clampography-muted,#888);font-family:monospace;cursor:copy;" @click="$event.target.select()" title="Click to copy OKLCH">
+            <input type="color" v-model="colors[item.id]" @input="updateVar(item.v, colors[item.id])" style="margin:0;">
+          </div>
+        </div>
+        <div style="display:flex;gap:0.3rem;margin-top:0.5rem;">
+          <button @click="copyTheme" style="flex:1;cursor:pointer;padding:0.3rem;font-size:0.75rem;border:1px solid var(--clampography-border,#ccc);border-radius:4px;background:transparent;color:var(--clampography-text,#333);transition:color 0.2s;">
+            {{ isCopied ? 'Copied JSON!' : 'Copy JSON' }}
+          </button>
+          <button @click="copyCss" style="flex:1;cursor:pointer;padding:0.3rem;font-size:0.75rem;border:1px solid var(--clampography-border,#ccc);border-radius:4px;background:transparent;color:var(--clampography-text,#333);transition:color 0.2s;">
+            {{ isCopiedCss ? 'Copied CSS!' : 'Copy CSS' }}
+          </button>
+        </div>
+        <button @click="resetColors"
+          style="width:100%;margin-top:0.5rem;cursor:pointer;padding:0.3rem;font-size:0.75rem;border:1px solid var(--clampography-border,#ccc);border-radius:4px;background:var(--clampography-surface,#f0f0f0);color:var(--clampography-text,#333);">
+          Reset to defaults
+        </button>
+      </div>
+    </details>
+
+    <!-- Footer -->
+    <div class="pg-sidebar-footer">
+      <a href="https://github.com/Avaray/clampography" target="_blank" class="pg-github-link">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub
+      </a>
+    </div>
+
+  </aside>
+
+
+  <!-- Sidebar toggle tab -->
+  <button class="pg-sidebar-btn" id="pg-sidebar-btn" title="Toggle sidebar" data-theme="dark">&#8250;</button>
+
+
+  <div class="content-wrapper" id="content-wrapper">
+    <div class="content-inner">
+    <h1>The Secret Lives of Cats</h1>
+    <p>A typographic specimen exploring <a href="#">feline biology</a>, <a href="#">history</a>, and
+      <mark>mysterious behaviour</mark> across all HTML elements styled exclusively by Clampography. Every heading,
+      paragraph, list, and table you see is rendered <strong>without any custom CSS</strong> &mdash; just the plugin.
+    </p>
+
+    <figure>
+      <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=800&q=80"
+        alt="A curious cat looking into the camera">
+      <figcaption><cite>Felis catus</cite> in its natural environment of observation and judgement. Photo via <a
+          href="https://unsplash.com" target="_blank">Unsplash</a>.</figcaption>
+    </figure>
+
+    <h2>Masters of Stealth and Silence</h2>
+    <p>
+      Cats (<strong>Felis catus</strong>) have co-habited with humans for roughly <em>10,000 years</em>, yet they remain
+      one of the most <mark>misunderstood</mark> animals on Earth. Unlike dogs, cats were never truly domesticated
+      &mdash; they <em>chose</em> us. You can read more about this <a href="#">feline self-selection</a> in the
+      archaeological record from the <a href="#">Fertile Crescent</a>, where <del>wolves</del> wildcats first began
+      lurking around grain stores. Scholars from the <abbr title="University of California">UC</abbr> system have
+      documented <ins>over 40 distinct vocalisations</ins> that domestic cats use exclusively when communicating with
+      their human companions.
+    </p>
+    <p>
+      A cat&rsquo;s hearing range spans <code>48 Hz&ndash;85 kHz</code>. Press <kbd>Ctrl</kbd> + <kbd>Q</kbd> to remind
+      yourself that a cat can hear frequencies <strong>1.6 octaves</strong> higher than any human. Their ears rotate up
+      to <em>180&deg;</em> independently &mdash; acting like biological satellite dishes pointed directly at the sound of
+      a treat bag opening three rooms away. The technical term for this skill is
+      <dfn>pinnae rotation</dfn>, derived from the Latin <i lang="la">pinna</i> (feather, fin).
+    </p>
+
+    <blockquote>
+      <p>&ldquo;Time spent with cats is never wasted.&rdquo;</p>
+      <footer>&mdash; <cite>Sigmund Freud</cite>, allegedly after his cat knocked his inkwell off the desk</footer>
+    </blockquote>
+
+    <h3>The Physics of the Righting Reflex</h3>
+    <p>Cats have a specialised collarbone that lets them always land on their feet during a fall &mdash; a phenomenon
+      called the <em>aerial righting reflex</em>. They also have <strong>no clavicle attachment</strong> to their spine,
+      allowing them to squeeze through any gap their head fits through. This is sometimes called the
+      <a href="#">liquid cat hypothesis</a>, and while it&rsquo;s not a real scientific paper,
+      <strong>it should be</strong>.</p>
+
+    <p>
+      The minimum safe height for the righting reflex to complete is approximately
+      <data value="30">30 cm</data>. Terminal velocity for a cat is roughly
+      <data value="97">97 km/h</data>, achieved at around <data value="5">5 storeys</data>.
+      Below that, survival rate is paradoxically <em>lower</em> because the cat hasn&rsquo;t had time to relax.
+      This is documented in the <abbr title="Journal of the American Veterinary Medical Association">JAVMA</abbr>
+      and confirmed by every cat who has ever stared at you from a high shelf with complete contempt.
+    </p>
+
+    <h3>Sacred Animals of Ancient Egypt</h3>
+    <p>In <a href="#">ancient Egypt</a>, cats were considered divine. The penalties for harming one were severe,
+      the worship was genuine, and the merchandise was <em>excellent</em>.</p>
+    <ul>
+      <li>The goddess <strong><a href="#">Bastet</a></strong> had the head of a cat and was worshipped at
+        <a href="#">Bubastis</a></li>
+      <li>
+        Killing a cat, even <em>accidentally</em>, carried severe punishment &mdash; sometimes fatal:
+        <blockquote>
+          <p>According to <a href="#">Diodorus Siculus</a>, Roman soldiers who accidentally killed cats were sometimes
+            lynched by mobs, regardless of <abbr title="Vienna Convention on Diplomatic Relations">diplomatic
+              immunity</abbr>.</p>
+        </blockquote>
+      </li>
+      <li>Cats were mummified and buried alongside their owners &mdash; often with <a href="#">mummified mice</a> for
+        the afterlife journey</li>
+      <li>Estimated mummified cats found in Egypt: over <strong>300,000</strong>, discovered in
+        <time datetime="1888">1888</time> alone</li>
+      <li>
+        <p>The city of <a href="#">Per-Bast</a> was literally named after Bastet. Archaeologists have found:</p>
+        <ul>
+          <li><strong>Amulets</strong> &mdash; mass-produced in <code>bronze</code>, <code>faience</code>, and gold
+          </li>
+          <li>Votive statues &mdash; ranging from <data value="2">2 cm</data> to <data value="60">60 cm</data> tall
+          </li>
+          <li><a href="#">Temple complexes</a> described by Herodotus as &ldquo;the most beautiful in all Egypt&rdquo;
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Dynasty</th>
+          <th>Cat Goddess</th>
+          <th>Centre of Worship</th>
+          <th>Primary Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Old Kingdom <small>(<time datetime="-2686">~2686 BCE</time>)</small></td>
+          <td><a href="#">Mafdet</a></td>
+          <td>Heliopolis</td>
+          <td>Protector against <em>venomous animals</em></td>
+        </tr>
+        <tr>
+          <td>Middle Kingdom</td>
+          <td><strong><a href="#">Bastet</a></strong></td>
+          <td>Bubastis</td>
+          <td>Fertility, home, <mark>cats</mark></td>
+        </tr>
+        <tr>
+          <td>New Kingdom</td>
+          <td><a href="#">Sekhmet</a></td>
+          <td>Memphis</td>
+          <td>War, plague, <del>cuddling</del> destruction</td>
+        </tr>
+      </tbody>
+      <caption>Egyptian cat deities by dynasty &mdash; source: <cite><a href="#">Encyclopedia of Ancient Egypt</a></cite>
+      </caption>
+    </table>
+
+    <h2>Feline Biology and Behaviour</h2>
+
+    <hgroup>
+      <h3>Sleep, Dreams, and Professional Laziness</h3>
+      <p>A scientific overview of why your cat is asleep right now</p>
+    </hgroup>
+    <p>Cats spend <strong>70% of their lives sleeping</strong> &mdash; roughly
+      <data value="13">13</data>&ndash;<data value="16">16</data> hours a day. During light sleep, their ears still
+      rotate to monitor sounds. In deep <abbr title="Rapid Eye Movement">REM</abbr> sleep, paws twitch from vivid
+      dreams &mdash; likely involving <a href="#">birds they&rsquo;ve never caught</a> and keyboards they
+      <em>have</em>.</p>
+
+    <ul>
+      <li>Cats cannot taste sweetness &mdash; they lack the <code>Tas1r2</code> gene
+        <ol>
+          <li>This is a recessive mutation shared by <em>all</em> <a href="#">felids</a>
+            <ul>
+              <li><i>Panthera leo</i> (Lions) &mdash; <strong>confirmed</strong></li>
+              <li><i>Panthera tigris</i> (Tigers) &mdash; <strong>confirmed</strong></li>
+              <li><i>Acinonyx jubatus</i> (Cheetahs) &mdash; <a href="#">see study</a></li>
+            </ul>
+          </li>
+          <li>Lions and tigers share this same trait
+            <ul>
+              <li>Even big cats are indifferent to sugar
+                <ol>
+                  <li>Unlike dogs, who have a <a href="#">sweet tooth</a>
+                    <ul>
+                      <li>Especially <a href="#">Golden Retrievers</a>
+                        <ol>
+                          <li>Observed in <cite>laboratory settings</cite></li>
+                          <li>And also <em>in my backyard</em></li>
+                        </ol>
+                      </li>
+                      <li>Even Pugs love apples &mdash; <mark>this is verified</mark></li>
+                    </ul>
+                  </li>
+                  <li>Unlike bears, who love <a href="#">honey</a> (<abbr title="As documented by Winnie the Pooh">source</abbr>)</li>
+                </ol>
+              </li>
+              <li>They primarily rely on scent and texture &mdash; <code>olfactory.priority = 1</code></li>
+            </ul>
+          </li>
+          <li>Evolutionary biologists believe this is why cats are <a href="#">obligate carnivores</a></li>
+        </ol>
+      </li>
+      <li>
+        <p>A group of cats is called a <em>clowder</em>. A group of kittens is called a <em>kindle</em>. A group of
+          cats ignoring you is called a <strong>Tuesday</strong>.</p>
+        <ul>
+          <li>Other interesting collective nouns &mdash; for <a href="#">comparison</a>:
+            <ol>
+              <li>A <em>glint</em> of goldfish</li>
+              <li>A <em>murder</em> of crows &mdash; (<mark>very on-brand</mark>)</li>
+              <li>A <em>business</em> of ferrets</li>
+              <li>A <em>parliament</em> of owls</li>
+            </ol>
+          </li>
+        </ul>
+      </li>
+      <li>Cats rarely meow at other cats &mdash; meowing is a <a href="#">language invented just for humans</a></li>
+      <li>A cat&rsquo;s nose print is as unique as a human fingerprint &mdash; <del>this has been used in court</del>
+        <ins>this has not yet been used in court, but it should be</ins></li>
+    </ul>
+
+    <h4>Purring: <data value="25">25</data>&ndash;<data value="150">150</data> Hz Healing Frequencies</h4>
+    <p>The purr frequency of <code>25&ndash;50 Hz</code> has been shown to promote
+      <a href="#">bone density and wound healing</a> in humans. Which means your cat is either a
+      <strong>therapeutic device</strong> or just pretending to be one in exchange for food.
+      The technical jury is still out. The cat, meanwhile, has already decided.</p>
+
+    <p>The language of cat body signals, in order of social importance:</p>
+    <ol>
+      <li><strong>Slow blinking</strong> &mdash; recognised sign of trust. Return the blink.
+        <a href="#">Here&rsquo;s how.</a></li>
+      <li><strong>Head-bunting</strong> your forehead &mdash; marks you as <em>owned territory</em></li>
+      <li><strong>Cat yawning</strong> in your presence &mdash; signals they feel unthreatened. Or bored. Probably
+        both.</li>
+      <li><strong>Chirping</strong> at birds &mdash; instinctive <abbr
+          title="Chattering Attack Response">jaw-chattering</abbr> reflex, possibly from frustration</li>
+      <li><strong>Kneading</strong> (&ldquo;making biscuits&rdquo;) &mdash; comfort behaviour from kittenhood, now
+        deployed on your <del>laptop</del> <ins>stomach</ins> at <time datetime="03:00">3am</time></li>
+      <li><strong>Bringing you dead prey</strong> &mdash; a remedial lesson in hunting. Be humble.
+        <a href="#">Read the research.</a></li>
+    </ol>
+
+    <h5>The Tail as a Real-Time Mood Barometer</h5>
+    <pre><code>// Determine if a cat is currently judging you
+function isBeingJudged(cat) {
+  const { eyeContact, tailPosition, earOrientation } = cat;
+
+  if (eyeContact === 'slow-blink') return false;   // trust established
+  if (tailPosition === 'puffed')   return 'imminent danger';
+  if (earOrientation === 'flat')   return 'maximum judgment';
+
+  // The unblinking stare: a philosophical statement
+  return eyeContact === 'unblinking-stare'; // probably yes
+}
+
+console.log(isBeingJudged(myCat)); // true, always true</code></pre>
+
+    <h2>Popular Domestic Breeds</h2>
+    <p>Below is a selection of popular breeds. All weight data is from the
+      <abbr title="World Cat Federation">WCF</abbr> registry. Links lead to <a href="#">breed profiles</a>
+      that may or may not exist.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Breed</th>
+          <th>Origin</th>
+          <th>Avg. Weight</th>
+          <th>Known For</th>
+          <th>Noise Level</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><a href="#"><strong>Maine Coon</strong></a></td>
+          <td><abbr title="United States of America">USA</abbr></td>
+          <td><data value="5">5</data>&ndash;<data value="8">8</data> kg</td>
+          <td>Dog-like loyalty, <a href="#">tufted ears</a></td>
+          <td><meter min="0" max="5" value="2" title="2/5"></meter></td>
+        </tr>
+        <tr>
+          <td><a href="#"><strong>Siamese</strong></a></td>
+          <td>Thailand</td>
+          <td><data value="3">3</data>&ndash;<data value="5">5</data> kg</td>
+          <td><mark>Loud opinions</mark>, blue eyes</td>
+          <td><meter min="0" max="5" value="5" title="5/5"></meter></td>
+        </tr>
+        <tr>
+          <td><a href="#"><strong>Scottish Fold</strong></a></td>
+          <td>Scotland</td>
+          <td><data value="3">3</data>&ndash;<data value="6">6</data> kg</td>
+          <td>Folded ears, <em>owl-like posture</em></td>
+          <td><meter min="0" max="5" value="2" title="2/5"></meter></td>
+        </tr>
+        <tr>
+          <td><a href="#"><strong>Bengal</strong></a></td>
+          <td><abbr title="United States of America">USA</abbr> (hybrid)</td>
+          <td><data value="4">4</data>&ndash;<data value="7">7</data> kg</td>
+          <td>Leopard spots, <del>calm temperament</del> <ins>high energy</ins></td>
+          <td><meter min="0" max="5" value="4" title="4/5"></meter></td>
+        </tr>
+        <tr>
+          <td><a href="#"><strong>Ragdoll</strong></a></td>
+          <td><abbr title="United States of America">USA</abbr></td>
+          <td><data value="5">5</data>&ndash;<data value="9">9</data> kg</td>
+          <td>Goes limp when held &mdash; <code>floppy: true</code></td>
+          <td><meter min="0" max="5" value="1" title="1/5"></meter></td>
+        </tr>
+        <tr>
+          <td><a href="#"><strong>Sphynx</strong></a></td>
+          <td>Canada</td>
+          <td><data value="3">3</data>&ndash;<data value="5">5</data> kg</td>
+          <td><em>Hairless</em>, warm to touch, demands attention</td>
+          <td><meter min="0" max="5" value="3" title="3/5"></meter></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="5"><small>Noise level rated
+              <data value="1">1</data>&ndash;<data value="5">5</data>. Data last verified
+              <time datetime="2025-01">January 2025</time>.</small></td>
+        </tr>
+      </tfoot>
+      <caption>Selected domestic cat breeds &mdash; source:
+        <cite><a href="#">World Cat Federation Registry</a></cite></caption>
+    </table>
+
+    <h2>Cat Jokes: A Necessary Appendix</h2>
+    <p>Science requires <em>balance</em>. For every peer-reviewed paper, there must be at least one terrible joke.
+      This is known as the <a href="#">Principle of Comedic Conservation</a>.</p>
+
+    <blockquote>
+      <p>&ldquo;Why don&rsquo;t cats play poker in the jungle?&rdquo;</p>
+      <footer>Answer: <strong>Too many cheetahs.</strong> &mdash; <cite>Anonymous, probably a dog person</cite></footer>
+    </blockquote>
+
+    <blockquote>
+      <p>&ldquo;What do you call a cat that gets everything it wants?&rdquo;</p>
+      <blockquote>
+        <p>&ldquo;Purrr-suasive.&rdquo;</p>
+        <footer>&mdash; <cite>The Internet, <time datetime="2009">circa 2009</time></cite></footer>
+      </blockquote>
+    </blockquote>
+
+    <blockquote>
+      <p>&ldquo;Why did the cat sit on the computer?&rdquo;</p>
+      <blockquote>
+        <p>&ldquo;To keep an eye on the mouse.&rdquo;</p>
+        <blockquote>
+          <p>Specifically <code>event.target === mouse</code>.</p>
+          <footer>&mdash; <cite>A developer who owns cats</cite></footer>
+        </blockquote>
+      </blockquote>
+    </blockquote>
+
+    <dl>
+      <dt><abbr title="Felis catus">Vibrissae</abbr></dt>
+      <dd>The technical term for a cat&rsquo;s <a href="#">whiskers</a>, used for navigation and sensing in low-light
+        conditions. They span exactly the width of the cat&rsquo;s body &mdash; a built-in
+        <code>max-width</code> detector.</dd>
+
+      <dt>Clowder</dt>
+      <dd>A group of adult cats. Also known as a <em>glaring</em> when they are unfamiliar with each other.
+        Also known as a <em>Monday</em> when they&rsquo;re yours.</dd>
+
+      <dt>Kindle</dt>
+      <dd>A group of kittens born to one mother. Not to be confused with the
+        <a href="#">electronic reader</a>, though both <mark>drain your battery</mark>.</dd>
+
+      <dt>Felid</dt>
+      <dd>A member of the <a href="#">family Felidae</a>, which includes all cats from the
+        <i>Felis catus</i> on your sofa to <i>Panthera leo</i> on the savanna. All equally convinced they
+        are superior to you.</dd>
+
+      <dt>Nepetalactone <sup><a href="#">[1]</a></sup></dt>
+      <dd>The active compound in <a href="#">catnip</a> (<i lang="la">Nepeta cataria</i>) that binds to
+        feline olfactory receptors. Affects approximately <strong>50&ndash;70%</strong> of cats.
+        The remaining <strong>30&ndash;50%</strong> are simply <em>too dignified</em>.</dd>
+    </dl>
+
+    <h3>Submit Feline Registry Entry</h3>
+    <p>Use this form to register a new entry in the <abbr title="Global Feline Authority">GFA</abbr> database.
+      Fields marked <strong>*</strong> are required. Data is transmitted via
+      <abbr title="HyperText Transfer Protocol Secure">HTTPS</abbr> to a server that does not exist.</p>
+      
+    <!-- Developer toggles for form states -->
+    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; padding: 0.5rem; border: 1px dashed var(--clampography-border); border-radius: 4px; background: var(--clampography-surface);">
+      <label style="font-size: 0.8rem; font-family: monospace; display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
+        <input type="checkbox" id="dev-toggle-readonly" onchange="document.querySelectorAll('#feline-form input, #feline-form select, #feline-form textarea').forEach(el => el.readOnly = this.checked)"> 
+        Force <code>readonly</code>
+      </label>
+      <label style="font-size: 0.8rem; font-family: monospace; display: flex; align-items: center; gap: 0.3rem; cursor: pointer;">
+        <input type="checkbox" id="dev-toggle-invalid" onchange="document.querySelectorAll('#feline-form input, #feline-form select, #feline-form textarea').forEach(el => this.checked ? el.setCustomValidity('Error') : el.setCustomValidity(''))"> 
+        Force <code>:user-invalid</code>
+      </label>
+    </div>
+
+    <form id="feline-form" onsubmit="return false;">
+      <div
+        style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); margin-bottom: var(--spacing-md);">
+        <div>
+          <label for="cat-name">Cat Name <strong>*</strong></label>
+          <input type="text" id="cat-name" placeholder="e.g. Luna">
+        </div>
+        <div>
+          <label for="cat-age">Age <small>(years)</small></label>
+          <input type="number" id="cat-age" placeholder="e.g. 4" min="0" max="30">
+        </div>
+      </div>
+      <div
+        style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); margin-bottom: var(--spacing-md);">
+        <div>
+          <label for="cat-email">Owner Email <strong>*</strong></label>
+          <input type="email" id="cat-email" placeholder="owner@example.com">
+        </div>
+        <div>
+          <label for="breed">Breed Category</label>
+          <select id="breed">
+            <optgroup label="Shorthair">
+              <option>Domestic Shorthair</option>
+              <option>Siamese</option>
+              <option>Bengal</option>
+            </optgroup>
+            <optgroup label="Longhair">
+              <option>Maine Coon</option>
+              <option>Ragdoll</option>
+              <option>Norwegian Forest Cat</option>
+            </optgroup>
+            <option>Other / Unknown</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-bottom: var(--spacing-md);">
+        <label for="notes">Behavioral Notes</label>
+        <textarea id="notes" rows="3" placeholder="Describe temperament, quirks, and current crimes against furniture..."></textarea>
+      </div>
+      <div style="margin-bottom: var(--spacing-md);">
+        <label for="cat-photo">Cat Photo <small>(<abbr title="Joint Photographic Experts Group">JPG</abbr>, <abbr title="Portable Network Graphics">PNG</abbr> or <abbr title="Graphics Interchange Format">GIF</abbr>)</small></label>
+        <input type="file" id="cat-photo" accept="image/*">
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); margin-bottom: var(--spacing-md);">
+        <div>
+          <label for="fluffiness">Fluffiness Level: <output for="fluffiness" id="fluff-out">72</output>%</label>
+          <input type="range" id="fluffiness" min="0" max="100" value="72"
+            oninput="document.getElementById('fluff-out').value = this.value; document.getElementById('progress-demo').value = this.value; document.getElementById('progress-demo').textContent = this.value + '%'; document.getElementById('meter-demo').value = this.value; document.getElementById('meter-demo').textContent = this.value + '%'">
+        </div>
+        <div>
+          <label for="fur-color">Primary Fur Color</label>
+          <input type="color" id="fur-color" value="#f4a460">
+        </div>
+      </div>
+      <div style="margin-bottom: var(--spacing-md);">
+        <label for="progress-demo">Registration Progress</label>
+        <progress id="progress-demo" value="72" max="100">72%</progress>
+      </div>
+      <div style="margin-bottom: var(--spacing-md);">
+        <label for="meter-demo">Cat Energy Level</label>
+        <meter id="meter-demo" min="0" max="100" value="72" optimum="100" high="70" low="30">72%</meter>
+      </div>
+      <fieldset>
+        <legend>Notification Preferences</legend>
+        <p>
+          <label style="display: flex; align-items: center; gap: 0.5rem;">
+            <input type="checkbox" checked> Notify me about catnip updates via
+            <abbr title="Electronic Mail">e-mail</abbr>
+          </label>
+        </p>
+        <p>
+          <label style="display: flex; align-items: center; gap: 0.5rem;">
+            <input type="checkbox"> Send weekly reports on my cat&rsquo;s
+            <abbr title="Sleep Efficiency Index">SEI</abbr> score
+          </label>
+        </p>
+        <p>
+          <label style="display: flex; align-items: center; gap: 0.5rem;">
+            <input type="radio" name="urgency" value="low" checked> Low urgency
+            <small>(response within <time datetime="P30D">30 days</time>)</small>
+          </label>
+        </p>
+        <p>
+          <label style="display: flex; align-items: center; gap: 0.5rem;">
+            <input type="radio" name="urgency" value="high"> High urgency
+            <small>(cat has knocked something off a shelf)</small>
+          </label>
+        </p>
+      </fieldset>
+      <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-md);">
+        <button type="submit">Register Feline</button>
+        <button type="reset">Clear Form</button>
+      </div>
+    </form>
+
+    <p>
+      <small>Data provided by the <abbr title="Global Feline Authority">GFA</abbr> under the
+        <a href="#">Creative Commons <abbr title="Attribution 4.0 International">CC BY 4.0</abbr></a> license.
+        System status: <samp>All systems purring...</samp> &mdash;
+        Last sync: <time datetime="2025-01-01T00:00:00">midnight, 1 January 2025</time>.</small>
+    </p>
+
+    <hr>
+
+    <h2>Keyboard Shortcuts</h2>
+    <p>The <code>&lt;kbd&gt;</code> element represents user keyboard input. With <code>kbd: true</code> enabled,
+      each key is rendered with a <strong>3D isometric effect</strong> &mdash; layered
+      <code>box-shadow</code> simulates the visible side face and cast shadow of a real keycap.
+      Click any key below to see the <a href="#">press animation</a>.</p>
+
+    <h4>Single Keys</h4>
+    <p>
+      <kbd>Esc</kbd> &nbsp;
+      <kbd>Tab</kbd> &nbsp;
+      <kbd>Caps Lock</kbd> &nbsp;
+      <kbd>Shift</kbd> &nbsp;
+      <kbd>Ctrl</kbd> &nbsp;
+      <kbd>Alt</kbd> &nbsp;
+      <kbd>Space</kbd> &nbsp;
+      <kbd>Enter</kbd> &nbsp;
+      <kbd>Backspace</kbd> &nbsp;
+      <kbd>Delete</kbd> &nbsp;
+      <kbd>&uarr;</kbd> &nbsp;
+      <kbd>&darr;</kbd> &nbsp;
+      <kbd>&larr;</kbd> &nbsp;
+      <kbd>&rarr;</kbd>
+    </p>
+    <p>
+      <kbd>A</kbd> &nbsp;
+      <kbd>S</kbd> &nbsp;
+      <kbd>D</kbd> &nbsp;
+      <kbd>F</kbd> &nbsp;
+      <kbd>G</kbd> &nbsp;
+      <kbd>H</kbd> &nbsp;
+      <kbd>J</kbd> &nbsp;
+      <kbd>K</kbd> &nbsp;
+      <kbd>L</kbd>
+    </p>
+
+    <h4>Key Combinations</h4>
+    <p>Press <kbd>Ctrl</kbd> + <kbd>C</kbd> to copy, <kbd>Ctrl</kbd> + <kbd>V</kbd> to paste,
+      and <kbd>Ctrl</kbd> + <kbd>Z</kbd> to undo your mistakes. Or just
+      <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>Delete</kbd> and start over entirely.</p>
+
+    <p>Common terminal shortcuts: <kbd>Ctrl</kbd> + <kbd>D</kbd> to exit,
+      <kbd>Ctrl</kbd> + <kbd>C</kbd> to interrupt, and
+      <kbd>Ctrl</kbd> + <kbd>R</kbd> to search history.</p>
+
+    <h4>Common Shortcut Reference</h4>
+    <table>
+      <thead>
+        <tr>
+          <th>Action</th>
+          <th>Windows / Linux</th>
+          <th>macOS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Copy</td>
+          <td><kbd>Ctrl</kbd> + <kbd>C</kbd></td>
+          <td><kbd>⌘</kbd> + <kbd>C</kbd></td>
+        </tr>
+        <tr>
+          <td>Paste</td>
+          <td><kbd>Ctrl</kbd> + <kbd>V</kbd></td>
+          <td><kbd>⌘</kbd> + <kbd>V</kbd></td>
+        </tr>
+        <tr>
+          <td>Undo</td>
+          <td><kbd>Ctrl</kbd> + <kbd>Z</kbd></td>
+          <td><kbd>⌘</kbd> + <kbd>Z</kbd></td>
+        </tr>
+        <tr>
+          <td>Save</td>
+          <td><kbd>Ctrl</kbd> + <kbd>S</kbd></td>
+          <td><kbd>⌘</kbd> + <kbd>S</kbd></td>
+        </tr>
+        <tr>
+          <td>Select All</td>
+          <td><kbd>Ctrl</kbd> + <kbd>A</kbd></td>
+          <td><kbd>⌘</kbd> + <kbd>A</kbd></td>
+        </tr>
+        <tr>
+          <td>Find</td>
+          <td><kbd>Ctrl</kbd> + <kbd>F</kbd></td>
+          <td><kbd>⌘</kbd> + <kbd>F</kbd></td>
+        </tr>
+        <tr>
+          <td>Switch tab</td>
+          <td><kbd>Ctrl</kbd> + <kbd>Tab</kbd></td>
+          <td><kbd>⌘</kbd> + <kbd>⌥</kbd> + <kbd>&rarr;</kbd></td>
+        </tr>
+        <tr>
+          <td>Open DevTools</td>
+          <td><kbd>F12</kbd> or <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>I</kbd></td>
+          <td><kbd>⌘</kbd> + <kbd>⌥</kbd> + <kbd>I</kbd></td>
+        </tr>
+      </tbody>
+      <caption>Common keyboard shortcuts &mdash; toggle <strong>Kbd</strong> in the toolbar to compare styled vs. unstyled</caption>
+    </table>
+
+    <hr>
+
+    <h6>Frequently Asked Questions</h6>
+
+    <details>
+      <summary>Why do cats bring you dead animals?</summary>
+      <p>Your cat considers you a <strong>terrible hunter</strong>. By bringing you prey, it is attempting to
+        <em>teach you to survive</em>. This is not a gift &mdash; it is a remedial lesson in basic predator skills.
+        <a href="#">Several studies</a> support this interpretation. Be grateful. Be humble.</p>
+    </details>
+    <details>
+      <summary>Can cats get high on catnip?</summary>
+      <p>Not exactly. <code>Nepetalactone</code>, the active compound in catnip, binds to feline olfactory receptors
+        and mimics a cat pheromone. The reaction &mdash; rolling, drooling, vocalising &mdash; lasts about
+        <strong>10 minutes</strong>. Roughly <strong>30% of cats</strong> carry a recessive gene that makes them
+        completely unresponsive. They judge the other 70% silently from across the room.</p>
+    </details>
+    <details>
+      <summary>Do cats dream?</summary>
+      <p>Yes. Cats experience <abbr title="Rapid Eye Movement">REM</abbr> sleep, during which their brains show
+        activity patterns similar to humans. The twitching paws you see are likely responses to a dream-hunt.
+        <a href="#">Research published in <cite>Science</cite></a> suggests cats replay the events of their day
+        during sleep &mdash; which, for most cats, consists entirely of <del>filing tax returns</del>
+        <ins>staring out of windows</ins>.</p>
+    </details>
+    <details>
+      <summary>Is it true cats have a dominant paw?</summary>
+      <p>Yes. Studies show that roughly <strong>40%</strong> of cats are right-pawed, <strong>40%</strong> left-pawed,
+        and <strong>20%</strong> ambidextrous &mdash; a higher ambidexterity rate than humans.
+        Female cats tend to be <mark>right-pawed</mark>; male cats tend to be <mark>left-pawed</mark>.
+        No one has asked any cats for comment.</p>
+    </details>
+    <details>
+      <summary>Why does my cat knock things off tables?</summary>
+      <p>There are three leading theories: <em>(1)</em> they are testing gravity to make sure it still works;
+        <em>(2)</em> they are checking if the object is alive; <em>(3)</em> they simply enjoy the sound of your
+        <del>patience</del> <ins>ceramic mug</ins> shattering. Current scientific consensus favours option
+        <strong>(3)</strong>. <a href="#">See: Newton&rsquo;s Third Law of Cat Physics.</a></p>
+    </details>
+    </div>
+  </div>
+
+
+
+
+  <script>
+    // ─── Sidebar toggle (vanilla — button is outside Vue scope) ─────────────────────
+    const pgSidebar    = document.getElementById('pg-sidebar');
+    const pgSidebarBtn = document.getElementById('pg-sidebar-btn');
+    const contentWrapper = document.getElementById('content-wrapper');
+
+    let sidebarOpen = localStorage.getItem('clampography-sidebar') !== 'closed';
+
+    function setSidebar(open) {
+      sidebarOpen = open;
+      pgSidebar.classList.toggle('is-closed', !open);
+      pgSidebarBtn.classList.toggle('is-closed', !open);
+      pgSidebarBtn.textContent = open ? '\u2039' : '\u203a';
+      
+      const w = pgSidebar.offsetWidth + 'px';
+      pgSidebarBtn.style.left = open ? w : '0';
+      contentWrapper.classList.toggle('sidebar-closed', !open);
+      contentWrapper.style.marginLeft = open ? w : '0';
+      
+      localStorage.setItem('clampography-sidebar', open ? 'open' : 'closed');
+    }
+
+    pgSidebarBtn.addEventListener('click', () => setSidebar(!sidebarOpen));
+    setSidebar(sidebarOpen);
+
+    const resizeObserver = new ResizeObserver(entries => {
+      for (let entry of entries) {
+        if (sidebarOpen) {
+          const w = entry.target.offsetWidth + 'px';
+          pgSidebarBtn.style.left = w;
+          contentWrapper.style.marginLeft = w;
+        }
+      }
+    });
+    resizeObserver.observe(pgSidebar);
+  </script>
+
+  <!-- ─── Vue 3 — Sidebar app (controls + theme editor) ──────────────────────── -->
+  <script>
+  {
+    const { createApp, ref, reactive, computed, watch, onMounted } = Vue;
+
+    // — Static data —
+    const AVAILABLE_THEMES = []; // replaced by server.js
+    const THEME_DATA = {};       // replaced by server.js
+
+    const FONTS = [
+      { label: 'System',        stack: 'system-ui, sans-serif' },
+      { label: 'Inter',         stack: "'Inter', sans-serif" },
+      { label: 'Roboto',        stack: "'Roboto', sans-serif" },
+      { label: 'Playfair',      stack: "'Playfair Display', serif" },
+      { label: 'Quando',        stack: "'Quando', serif" },
+      { label: 'Fira Mono',     stack: "'Fira Mono', monospace" },
+      { label: 'Josefin Light', stack: "'Josefin Sans', sans-serif" },
+      { label: 'Nunito Light',  stack: "'Nunito', sans-serif" },
+    ];
+
+    const COLOR_VARS = [
+      { id: 'background', label: 'Background', v: '--clampography-background' },
+      { id: 'surface',    label: 'Surface',    v: '--clampography-surface' },
+      { id: 'text',       label: 'Text',       v: '--clampography-text' },
+      { id: 'heading',    label: 'Heading',    v: '--clampography-heading' },
+      { id: 'primary',    label: 'Primary',    v: '--clampography-primary' },
+      { id: 'secondary',  label: 'Secondary',  v: '--clampography-secondary' },
+      { id: 'muted',      label: 'Muted',      v: '--clampography-muted' },
+      { id: 'border',     label: 'Border',     v: '--clampography-border' },
+      { id: 'link',       label: 'Link',       v: '--clampography-link' },
+      { id: 'success',    label: 'Success',    v: '--clampography-success' },
+      { id: 'warning',    label: 'Warning',    v: '--clampography-warning' },
+      { id: 'error',      label: 'Error',      v: '--clampography-error' },
+      { id: 'info',       label: 'Info',       v: '--clampography-info' },
+    ];
+
+    // — DOM refs for side effects outside Vue scope —
+    const cssLink = document.getElementById('main-css');
+    const cw = document.getElementById('content-wrapper');
+
+    // — Utils —
+    const canvasCtx = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+    canvasCtx.canvas.width = 1;
+    canvasCtx.canvas.height = 1;
+
+    // Convert OKLCH to HEX precisely (reverse engineering)
+    function oklchToHex(l, c, h) {
+      let lVal = parseFloat(l);
+      if (typeof l === 'string' && l.includes('%')) {
+        lVal /= 100;
+      } else if (lVal > 1.0) {
+        lVal /= 100;
+      }
+      l = lVal;
+      c = parseFloat(c);
+      h = parseFloat(h) * Math.PI / 180;
+
+      const a = c * Math.cos(h);
+      const b_ = c * Math.sin(h);
+
+      const l_ = l + 0.3963377774 * a + 0.2158037573 * b_;
+      const m_ = l - 0.1055613458 * a - 0.0638541728 * b_;
+      const s_ = l - 0.0894841775 * a - 1.2914855480 * b_;
+
+      const l3 = l_ * l_ * l_;
+      const m3 = m_ * m_ * m_;
+      const s3 = s_ * s_ * s_;
+
+      let r = +4.0767416621 * l3 - 3.3077115913 * m3 + 0.2309699292 * s3;
+      let g = -1.2684380046 * l3 + 2.6097574011 * m3 - 0.3413193965 * s3;
+      let b = -0.0041960863 * l3 - 0.7034186147 * m3 + 1.7076147010 * s3;
+
+      r = r > 0.0031308 ? 1.055 * Math.pow(r, 1 / 2.4) - 0.055 : 12.92 * r;
+      g = g > 0.0031308 ? 1.055 * Math.pow(g, 1 / 2.4) - 0.055 : 12.92 * g;
+      b = b > 0.0031308 ? 1.055 * Math.pow(b, 1 / 2.4) - 0.055 : 12.92 * b;
+
+      r = Math.max(0, Math.min(255, Math.round(r * 255)));
+      g = Math.max(0, Math.min(255, Math.round(g * 255)));
+      b = Math.max(0, Math.min(255, Math.round(b * 255)));
+
+      return '#' + [r, g, b].map(n => n.toString(16).padStart(2, '0')).join('');
+    }
+
+    function varToHex(cssVar) {
+      // Read from body — data-theme is on body, so vars cascade there
+      // (documentElement only has :root defaults, ignoring active data-theme)
+      const raw = getComputedStyle(document.body).getPropertyValue(cssVar).trim();
+      if (!raw) return '#888888'; // CSS not loaded yet — caller should retry
+
+      if (raw.startsWith('oklch(')) {
+        const match = raw.match(/oklch\(\s*([\d.]+%?)\s+([\d.e-]+)\s+([\d.e-]+)/);
+        if (match) return oklchToHex(match[1], match[2], match[3]);
+      }
+
+      // Fallback: resolve through the browser using canvas (for non-oklch values)
+      const el = Object.assign(document.createElement('div'), {
+        style: 'position:absolute;visibility:hidden;'
+      });
+      el.style.color = raw; // use the raw value directly, not var()
+      document.body.appendChild(el);
+      const comp = getComputedStyle(el).color;
+      document.body.removeChild(el);
+
+      canvasCtx.clearRect(0, 0, 1, 1);
+      canvasCtx.fillStyle = '#888888';
+      if (comp) canvasCtx.fillStyle = comp;
+      canvasCtx.fillRect(0, 0, 1, 1);
+
+      const [r, g, b] = canvasCtx.getImageData(0, 0, 1, 1).data;
+      return '#' + [r, g, b].map(n => n.toString(16).padStart(2, '0')).join('');
+    }
+
+    // Convert HEX to exact OKLCH string for clampography themes
+    function hexToOklch(hex) {
+      if (!hex || hex.length !== 7) return 'oklch(0% 0 0)';
+      let r = parseInt(hex.slice(1, 3), 16) / 255;
+      let g = parseInt(hex.slice(3, 5), 16) / 255;
+      let b = parseInt(hex.slice(5, 7), 16) / 255;
+
+      // sRGB to Linear sRGB
+      r = r > 0.04045 ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
+      g = g > 0.04045 ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
+      b = b > 0.04045 ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
+
+      // Linear sRGB to LMS
+      const l = 0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b;
+      const m = 0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b;
+      const s = 0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b;
+
+      // LMS to OKLab
+      const l_ = Math.cbrt(l);
+      const m_ = Math.cbrt(m);
+      const s_ = Math.cbrt(s);
+
+      const L = 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
+      const a = 1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_;
+      const b_ = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
+
+      // OKLab to OKLCH
+      const C = Math.sqrt(a * a + b_ * b_);
+      let h = Math.atan2(b_, a) * 180 / Math.PI;
+      if (h < 0) h += 360;
+
+      // Format exactly how clampography expects it
+      return `oklch(${(L * 100).toFixed(1)}% ${C.toFixed(3)} ${h.toFixed(1)})`;
+    }
+
+    // — Restore saved state from localStorage —
+    const ls = k => localStorage.getItem(k);
+    const lsBool = (k, def = true) => ls(k) === null ? def : ls(k) === 'true';
+
+    createApp({
+      setup() {
+        // ─ Reactive state ─
+        const extra  = ref(lsBool('clampography-dev-extra'));
+        const forms  = ref(lsBool('clampography-dev-forms'));
+        const kbd    = ref(lsBool('clampography-dev-kbd'));
+        const themes = ref(lsBool('clampography-dev-themes-enabled'));
+
+        const savedThemeIdx = AVAILABLE_THEMES.indexOf(ls('clampography-dev-theme'));
+        const currentThemeIndex = ref(savedThemeIdx !== -1 ? savedThemeIdx : 0);
+        const currentFontIndex  = ref(0);
+
+        const colors = reactive(Object.fromEntries(COLOR_VARS.map(({ id }) => [id, '#888888'])));
+
+        // ─ Computed ─
+        const currentFont      = computed(() => FONTS[currentFontIndex.value]);
+        const currentThemeName = computed(() => AVAILABLE_THEMES[currentThemeIndex.value] ?? '');
+        const cssSuffix = computed(() =>
+          (themes.value ? 't' : '') + (extra.value ? 'e' : '') +
+          (forms.value  ? 'f' : '') + (kbd.value   ? 'k' : '') || 'n'
+        );
+
+        // ─ Methods ─
+        const prevFont  = () => { currentFontIndex.value  = (currentFontIndex.value  - 1 + FONTS.length)            % FONTS.length; };
+        const nextFont  = () => { currentFontIndex.value  = (currentFontIndex.value  + 1) % FONTS.length; };
+        const prevTheme = () => { if (AVAILABLE_THEMES.length) currentThemeIndex.value = (currentThemeIndex.value - 1 + AVAILABLE_THEMES.length) % AVAILABLE_THEMES.length; };
+        const nextTheme = () => { if (AVAILABLE_THEMES.length) currentThemeIndex.value = (currentThemeIndex.value + 1) % AVAILABLE_THEMES.length; };
+
+        function syncColors() {
+          const name = currentThemeName.value;
+          const themeObj = THEME_DATA[name]; // direct lookup — no CSS parsing needed
+
+          COLOR_VARS.forEach(({ id, v }) => {
+            if (themeObj && themeObj[v]) {
+              // Parse the known OKLCH value from the JS theme data — always accurate
+              const raw = themeObj[v].trim();
+              const match = raw.match(/oklch\(\s*([\d.]+%?)\s+([\d.e-]+)\s+([\d.e-]+)/);
+              colors[id] = match ? oklchToHex(match[1], match[2], match[3]) : '#888888';
+            } else {
+              // 'auto' or unknown theme: fall back to reading from computed styles
+              colors[id] = varToHex(v);
+            }
+          });
+        }
+
+        // Fallback: poll until CSS is loaded (used only for 'auto'/system theme)
+        function syncColorsWhenReady(attemptsLeft = 40) {
+          const test = getComputedStyle(document.body)
+            .getPropertyValue('--clampography-background').trim();
+          if (test) {
+            syncColors();
+          } else if (attemptsLeft > 0) {
+            requestAnimationFrame(() => syncColorsWhenReady(attemptsLeft - 1));
+          }
+        }
+
+        function resetColors() {
+          COLOR_VARS.forEach(({ v }) => document.body.style.removeProperty(v));
+          requestAnimationFrame(syncColors);
+        }
+
+        // ─ Side-effect watches ─
+        // CSS variant
+        watch(cssSuffix, s => {
+          cssLink.href = `/css/${s}.css`;
+          localStorage.setItem('clampography-dev-extra',            extra.value);
+          localStorage.setItem('clampography-dev-forms',            forms.value);
+          localStorage.setItem('clampography-dev-kbd',              kbd.value);
+          localStorage.setItem('clampography-dev-themes-enabled',   themes.value);
+          
+          // Wait for the new stylesheet to actually apply its CSS variables
+          cssLink.onload = () => requestAnimationFrame(syncColors);
+        }, { immediate: true });
+
+        // Font
+        watch(currentFont, f => { cw.style.fontFamily = f.stack; }, { immediate: true });
+
+        // Theme
+        watch([currentThemeName, themes], ([name, enabled]) => {
+          COLOR_VARS.forEach(({ v }) => document.body.style.removeProperty(v));
+          if (enabled && name && name !== 'auto') {
+            document.body.setAttribute('data-theme', name);
+            localStorage.setItem('clampography-dev-theme', name);
+          } else if (enabled && name === 'auto') {
+            document.body.removeAttribute('data-theme');
+            localStorage.setItem('clampography-dev-theme', 'auto');
+          } else if (!enabled) {
+            document.body.removeAttribute('data-theme');
+          }
+          // After any theme change, wait for a paint cycle then sync
+          requestAnimationFrame(() => requestAnimationFrame(syncColors));
+        }, { immediate: true });
+
+        function updateVar(cssVar, val) {
+          document.body.style.setProperty(cssVar, hexToOklch(val));
+        }
+
+        // ─ Export Theme ─
+        const isCopied = ref(false);
+
+        function generateThemeJson() {
+          const themeObj = { name: currentThemeName.value || 'custom-theme' };
+          COLOR_VARS.forEach(({ id }) => { themeObj[id] = hexToOklch(colors[id]); });
+          return JSON.stringify(themeObj, null, 2);
+        }
+
+        function copyTheme() {
+          navigator.clipboard.writeText(generateThemeJson()).then(() => {
+            isCopied.value = true;
+            setTimeout(() => isCopied.value = false, 2000);
+          });
+        }
+
+        const isCopiedCss = ref(false);
+        function copyCss() {
+          let css = ":root {\n";
+          COLOR_VARS.forEach(({ id, v }) => { css += `  ${v}: ${hexToOklch(colors[id])};\n`; });
+          css += "}";
+          navigator.clipboard.writeText(css).then(() => {
+            isCopiedCss.value = true;
+            setTimeout(() => isCopiedCss.value = false, 2000);
+          });
+        }
+
+        function downloadTheme() {
+          const jsonStr = generateThemeJson();
+          const blob = new Blob([jsonStr], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${currentThemeName.value || 'custom-theme'}.json`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }
+
+        // Keyboard shortcuts
+        onMounted(() => {
+          // On mount: poll until CSS is ready (handles cold cache and cached loads alike)
+          syncColorsWhenReady();
+
+          document.addEventListener('keydown', e => {
+            if (e.ctrlKey) {
+              if (e.key === 'ArrowLeft')  { e.preventDefault(); prevTheme(); }
+              if (e.key === 'ArrowRight') { e.preventDefault(); nextTheme(); }
+            }
+          });
+        });
+
+        return { FONTS, COLOR_VARS, extra, forms, kbd, themes,
+          currentFont, currentThemeName, colors, isCopied, isCopiedCss,
+          prevFont, nextFont, prevTheme, nextTheme, resetColors, updateVar, hexToOklch,
+          copyTheme, copyCss, downloadTheme };
+      }
+    }).mount('#pg-sidebar');
+  }
+  </script>
+</body>
+
+</html>
