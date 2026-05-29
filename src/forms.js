@@ -226,38 +226,38 @@ export default (options = {}) => {
 
     // WebKit inner track
     [scope("meter::-webkit-meter-bar")]: {
-      "background-color": "color-mix(in oklab, var(--clampography-text) 15%, transparent)",
+      "background": "color-mix(in oklab, var(--clampography-text) 15%, transparent)",
       "border": "none",
       "border-radius": "0.25rem",
     },
 
     // 1. Optimum (Success)
     [scope("meter::-webkit-meter-optimum-value")]: {
-      "background-color": "var(--clampography-success)",
+      "background": "var(--clampography-success)",
       "border-radius": "0.25rem",
     },
     [scope("meter:-moz-meter-optimum::-moz-meter-bar")]: {
-      "background-color": "var(--clampography-success)",
+      "background": "var(--clampography-success)",
       "border-radius": "0.25rem",
     },
 
     // 2. Sub-optimum (Warning)
     [scope("meter::-webkit-meter-suboptimum-value")]: {
-      "background-color": "var(--clampography-warning)",
+      "background": "var(--clampography-warning)",
       "border-radius": "0.25rem",
     },
     [scope("meter:-moz-meter-sub-optimum::-moz-meter-bar")]: {
-      "background-color": "var(--clampography-warning)",
+      "background": "var(--clampography-warning)",
       "border-radius": "0.25rem",
     },
 
     // 3. Even less good (Error)
     [scope("meter::-webkit-meter-even-less-good-value")]: {
-      "background-color": "var(--clampography-error)",
+      "background": "var(--clampography-error)",
       "border-radius": "0.25rem",
     },
     [scope("meter:-moz-meter-sub-sub-optimum::-moz-meter-bar")]: {
-      "background-color": "var(--clampography-error)",
+      "background": "var(--clampography-error)",
       "border-radius": "0.25rem",
     },
   };
