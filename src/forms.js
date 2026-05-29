@@ -262,6 +262,13 @@ export default (options = {}) => {
       },
     },
 
+    // WebKit inner element: re-establish height context lost when appearance:none is set
+    // Without an explicit height here, height:100% on child pseudo-elements is unresolvable
+    [scope("meter::-webkit-meter-inner-element")]: {
+      "display": "block",
+      "height": "1em",
+    },
+
     // WebKit inner track
     [scope("meter::-webkit-meter-bar")]: {
       "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
