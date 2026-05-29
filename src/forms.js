@@ -220,7 +220,7 @@ export default (options = {}) => {
 
     // WebKit progress track
     [scope("progress::-webkit-progress-bar")]: {
-      "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
+      "background": "transparent",
       "border-radius": "0",
       "box-shadow": "none",
       "height": "100%",
@@ -265,7 +265,7 @@ export default (options = {}) => {
 
     // WebKit inner track
     [scope("meter::-webkit-meter-bar")]: {
-      "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
+      "background": "transparent",
       "border": "none",
       "border-radius": "0",
       "box-shadow": "none",
