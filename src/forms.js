@@ -252,9 +252,12 @@ export default (options = {}) => {
 
     // Re-establish height context for WebKit shadow DOM
     // appearance:none breaks Chrome's flex layout; inner elements can't resolve height:100%
-    // without a concrete parent height set here
+    // without a concrete parent height set here.
+    // display:flex + align-items:stretch forces the child bar to fill the full height
+    // without top-anchoring it the way display:block would.
     [scope("meter::-webkit-meter-inner-element")]: {
-      "display": "block",
+      "display": "flex",
+      "align-items": "stretch",
       "height": "1em",
     },
 
