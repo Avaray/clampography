@@ -160,10 +160,11 @@ export default (options = {}) => {
 
     [scope("summary")]: {
       "color": "var(--clampography-heading)",
+      "border-bottom": "0px solid var(--clampography-border)",
     },
 
     [scope("details[open] > summary")]: {
-      "border-bottom": "1px solid var(--clampography-border)",
+      "border-bottom-width": "1px",
       "padding-bottom": "0.5rem",
     },
   };
