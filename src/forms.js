@@ -223,6 +223,7 @@ export default (options = {}) => {
       "background": "transparent",
       "border-radius": "0",
       "box-shadow": "none",
+      "overflow": "hidden",
       "height": "100%",
     },
 
@@ -260,6 +261,8 @@ export default (options = {}) => {
       "appearance": "none",
       "background": "transparent",
       "border": "none",
+      "box-shadow": "none",
+      "overflow": "hidden",
       "height": "100%",
     },
 
@@ -269,6 +272,7 @@ export default (options = {}) => {
       "border": "none",
       "border-radius": "0",
       "box-shadow": "none",
+      "overflow": "hidden",
       "height": "100%",
     },
 
