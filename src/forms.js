@@ -215,18 +215,21 @@ export default (options = {}) => {
       "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
       "border-radius": "0",
       "border": "none",
+      "box-shadow": "none",
     },
 
     // WebKit progress track
     [scope("progress::-webkit-progress-bar")]: {
       "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
       "border-radius": "0",
+      "box-shadow": "none",
     },
 
     // WebKit progress value
     [scope("progress::-webkit-progress-value")]: {
       "background": "var(--clampography-success)",
       "border-radius": "0",
+      "box-shadow": "none",
     },
 
     // Firefox progress value
@@ -246,6 +249,7 @@ export default (options = {}) => {
       "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
       "border-radius": "0",
       "border": "none",
+      "box-shadow": "none",
     },
 
     // WebKit inner track
@@ -253,12 +257,14 @@ export default (options = {}) => {
       "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
       "border": "none",
       "border-radius": "0",
+      "box-shadow": "none",
     },
 
     // 1. Optimum (Success)
     [scope("meter::-webkit-meter-optimum-value")]: {
       "background": "var(--clampography-success)",
       "border-radius": "0",
+      "box-shadow": "none",
     },
     [scope("meter:-moz-meter-optimum::-moz-meter-bar")]: {
       "background": "var(--clampography-success)",
@@ -269,6 +275,7 @@ export default (options = {}) => {
     [scope("meter::-webkit-meter-suboptimum-value")]: {
       "background": "var(--clampography-warning)",
       "border-radius": "0",
+      "box-shadow": "none",
     },
     [scope("meter:-moz-meter-sub-optimum::-moz-meter-bar")]: {
       "background": "var(--clampography-warning)",
@@ -279,6 +286,7 @@ export default (options = {}) => {
     [scope("meter::-webkit-meter-even-less-good-value")]: {
       "background": "var(--clampography-error)",
       "border-radius": "0",
+      "box-shadow": "none",
     },
     [scope("meter:-moz-meter-sub-sub-optimum::-moz-meter-bar")]: {
       "background": "var(--clampography-error)",
