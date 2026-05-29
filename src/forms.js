@@ -211,7 +211,7 @@ export default (options = {}) => {
       "-moz-appearance": "none",
       "appearance": "none",
       "width": "100%",
-      "background": "color-mix(in oklab, var(--clampography-text) 15%, transparent)",
+      "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
       "border-radius": "0.25rem",
       "height": "0.75rem",
       "border": "none",
@@ -219,7 +219,7 @@ export default (options = {}) => {
 
     // WebKit progress track
     [scope("progress::-webkit-progress-bar")]: {
-      "background": "color-mix(in oklab, var(--clampography-text) 15%, transparent)",
+      "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
       "border-radius": "0.25rem",
     },
 
@@ -242,7 +242,7 @@ export default (options = {}) => {
       "-moz-appearance": "none",
       "appearance": "none",
       "width": "100%",
-      "background-color": "transparent",
+      "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
       "border-radius": "0.25rem",
       "height": "0.75rem",
       "border": "none",
@@ -250,7 +250,7 @@ export default (options = {}) => {
 
     // WebKit inner track
     [scope("meter::-webkit-meter-bar")]: {
-      "background": "color-mix(in oklab, var(--clampography-text) 15%, transparent)",
+      "background": "color-mix(in oklab, var(--clampography-text) 20%, transparent)",
       "border": "none",
       "border-radius": "0.25rem",
     },
