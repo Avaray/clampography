@@ -210,5 +210,35 @@ export default (options = {}) => {
       "accent-color": "var(--clampography-primary)",
       "width": "100%",
     },
+
+    // Custom styling for <meter> (accent-color does not work on meter)
+    [scope("meter")]: {
+      "-webkit-appearance": "none",
+      "-moz-appearance": "none",
+      "appearance": "none",
+      "background-color": "color-mix(in oklab, var(--clampography-text) 15%, transparent)",
+      "border-radius": "0.25rem",
+      "height": "0.75rem",
+      "border": "none",
+    },
+
+    // WebKit inner track
+    [scope("meter::-webkit-meter-bar")]: {
+      "background-color": "color-mix(in oklab, var(--clampography-text) 15%, transparent)",
+      "border": "none",
+      "border-radius": "0.25rem",
+    },
+
+    // WebKit values (optimum, suboptimum, even-less-good)
+    [scope("meter::-webkit-meter-optimum-value, meter::-webkit-meter-suboptimum-value, meter::-webkit-meter-even-less-good-value")]: {
+      "background-color": "var(--clampography-success)",
+      "border-radius": "0.25rem",
+    },
+
+    // Firefox value
+    [scope("meter::-moz-meter-bar")]: {
+      "background-color": "var(--clampography-success)",
+      "border-radius": "0.25rem",
+    },
   };
 };
