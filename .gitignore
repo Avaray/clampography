@@ -5,6 +5,4 @@ css/
 node_modules/
 .npm-cache/
 dev/css/
-dev/output.css
-dev/input.css
 temp/

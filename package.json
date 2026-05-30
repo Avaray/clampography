@@ -63,7 +63,6 @@
   "scripts": {
     "build": "bun src/convert.js",
     "test": "bun test",
-    "dev:css": "bunx @tailwindcss/cli -i ./dev/input.css -o ./dev/output.css --watch",
     "dev:server": "bun run dev/server.js",
     "dev": "bun run dev/server.js"
   },
