@@ -66,7 +66,8 @@ export default (options = {}) => {
     },
 
     [scope("h1")]: {
-      "font-size": "clamp(1.875rem, 1.1875rem + 3.5vw, 4rem)",
+      // 30px → 54px (mobile → desktop)
+      "font-size": "clamp(1.875rem, 1.375rem + 2.5vw, 3.375rem)",
       "line-height": "1.1111",
       "font-weight": "800",
       "margin-top": "0",
@@ -74,7 +75,8 @@ export default (options = {}) => {
     },
 
     [scope("h2")]: {
-      "font-size": "clamp(1.25rem, 0.6875rem + 2.9vw, 3rem)",
+      // 22px → 30px (mobile → desktop)
+      "font-size": "clamp(1.375rem, 1.2rem + 0.85vw, 1.875rem)",
       "line-height": "1.3333",
       "font-weight": "700",
       "margin-top": "var(--spacing-xl)",
@@ -82,14 +84,16 @@ export default (options = {}) => {
     },
 
     [scope("h3")]: {
-      "font-size": "clamp(1.125rem, 0.75rem + 1.875vw, 2.25rem)",
+      // 18px → 24px (mobile → desktop)
+      "font-size": "clamp(1.125rem, 1rem + 0.625vw, 1.5rem)",
       "line-height": "1.5",
       "margin-top": "var(--spacing-lg)",
       "margin-bottom": "var(--spacing-sm)",
     },
 
     [scope("h4")]: {
-      "font-size": "clamp(1rem, 0.8125rem + 0.83vw, 1.5rem)",
+      // 16px → 20px (mobile → desktop)
+      "font-size": "clamp(1rem, 0.917rem + 0.42vw, 1.25rem)",
       "line-height": "1.5",
       "margin-top": "var(--spacing-lg)",
       "margin-bottom": "var(--spacing-sm)",
