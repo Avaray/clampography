@@ -232,7 +232,7 @@ To define a custom font for your entire project (which Clampography will automat
 
 @theme {
   --font-sans: "Your Custom Font", "Segoe UI", sans-serif;
-  --font-mono: "Your Custom Mono", monospace; /* Used for code blocks */
+  --font-mono: "Your Custom Mono", monospace;
 }
 ```
 
