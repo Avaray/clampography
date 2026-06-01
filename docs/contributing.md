@@ -33,7 +33,7 @@ The project uses [Bun](https://bun.sh/) as the package manager and test runner.
 
 ## Compiling CSS
 
-The standalone CSS files in `src/css/` are not committed to Git but are generated dynamically from the core JS modules. They are included when the package is published to NPM.
+The standalone CSS files in `css/` are not committed to Git but are generated dynamically from the core JS modules. They are included when the package is published to NPM.
 
 To generate the `.css` and minified `.css.min` files locally:
 
@@ -61,12 +61,13 @@ bun test --watch
 
 ## Making Changes
 
-1. **JS Source Files:** Style definitions are split across `src/base.js`, `src/extra.js`, `src/forms.js`, `src/kbd.js`, and `src/themes.js`.
+1. **JS Source Files:** Style definitions are split across `src/base.js`, `src/extra.js`, `src/forms.js`, `src/kbd.js`, `src/theme.js`, and `src/themes.js`.
    - `base.js` — fluid typography, spacing, headings, lists, code blocks
    - `extra.js` — opinionated decorations (borders, blockquote, table zebra-stripes, links)
    - `forms.js` — all HTML form elements (inputs, buttons, select, checkbox, range, etc.)
    - `kbd.js` — 3D isometric keyboard key styling for `<kbd>` elements
-   - `themes.js` — built-in light/dark color palettes
+   - `theme.js` — structure for CSS color variables using current active theme values
+   - `themes.js` — built-in light/dark color palettes using OKLCH format
 2. **Themes:** Ensure any new color references use the `oklch` color space format for maximum compatibility and opacity modifier support.
 3. **Docs:** If you add a new feature, document it in `docs/usage.md`.
 4. **Commits:** Use Conventional Commits (`feat:`, `fix:`, `chore:`, etc.).
