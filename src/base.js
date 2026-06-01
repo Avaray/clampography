@@ -33,7 +33,8 @@ export default (options = {}) => {
 
   return {
     // ROOT CONFIGURATION (CSS variables)
-    [root]: {
+    // Uses :where() for zero specificity so user overrides always win regardless of layer/source order
+    [`:where(${root})`]: {
       "--spacing-xs": "clamp(0.25rem, 1.25vw, 0.75rem)",
       "--spacing-sm": "clamp(0.375rem, -0.0625rem + 2.1875vw, 1.25rem)",
       "--spacing-md": "clamp(0.5rem, 2.5vw, 1.5rem)",
