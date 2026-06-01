@@ -240,6 +240,59 @@ Clampography internally uses the CSS cascade `var(--font-sans, var(--font-family
 
 ---
 
+## Customizing Headings
+
+Clampography provides beautiful fluid typography defaults (using `clamp()`), but gives you absolute pixel-perfect control over heading sizes through zero-specificity CSS variables.
+
+### Global Scaling
+
+You can proportionally scale all headings (H1-H6) globally by overriding the `--clampography-heading-scale` multiplier on `:root`. By default, this multiplier is `1`.
+
+```css
+@layer base {
+  :root {
+    /* Shrinks all headings to 85% of their default fluid sizes */
+    --clampography-heading-scale: 0.85;
+  }
+}
+```
+
+### Individual Heading Scaling
+
+If you want to scale a specific heading without affecting others, you can use the individual scale variables (e.g. `--clampography-h1-scale` through `--clampography-h6-scale`). These default to inheriting the global scale.
+
+```css
+@layer base {
+  :root {
+    /* Scale all headings down slightly... */
+    --clampography-heading-scale: 0.85;
+
+    /* ...except for H1, which we want much larger */
+    --clampography-h1-scale: 1.25;
+  }
+}
+```
+
+### Completely Custom Sizes
+
+If you don't like the default fluid `clamp()` math provided by the plugin, you can replace the entire size definition for any heading.
+
+```css
+@layer base {
+  :root {
+    /* Provide a completely custom clamp() function */
+    --clampography-h1-size: clamp(2.5rem, 5vw, 5rem);
+
+    /* Or provide a fixed static size */
+    --clampography-h2-size: 3rem;
+  }
+}
+```
+
+Because Clampography uses `:where(:root)` internally for these variables, your `@layer base` overrides will **always** win regardless of CSS file loading order. No `!important` required!
+
+---
+
 ## Configuration Options
 
 ### Main Plugin Options
