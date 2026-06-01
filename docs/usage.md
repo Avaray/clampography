@@ -220,6 +220,46 @@ Style `<kbd>` elements as realistic 3D keyboard keys.
 
 ---
 
+## Custom Fonts
+
+Clampography intelligently integrates with Tailwind CSS to automatically respect your font choices. It does not force its own typography on your site if you have explicitly defined your own.
+
+### Tailwind v4
+
+To define a custom font for your entire project (which Clampography will automatically adopt for all body text), override the `--font-sans` variable in your CSS:
+
+```css
+@import "tailwindcss";
+@plugin "clampography";
+
+@theme {
+  --font-sans: "Your Custom Font", "Segoe UI", sans-serif;
+  --font-mono: "Your Custom Mono", monospace; /* Used for code blocks */
+}
+```
+
+### Tailwind v3
+
+If you are using Tailwind v3 (e.g., in Astro), configure the `sans` and `mono` font families in your configuration file:
+
+```javascript
+// tailwind.config.js
+export default {
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['"Your Custom Font"', '"Segoe UI"', 'sans-serif'],
+        mono: ['"Your Custom Mono"', 'monospace'],
+      }
+    }
+  }
+}
+```
+
+Clampography internally uses the CSS cascade `var(--font-sans, var(--font-family-base))`. This ensures your Tailwind fonts always take priority, while falling back to a robust system font stack if no custom font is provided.
+
+---
+
 ## Configuration Options
 
 ### Main Plugin Options
