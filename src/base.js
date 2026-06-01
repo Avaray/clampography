@@ -66,7 +66,7 @@ export default (options = {}) => {
     },
 
     [scope("h1")]: {
-      "font-size": "clamp(2.25rem, 1.95rem + 1.5vw, 3rem)",
+      "font-size": "clamp(1.875rem, 1.1875rem + 3.5vw, 4rem)",
       "line-height": "1.1111",
       "font-weight": "800",
       "margin-top": "0",
@@ -74,7 +74,7 @@ export default (options = {}) => {
     },
 
     [scope("h2")]: {
-      "font-size": "clamp(1.5rem, 1.35rem + 0.75vw, 1.875rem)",
+      "font-size": "clamp(1.25rem, 0.6875rem + 2.9vw, 3rem)",
       "line-height": "1.3333",
       "font-weight": "700",
       "margin-top": "var(--spacing-xl)",
@@ -82,14 +82,14 @@ export default (options = {}) => {
     },
 
     [scope("h3")]: {
-      "font-size": "clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem)",
+      "font-size": "clamp(1.125rem, 0.75rem + 1.875vw, 2.25rem)",
       "line-height": "1.5",
       "margin-top": "var(--spacing-lg)",
       "margin-bottom": "var(--spacing-sm)",
     },
 
     [scope("h4")]: {
-      "font-size": "clamp(1rem, 0.975rem + 0.125vw, 1.125rem)",
+      "font-size": "clamp(1rem, 0.8125rem + 0.83vw, 1.5rem)",
       "line-height": "1.5",
       "margin-top": "var(--spacing-lg)",
       "margin-bottom": "var(--spacing-sm)",
