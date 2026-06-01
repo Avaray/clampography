@@ -32,7 +32,7 @@ export default (options = {}) => {
   };
 
   return {
-    // ROOT CONFIGURATION
+    // ROOT CONFIGURATION (CSS variables)
     [root]: {
       "--spacing-xs": "clamp(0.25rem, 1.25vw, 0.75rem)",
       "--spacing-sm": "clamp(0.375rem, -0.0625rem + 2.1875vw, 1.25rem)",
@@ -45,8 +45,10 @@ export default (options = {}) => {
         "system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif",
       "--font-family-mono":
         "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
+    },
 
-      // Body styles applied to the root container
+    // BODY STYLES (Typography baseline)
+    [root === ":root" ? "body" : root]: {
       "font-family": "var(--font-family-base)",
       "font-size": "clamp(1rem, 0.95rem + 0.25vw, 1.125rem)",
       "line-height": "1.75",

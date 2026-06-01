@@ -32,7 +32,7 @@ export default (options = {}) => {
 
   return {
     // --- Basic Coloring ---
-    [root]: {
+    [root === ":root" ? "body" : root]: {
       "background-color": "var(--clampography-background)",
       "color": "var(--clampography-text)",
     },
