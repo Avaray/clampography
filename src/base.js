@@ -60,6 +60,14 @@ export default (options = {}) => {
       // Override in :root to proportionally scale all headings at once.
       // Example: :root { --clampography-heading-scale: 0.85; }
       "--clampography-heading-scale": "1",
+      
+      // Individual heading scales (default to global scale)
+      "--clampography-h1-scale": "var(--clampography-heading-scale)",
+      "--clampography-h2-scale": "var(--clampography-heading-scale)",
+      "--clampography-h3-scale": "var(--clampography-heading-scale)",
+      "--clampography-h4-scale": "var(--clampography-heading-scale)",
+      "--clampography-h5-scale": "var(--clampography-heading-scale)",
+      "--clampography-h6-scale": "var(--clampography-heading-scale)",
     },
 
     // BODY STYLES (Typography baseline)
@@ -81,7 +89,7 @@ export default (options = {}) => {
     },
 
     [scope("h1")]: {
-      "font-size": "calc(var(--clampography-h1-size) * var(--clampography-heading-scale))",
+      "font-size": "calc(var(--clampography-h1-size) * var(--clampography-h1-scale))",
       "line-height": "1.1111",
       "font-weight": "800",
       "margin-top": "0",
@@ -89,7 +97,7 @@ export default (options = {}) => {
     },
 
     [scope("h2")]: {
-      "font-size": "calc(var(--clampography-h2-size) * var(--clampography-heading-scale))",
+      "font-size": "calc(var(--clampography-h2-size) * var(--clampography-h2-scale))",
       "line-height": "1.3333",
       "font-weight": "700",
       "margin-top": "var(--spacing-xl)",
@@ -97,28 +105,28 @@ export default (options = {}) => {
     },
 
     [scope("h3")]: {
-      "font-size": "calc(var(--clampography-h3-size) * var(--clampography-heading-scale))",
+      "font-size": "calc(var(--clampography-h3-size) * var(--clampography-h3-scale))",
       "line-height": "1.5",
       "margin-top": "var(--spacing-lg)",
       "margin-bottom": "var(--spacing-sm)",
     },
 
     [scope("h4")]: {
-      "font-size": "calc(var(--clampography-h4-size) * var(--clampography-heading-scale))",
+      "font-size": "calc(var(--clampography-h4-size) * var(--clampography-h4-scale))",
       "line-height": "1.5",
       "margin-top": "var(--spacing-lg)",
       "margin-bottom": "var(--spacing-sm)",
     },
 
     [scope("h5")]: {
-      "font-size": "calc(var(--clampography-h5-size) * var(--clampography-heading-scale))",
+      "font-size": "calc(var(--clampography-h5-size) * var(--clampography-h5-scale))",
       "line-height": "1.5",
       "margin-top": "var(--spacing-md)",
       "margin-bottom": "var(--spacing-xs)",
     },
 
     [scope("h6")]: {
-      "font-size": "calc(var(--clampography-h6-size) * var(--clampography-heading-scale))",
+      "font-size": "calc(var(--clampography-h6-size) * var(--clampography-h6-scale))",
       "line-height": "1.5",
       "margin-top": "var(--spacing-md)",
       "margin-bottom": "var(--spacing-xs)",
