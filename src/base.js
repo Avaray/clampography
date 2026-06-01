@@ -45,6 +45,20 @@ export default (options = {}) => {
         "system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif",
       "--font-family-mono":
         "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
+
+      // Heading size tokens (30→54px, 22→30px, 18→24px, 16→20px, static)
+      // Override any of these in :root to customize individual headings.
+      "--clampography-h1-size": "clamp(1.875rem, 1.375rem + 2.5vw, 3.375rem)",
+      "--clampography-h2-size": "clamp(1.375rem, 1.2rem + 0.85vw, 1.875rem)",
+      "--clampography-h3-size": "clamp(1.125rem, 1rem + 0.625vw, 1.5rem)",
+      "--clampography-h4-size": "clamp(1rem, 0.917rem + 0.42vw, 1.25rem)",
+      "--clampography-h5-size": "1rem",
+      "--clampography-h6-size": "0.875rem",
+
+      // Global heading scale multiplier (default: 1 = no scaling).
+      // Override in :root to proportionally scale all headings at once.
+      // Example: :root { --clampography-heading-scale: 0.85; }
+      "--clampography-heading-scale": "1",
     },
 
     // BODY STYLES (Typography baseline)
@@ -66,8 +80,7 @@ export default (options = {}) => {
     },
 
     [scope("h1")]: {
-      // 30px → 54px (mobile → desktop)
-      "font-size": "clamp(1.875rem, 1.375rem + 2.5vw, 3.375rem)",
+      "font-size": "calc(var(--clampography-h1-size) * var(--clampography-heading-scale))",
       "line-height": "1.1111",
       "font-weight": "800",
       "margin-top": "0",
@@ -75,8 +88,7 @@ export default (options = {}) => {
     },
 
     [scope("h2")]: {
-      // 22px → 30px (mobile → desktop)
-      "font-size": "clamp(1.375rem, 1.2rem + 0.85vw, 1.875rem)",
+      "font-size": "calc(var(--clampography-h2-size) * var(--clampography-heading-scale))",
       "line-height": "1.3333",
       "font-weight": "700",
       "margin-top": "var(--spacing-xl)",
@@ -84,30 +96,28 @@ export default (options = {}) => {
     },
 
     [scope("h3")]: {
-      // 18px → 24px (mobile → desktop)
-      "font-size": "clamp(1.125rem, 1rem + 0.625vw, 1.5rem)",
+      "font-size": "calc(var(--clampography-h3-size) * var(--clampography-heading-scale))",
       "line-height": "1.5",
       "margin-top": "var(--spacing-lg)",
       "margin-bottom": "var(--spacing-sm)",
     },
 
     [scope("h4")]: {
-      // 16px → 20px (mobile → desktop)
-      "font-size": "clamp(1rem, 0.917rem + 0.42vw, 1.25rem)",
+      "font-size": "calc(var(--clampography-h4-size) * var(--clampography-heading-scale))",
       "line-height": "1.5",
       "margin-top": "var(--spacing-lg)",
       "margin-bottom": "var(--spacing-sm)",
     },
 
     [scope("h5")]: {
-      "font-size": "1rem",
+      "font-size": "calc(var(--clampography-h5-size) * var(--clampography-heading-scale))",
       "line-height": "1.5",
       "margin-top": "var(--spacing-md)",
       "margin-bottom": "var(--spacing-xs)",
     },
 
     [scope("h6")]: {
-      "font-size": "0.875rem",
+      "font-size": "calc(var(--clampography-h6-size) * var(--clampography-heading-scale))",
       "line-height": "1.5",
       "margin-top": "var(--spacing-md)",
       "margin-bottom": "var(--spacing-xs)",
