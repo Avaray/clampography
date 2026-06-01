@@ -31,10 +31,13 @@ export default (options = {}) => {
   };
 
   return {
-    // --- Basic Coloring ---
+    // --- Basic Coloring & Font (with user-font priority) ---
     [root === ":root" ? "body" : root]: {
       "background-color": "var(--clampography-background)",
       "color": "var(--clampography-text)",
+      // --font-sans is Tailwind v4's way to expose the user's font choice.
+      // If the user sets a font in their project, it wins. If not, fallback to clampography's system stack.
+      "font-family": "var(--font-sans, var(--font-family-base))",
     },
 
     [scope(":where(h1, h2, h3, h4, h5, h6)")]: {

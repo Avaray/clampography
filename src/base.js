@@ -48,8 +48,9 @@ export default (options = {}) => {
     },
 
     // BODY STYLES (Typography baseline)
+    // Note: font-family is intentionally NOT set here.
+    // It is applied in extra.js with user-font priority via --font-sans.
     [root === ":root" ? "body" : root]: {
-      "font-family": "var(--font-family-base)",
       "font-size": "clamp(1rem, 0.95rem + 0.25vw, 1.125rem)",
       "line-height": "1.75",
       "text-rendering": "optimizeLegibility",
