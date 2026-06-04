@@ -45,7 +45,7 @@ export default (options = {}) => {
       "--font-family-base":
         "system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif",
       "--font-family-mono":
-        "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
+        "ui-monospace, 'Cascadia Code', 'Cascadia Mono', 'Segoe UI Mono', 'Ubuntu Mono', SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
 
       // Heading size tokens (30→54px, 22→30px, 18→24px, 16→20px, static)
       // Override any of these in :root to customize individual headings.
@@ -201,6 +201,8 @@ export default (options = {}) => {
     [scope(":where(code, kbd, samp)")]: {
       "font-family": "var(--font-family-mono)",
       "font-size": "0.875em",
+      "-webkit-font-smoothing": "auto",
+      "-moz-osx-font-smoothing": "auto",
     },
 
     [scope("kbd")]: {
@@ -384,6 +386,8 @@ export default (options = {}) => {
       "font-family": "var(--font-family-mono)",
       "line-height": "1.6",
       "overflow-x": "auto",
+      "-webkit-font-smoothing": "auto",
+      "-moz-osx-font-smoothing": "auto",
     },
 
     [scope("pre code")]: {
