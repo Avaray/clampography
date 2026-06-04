@@ -8,6 +8,9 @@ Complete guide from basic setup to advanced theming scenarios.
 
 - [Installation](#installation)
 - [Basic Usage](#basic-usage)
+- [Custom Fonts](#custom-fonts)
+- [Customizing Headings](#customizing-headings)
+- [Advanced Fluid Math](#advanced-fluid-math)
 - [Configuration Options](#configuration-options)
 - [Built-in Themes](#built-in-themes)
 - [Custom Themes](#custom-themes)
@@ -327,6 +330,42 @@ Because Clampography uses `:where(:root)` internally for these variables, your `
 
 ---
 
+## Advanced Fluid Math
+
+Clampography features a built-in mathematical engine that calculates perfectly smooth `clamp()` functions for all typography and spacing elements.
+
+Instead of hardcoding sizes to specific breakpoints (which breaks if your site is wider or narrower than standard), you can configure the exact viewport range across which all typography should fluidly scale.
+
+### Configuring Fluid Bounds
+
+By default, Clampography scales everything between **320px** (mobile) and **1280px** (desktop). To change this, pass `fluid-min` and `fluid-max` options:
+
+```css
+@plugin "clampography" {
+  themes: all;
+  
+  /* Start scaling at a custom mobile breakpoint */
+  fluid-min: "375px";
+  
+  /* Keep scaling all the way up to ultra-wide desktop */
+  fluid-max: "1536px";
+}
+```
+
+When you change these bounds, **all** font sizes, margins, and padding variables in `base.js` will automatically mathematically stretch to fit your new bounds perfectly, ensuring a flawless linear scale.
+
+### Tailwind Typography Alignment
+
+Clampography's fluid sizes are mathematically audited to perfectly match the official `@tailwindcss/typography` plugin at the minimum and maximum boundaries:
+
+- `body`: 14px ➔ 18px (`sm` to `2xl` equivalents)
+- `h1`: 30px ➔ 64px
+- `h2`: 20px ➔ 48px
+- `h3`: 18px ➔ 36px
+- `h4`: 16px ➔ 24px
+
+---
+
 ## Configuration Options
 
 ### Main Plugin Options
@@ -357,6 +396,10 @@ Because Clampography uses `:where(:root)` internally for these variables, your `
   /* Customize utility class prefix */
   prefix: "clampography" | "custom" | false; /* default: "clampography" */
   
+  /* Advanced: Custom viewport scaling bounds for fluid math engine */
+  fluid-min: "320px"; /* default: "320" */
+  fluid-max: "1280px"; /* default: "1280" */
+
   /* Enable/disable console logs */
   logs: true | false; /* default: true */
 }
