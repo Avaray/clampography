@@ -41,7 +41,7 @@ To generate the `.css` and minified `.css.min` files locally:
 bun run build
 ```
 
-This runs `src/convert.js`, which processes all style modules (`base.js`, `extra.js`, `forms.js`, `kbd.js`) into standard CSS files in the `css/` directory.
+This runs `src/convert.js`, which processes all style modules (`base.js`, `extra.js`, `forms.js`, `kbd.js`, `print.js`) into standard CSS files in the `css/` directory. It also runs `src/export-figma.js` to regenerate `css/figma-tokens.json` with the latest theme color data.
 
 ## Testing
 
@@ -61,13 +61,16 @@ bun test --watch
 
 ## Making Changes
 
-1. **JS Source Files:** Style definitions are split across `src/base.js`, `src/extra.js`, `src/forms.js`, `src/kbd.js`, `src/theme.js`, and `src/themes.js`.
-   - `base.js` — fluid typography, spacing, headings, lists, code blocks
-   - `extra.js` — opinionated decorations (borders, blockquote, table zebra-stripes, links)
+1. **JS Source Files:** Style definitions are split across `src/base.js`, `src/extra.js`, `src/forms.js`, `src/kbd.js`, `src/print.js`, `src/theme.js`, and `src/themes.js`. Build scripts are in `src/convert.js` and `src/export-figma.js`.
+   - `base.js` — fluid typography, spacing, headings, lists, code blocks (purely structural — no colors or imposed appearance)
+   - `extra.js` — opinionated decorations (colors, borders, blockquote, table zebra-stripes, links, smooth theme transitions, `prefers-reduced-motion`, `prefers-contrast: more`)
    - `forms.js` — all HTML form elements (inputs, buttons, select, checkbox, range, etc.)
    - `kbd.js` — 3D isometric keyboard key styling for `<kbd>` elements
+   - `print.js` — opt-in `@media print` optimization (static sizes, ink-safe colors, page-break rules)
    - `theme.js` — structure for CSS color variables using current active theme values
-   - `themes.js` — built-in light/dark color palettes using OKLCH format
+   - `themes.js` — 90+ built-in color palettes using OKLCH format
+   - `convert.js` — build script that converts all JS style modules to CSS and minified CSS
+   - `export-figma.js` — build script that generates `css/figma-tokens.json` from all themes
 2. **Themes:** Ensure any new color references use the `oklch` color space format for maximum compatibility and opacity modifier support.
 3. **Docs:** If you add a new feature, document it in `docs/usage.md`.
 4. **Commits:** Use Conventional Commits (`feat:`, `fix:`, `chore:`, etc.).

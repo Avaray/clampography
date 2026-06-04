@@ -13,6 +13,9 @@ Complete guide from basic setup to advanced theming scenarios.
 - [Custom Themes](#custom-themes)
 - [Scoped Themes (Custom Root)](#scoped-themes-custom-root)
 - [Advanced Scenarios](#advanced-scenarios)
+- [Print Optimization](#print-optimization)
+- [Accessibility & Theme Transitions](#accessibility--theme-transitions)
+- [Figma Design Tokens](#figma-design-tokens)
 - [Form Styles](#form-styles)
 - [Tailwind Utilities](#tailwind-utilities)
 - [Color Formats](#color-formats)
@@ -336,7 +339,7 @@ Because Clampography uses `:where(:root)` internally for these variables, your `
   /* Load base typography styles */
   base: true | false; /* default: true */
   
-  /* Load extra opinionated styles (colors, decorations) */
+  /* Load extra opinionated styles (colors, decorations, transitions) */
   extra: true | false; /* default: false */
 
   /* Load styled form elements (inputs, buttons, selects, etc.) */
@@ -344,6 +347,9 @@ Because Clampography uses `:where(:root)` internally for these variables, your `
 
   /* Style <kbd> elements as 3D isometric keyboard keys */
   kbd: true | false; /* default: false */
+
+  /* Load print optimization styles (@media print) */
+  print: true | false; /* default: false */
   
   /* Custom root selector for scoping */
   root: ":root" | "#app" | "body"; /* default: ":root" */
@@ -1086,6 +1092,118 @@ HTML:
   </div>
 </body>
 ```
+
+---
+
+## Print Optimization
+
+Enable clean, ink-friendly output for printing or exporting to PDF. This is an **opt-in** module — it does not load automatically to keep `base.js` purely structural.
+
+```css
+@import "tailwindcss";
+@plugin "clampography" {
+  themes: all;
+  print: true; /* default: false */
+}
+```
+
+**What it does when activated:**
+
+- Converts all fluid `vw`-based `clamp()` sizes to static `pt` units (e.g., `body` → `12pt`, `h1` → `28pt`)
+- Forces `color: black` and `background: white` on `body` — saves ink regardless of which theme the user has active
+- Prevents headings from sitting alone at the bottom of a page (`page-break-after: avoid`)
+- Prevents code blocks, blockquotes, tables, and figures from being split across page breaks (`page-break-inside: avoid`)
+- Disables all CSS transitions during printing
+
+**Use case:** Blogs, documentation sites, articles, or any content users might print or save as PDF.
+
+> [!TIP]
+> The print module respects the `root` option, so if you use a custom root selector (e.g., `root: "#app"`), print styles will be scoped correctly to your element.
+
+---
+
+## Accessibility & Theme Transitions
+
+These features are included automatically with `extra: true` — no additional configuration needed.
+
+### Smooth Theme Transitions
+
+When `extra: true` is enabled, Clampography adds smooth color transitions to the `body` element. When a user changes the active theme (e.g., by setting `document.body.setAttribute("data-theme", "dark")`), all colors animate elegantly instead of snapping instantly.
+
+The transition duration is controlled by the `--clampography-transition-duration` CSS custom property (default: `200ms`). You can override it:
+
+```css
+@layer base {
+  :root {
+    /* Slow down to 500ms */
+    --clampography-transition-duration: 500ms;
+
+    /* Or disable entirely */
+    --clampography-transition-duration: 0ms;
+  }
+}
+```
+
+### Reduced Motion
+
+Clampography automatically respects the user's OS-level **"Reduce Motion"** accessibility setting (macOS, Windows, iOS, Android). When `prefers-reduced-motion: reduce` is detected, the `--clampography-transition-duration` is reset to `0ms` and all transitions are removed — no configuration required.
+
+```css
+/* This is handled automatically by extra.js */
+@media (prefers-reduced-motion: reduce) {
+  body {
+    transition: none;
+    --clampography-transition-duration: 0ms;
+  }
+}
+```
+
+### High Contrast Mode
+
+When `extra: true` is enabled, Clampography also automatically responds to the **"Increase Contrast"** OS accessibility setting (`prefers-contrast: more`). This overrides all theme colors with maximum-legibility black-on-white styling:
+
+- `body` background → `white`, color → `black`
+- All headings → `black`
+- Links → `black`, `font-weight: 700`, thick underline
+- Code blocks, `<pre>`, `<blockquote>` → `2px solid black` borders
+- Tables → `2px solid black` borders on all cells
+- Horizontal rules → `2px solid black`
+
+This is triggered automatically by macOS "Increase Contrast", Windows High Contrast Mode, or Android Accessibility settings — **no code changes required from the user**.
+
+---
+
+## Figma Design Tokens
+
+Every time you run `bun run build`, Clampography automatically generates a `css/figma-tokens.json` file containing all 90+ built-in themes formatted as standard [W3C Design Tokens](https://design-tokens.github.io/community-group/format/).
+
+### How to use in Figma
+
+1. Install the [Tokens Studio for Figma](https://tokens.studio/) plugin
+2. Open the plugin → **Sync** → **Local file** → Select `css/figma-tokens.json`
+3. All Clampography themes and colors appear instantly as Figma color styles
+
+### Token format
+
+Each theme is a group of named color tokens:
+
+```json
+{
+  "light": {
+    "background": { "value": "oklch(100% 0 0)", "type": "color" },
+    "primary":    { "value": "oklch(63% 0.258 262)", "type": "color" },
+    "text":       { "value": "oklch(31% 0.02 257)", "type": "color" }
+  },
+  "dark": {
+    "background": { "value": "oklch(10% 0 0)", "type": "color" },
+    "primary":    { "value": "oklch(63% 0.258 262)", "type": "color" },
+    "text":       { "value": "oklch(95% 0 0)", "type": "color" }
+  }
+}
+```
+
+> [!NOTE]
+> The token file is regenerated automatically on every `bun run build`. It is included in the published NPM package inside the `css/` directory, so users can also access it directly from `node_modules/clampography/css/figma-tokens.json`.
 
 ---
 
