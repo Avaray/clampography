@@ -31,6 +31,13 @@ export default (options = {}) => {
   };
 
   return {
+    // Transition duration token — drives smooth color changes when the theme changes.
+    // Scoped here (not in base.js) because transitions are an extra.js concern.
+    // Users can override: :root { --clampography-transition-duration: 0ms; } to disable.
+    [`:where(${root})`]: {
+      "--clampography-transition-duration": "200ms",
+    },
+
     // --- Basic Coloring & Font (with user-font priority) ---
     [root === ":root" ? "body" : root]: {
       "background-color": "var(--clampography-background)",
@@ -175,6 +182,16 @@ export default (options = {}) => {
     [scope("details[open] > summary")]: {
       "border-bottom-width": "1px",
       "padding-bottom": "var(--spacing-sm)",
+    },
+
+    // ACCESSIBILITY: Disable all transitions for users who prefer reduced motion.
+    // Respects the OS-level "Reduce Motion" setting on macOS, Windows, iOS, and Android.
+    // Placed here (not in base.js) because it targets the transitions added above.
+    "@media (prefers-reduced-motion: reduce)": {
+      [root === ":root" ? "body" : root]: {
+        "transition": "none",
+        "--clampography-transition-duration": "0ms",
+      },
     },
 
     // ACCESSIBILITY: High-contrast mode for users who need maximum legibility.

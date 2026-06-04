@@ -4,6 +4,7 @@ import baseStyles from "./base.js";
 import extraStyles from "./extra.js";
 import formsStyles from "./forms.js";
 import kbdStyles from "./kbd.js";
+import printStyles from "./print.js";
 
 // Import version from package.json
 import { version } from "../package.json" with { type: "json" };
@@ -44,12 +45,14 @@ export default plugin.withOptions(
         const includeExtra = resolveBool(options.extra, false); // Default: false
         const includeForms = resolveBool(options.forms, false); // Default: false
         const includeKbd = resolveBool(options.kbd, false);   // Default: false
+        const includePrint = resolveBool(options.print, false); // Default: false
 
         // Pass options to the style functions to enable scoping
         includeBase && addBase(baseStyles(options));
         includeExtra && addBase(extraStyles(options));
         includeForms && addBase(formsStyles(options));
         includeKbd && addBase(kbdStyles(options));
+        includePrint && addBase(printStyles(options));
 
         // 2. Parse themes configuration
         let configThemes = options.themes;
