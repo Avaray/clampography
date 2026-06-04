@@ -25,6 +25,34 @@ describe("Base Styles Generation", () => {
     // Ensure :root wasn't leaked
     expect(styles[":root"]).toBeUndefined();
   });
+
+  it("should generate dynamic fluid sizes based on fluidMin and fluidMax", () => {
+    // Generate styles with default limits (320-1280)
+    const defaultStyles = baseStyles({});
+    const defaultSpacingMd = defaultStyles[":where(:root)"]["--spacing-md"];
+    
+    // Generate styles with custom limits
+    const customStyles = baseStyles({ fluidMin: 500, fluidMax: 1500 });
+    const customSpacingMd = customStyles[":where(:root)"]["--spacing-md"];
+
+    // The output clamp strings should be mathematically different
+    expect(defaultSpacingMd).not.toBe(customSpacingMd);
+    expect(customSpacingMd).toContain("clamp(");
+  });
+
+  it("should isolate typography scope when typography option is provided", () => {
+    // With typography isolation
+    const isolatedStyles = baseStyles({ typography: ".prose" });
+    
+    // Base variables should still be on :where(:root)
+    expect(isolatedStyles[":where(:root)"]).toBeDefined();
+    
+    // Tag selectors should be prefixed with the typography class
+    expect(isolatedStyles[":root .prose h1"]).toBeDefined();
+    
+    // Ensure global tag selectors do NOT exist
+    expect(isolatedStyles[":root h1"]).toBeUndefined();
+  });
 });
 
 describe("Extra Styles Generation", () => {
