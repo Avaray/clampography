@@ -43,7 +43,7 @@ export default (options = {}) => {
       "--list-indent": "clamp(1.5rem, 1.25rem + 1.25vw, 2rem)",
       "--scroll-offset": "5rem",
       "--font-family-base":
-        "system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif",
+        "Inter, system-ui, -apple-system, 'Segoe UI Variable Display', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif",
       "--font-family-mono":
         "ui-monospace, 'Cascadia Code', 'Cascadia Mono', 'Segoe UI Mono', 'Ubuntu Mono', SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
 

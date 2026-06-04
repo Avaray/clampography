@@ -224,19 +224,50 @@ Style `<kbd>` elements as realistic 3D keyboard keys.
 
 Clampography intelligently integrates with Tailwind CSS to automatically respect your font choices. It does not force its own typography on your site if you have explicitly defined your own.
 
+If no custom font is provided, it safely falls back to a highly optimized, premium local system font stack (prioritizing modern fonts like Inter, San Francisco, and Segoe UI Variable Display).
+
+### Global Custom Font
+
 To define a custom font for your entire project (which Clampography will automatically adopt for all body text), override the `--font-sans` variable in your CSS using the `@theme` directive:
 
 ```css
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 @import "tailwindcss";
 @plugin "clampography";
 
 @theme {
-  --font-sans: "Your Custom Font", "Segoe UI", sans-serif;
+  --font-sans: "Inter", sans-serif;
   --font-mono: "Your Custom Mono", monospace;
 }
 ```
 
-Clampography internally uses the CSS cascade `var(--font-sans, var(--font-family-base))`. This ensures your Tailwind fonts always take priority, while falling back to a robust system font stack if no custom font is provided.
+### Lazy Loading Fonts per Theme
+
+You can bind specific web fonts to specific themes. Modern browsers are incredibly smart—they will **only** download the font file when an HTML element actually requires it.
+
+By scoping your `--font-sans` variable to a specific theme selector, you guarantee that a font is only downloaded over the network when the user switches to that exact theme!
+
+```css
+/* 1. Import all potential web fonts at the top */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;600&display=swap');
+
+@import "tailwindcss";
+@plugin "clampography";
+
+/* 2. Set the default font (Inter is downloaded immediately) */
+:where(:root) {
+  --font-sans: 'Inter', sans-serif;
+}
+
+/* 3. Set the font for a specific theme. 
+      Oswald will ONLY be downloaded when <html data-theme="vintage"> is active! */
+[data-theme="vintage"] {
+  --font-sans: 'Oswald', sans-serif;
+}
+```
+
+Clampography internally uses the CSS cascade `var(--font-sans, var(--font-family-base))`. This ensures your Tailwind fonts always take priority dynamically, while falling back to a robust system font stack if needed.
 
 ---
 
