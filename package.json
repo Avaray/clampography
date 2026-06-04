@@ -62,7 +62,6 @@
   "scripts": {
     "build": "bun src/convert.js",
     "dev": "bun run dev/server.js",
-    "dev:server": "bun run dev/server.js",
     "test": "bun test"
   },
   "sideEffects": false,
