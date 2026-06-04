@@ -6,11 +6,11 @@ describe("Base Styles Generation", () => {
   it("should return a valid object of base styles", () => {
     const styles = baseStyles({ root: ":root" });
     expect(styles).toBeTypeOf("object");
-    expect(styles[":root"]).toBeDefined();
+    expect(styles[":where(:root)"]).toBeDefined();
     
     // Check if typography fluid scales exist
-    expect(styles[":root"]["--spacing-md"]).toBeDefined();
-    expect(styles[":root"]["font-family"]).toBeDefined();
+    expect(styles[":where(:root)"]["--spacing-md"]).toBeDefined();
+    expect(styles[":where(:root)"]["--font-family-base"]).toBeDefined();
     
     // Check scoped tags
     expect(styles[":root h1"]).toBeDefined();
@@ -19,7 +19,7 @@ describe("Base Styles Generation", () => {
 
   it("should respect custom root scoping", () => {
     const styles = baseStyles({ root: "#my-app" });
-    expect(styles["#my-app"]).toBeDefined();
+    expect(styles[":where(#my-app)"]).toBeDefined();
     expect(styles["#my-app h1"]).toBeDefined();
     
     // Ensure :root wasn't leaked
