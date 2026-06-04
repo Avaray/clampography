@@ -11,6 +11,7 @@ Complete guide from basic setup to advanced theming scenarios.
 - [Custom Fonts](#custom-fonts)
 - [Customizing Headings](#customizing-headings)
 - [Advanced Fluid Math](#advanced-fluid-math)
+- [Scope Isolation (Prose Mode)](#scope-isolation-prose-mode)
 - [Configuration Options](#configuration-options)
 - [Built-in Themes](#built-in-themes)
 - [Custom Themes](#custom-themes)
@@ -366,6 +367,39 @@ Clampography's fluid sizes are mathematically audited to perfectly match the off
 
 ---
 
+## Scope Isolation (Prose Mode)
+
+By default, Clampography styles elements like `h1`, `p`, `ul`, `table`, and `blockquote` globally. This is perfect for content-heavy sites (like blogs), but can interfere with UI elements in complex applications (like dashboards).
+
+You can isolate Clampography's styling to a specific class using the `typography` option:
+
+```css
+@plugin "clampography" {
+  themes: all;
+  typography: ".clampography"; /* Only style elements inside this class */
+}
+```
+
+**Usage in HTML:**
+
+```html
+<!-- NOT STYLED: Plain Tailwind CSS -->
+<nav class="sidebar">
+  <h1>Dashboard Menu</h1>
+</nav>
+
+<!-- STYLED: Beautiful fluid typography and themes -->
+<main class="clampography">
+  <h1>Article Title</h1>
+  <p>This text is fluid and perfectly spaced.</p>
+</main>
+```
+
+> [!NOTE]  
+> Clampography variables (like `--clampography-primary` or `--clampography-h1-size`) remain globally accessible on `:root`, meaning you can still use utility classes like `bg-clampography-primary` anywhere on the page, even outside the isolated scope!
+
+---
+
 ## Configuration Options
 
 ### Main Plugin Options
@@ -390,8 +424,11 @@ Clampography's fluid sizes are mathematically audited to perfectly match the off
   /* Load print optimization styles (@media print) */
   print: true | false; /* default: false */
   
-  /* Custom root selector for scoping */
+  /* Custom root selector for CSS variables scoping */
   root: ":root" | "#app" | "body"; /* default: ":root" */
+  
+  /* Typography scope isolation (apply styles only to a specific class) */
+  typography: "global" | ".clampography" | ".prose"; /* default: "global" */
   
   /* Customize utility class prefix */
   prefix: "clampography" | "custom" | false; /* default: "clampography" */
