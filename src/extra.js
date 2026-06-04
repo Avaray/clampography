@@ -21,10 +21,15 @@ export default (options = {}) => {
     }
     parts.push(current.trim());
 
+    const typographyPrefix = options.typography && options.typography !== "global" ? ` ${options.typography}` : "";
+
     return parts
       .filter(Boolean)
       .map((part) => {
         if (part === ":root" || part === "body") return root;
+        if (typographyPrefix) {
+          return `${root}${typographyPrefix} ${part}`;
+        }
         return `${root} ${part}`;
       })
       .join(", ");
@@ -39,7 +44,11 @@ export default (options = {}) => {
     },
 
     // --- Basic Coloring & Font (with user-font priority) ---
-    [root === ":root" ? "body" : root]: {
+    [(() => {
+      const typographyPrefix = options.typography && options.typography !== "global" ? ` ${options.typography}` : "";
+      const bodyBase = root === ":root" ? "body" : root;
+      return typographyPrefix ? `${bodyBase}${typographyPrefix}` : bodyBase;
+    })()]: {
       "background-color": "var(--clampography-background)",
       "color": "var(--clampography-text)",
       // --font-sans is Tailwind v4's way to expose the user's font choice.
@@ -188,7 +197,11 @@ export default (options = {}) => {
     // Respects the OS-level "Reduce Motion" setting on macOS, Windows, iOS, and Android.
     // Placed here (not in base.js) because it targets the transitions added above.
     "@media (prefers-reduced-motion: reduce)": {
-      [root === ":root" ? "body" : root]: {
+      [(() => {
+        const typographyPrefix = options.typography && options.typography !== "global" ? ` ${options.typography}` : "";
+        const bodyBase = root === ":root" ? "body" : root;
+        return typographyPrefix ? `${bodyBase}${typographyPrefix}` : bodyBase;
+      })()]: {
         "transition": "none",
         "--clampography-transition-duration": "0ms",
       },
@@ -198,7 +211,11 @@ export default (options = {}) => {
     // Triggered automatically by the OS "Increase Contrast" setting on macOS,
     // Windows High Contrast Mode, or Android's Accessibility settings.
     "@media (prefers-contrast: more)": {
-      [root === ":root" ? "body" : root]: {
+      [(() => {
+        const typographyPrefix = options.typography && options.typography !== "global" ? ` ${options.typography}` : "";
+        const bodyBase = root === ":root" ? "body" : root;
+        return typographyPrefix ? `${bodyBase}${typographyPrefix}` : bodyBase;
+      })()]: {
         // Override theme colors with absolute black/white for maximum legibility
         "background-color": "white",
         "color": "black",

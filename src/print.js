@@ -21,10 +21,15 @@ export default (options = {}) => {
     }
     parts.push(current.trim());
 
+    const typographyPrefix = options.typography && options.typography !== "global" ? ` ${options.typography}` : "";
+
     return parts
       .filter(Boolean)
       .map((part) => {
         if (part === ":root" || part === "body") return root;
+        if (typographyPrefix) {
+          return `${root}${typographyPrefix} ${part}`;
+        }
         return `${root} ${part}`;
       })
       .join(", ");
@@ -35,7 +40,11 @@ export default (options = {}) => {
     // Overrides all theme colors, removes backgrounds, and converts fluid vw units to
     // static sizes so text renders correctly on physical paper (A4/Letter).
     "@media print": {
-      [root === ":root" ? "body" : root]: {
+      [(() => {
+        const typographyPrefix = options.typography && options.typography !== "global" ? ` ${options.typography}` : "";
+        const bodyBase = root === ":root" ? "body" : root;
+        return typographyPrefix ? `${bodyBase}${typographyPrefix}` : bodyBase;
+      })()]: {
         // Static sizes — vw-based clamp() is meaningless on paper
         "font-size": "12pt",
         "line-height": "1.6",

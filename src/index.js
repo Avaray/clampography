@@ -51,12 +51,15 @@ export default plugin.withOptions(
         const fluidMin = parseInt(options["fluid-min"] || options.fluidMin || "320");
         const fluidMax = parseInt(options["fluid-max"] || options.fluidMax || "1280");
 
+        // Extract typography scope option (default: global)
+        const typography = options.typography || "global";
+
         // Pass options to the style functions to enable scoping
-        includeBase && addBase(baseStyles({ ...options, fluidMin, fluidMax }));
-        includeExtra && addBase(extraStyles(options));
-        includeForms && addBase(formsStyles(options));
-        includeKbd && addBase(kbdStyles(options));
-        includePrint && addBase(printStyles(options));
+        includeBase && addBase(baseStyles({ ...options, fluidMin, fluidMax, typography }));
+        includeExtra && addBase(extraStyles({ ...options, typography }));
+        includeForms && addBase(formsStyles({ ...options, typography }));
+        includeKbd && addBase(kbdStyles({ ...options, typography }));
+        includePrint && addBase(printStyles({ ...options, typography }));
 
         // 2. Parse themes configuration
         let configThemes = options.themes;

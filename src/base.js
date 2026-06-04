@@ -21,10 +21,18 @@ export default (options = {}) => {
     }
     parts.push(current.trim());
 
+    const typographyPrefix = options.typography && options.typography !== "global" ? ` ${options.typography}` : "";
+
     return parts
       .filter(Boolean) // Remove empty strings
       .map((part) => {
         if (part === ":root" || part === "body") return root;
+        
+        // Apply typography scope isolation if configured
+        if (typographyPrefix) {
+          return `${root}${typographyPrefix} ${part}`;
+        }
+        
         // Avoid double spacing
         return `${root} ${part}`;
       })
@@ -92,7 +100,11 @@ export default (options = {}) => {
     // BODY STYLES (Typography baseline)
     // Note: font-family is intentionally NOT set here.
     // It is applied in extra.js with user-font priority via --font-sans.
-    [root === ":root" ? "body" : root]: {
+    [(() => {
+      const typographyPrefix = options.typography && options.typography !== "global" ? ` ${options.typography}` : "";
+      const bodyBase = root === ":root" ? "body" : root;
+      return typographyPrefix ? `${bodyBase}${typographyPrefix}` : bodyBase;
+    })()]: {
       "font-size": makeFluid(0.875, 1.125),
       "line-height": "1.75",
       "text-rendering": "optimizeLegibility",
