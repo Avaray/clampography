@@ -68,6 +68,11 @@ export default (options = {}) => {
       "--clampography-h4-scale": "var(--clampography-heading-scale)",
       "--clampography-h5-scale": "var(--clampography-heading-scale)",
       "--clampography-h6-scale": "var(--clampography-heading-scale)",
+
+      // Smooth theme transition duration.
+      // Used by extra.js to animate color changes when switching themes.
+      // Override to 0ms to disable: :root { --clampography-transition-duration: 0ms; }
+      "--clampography-transition-duration": "200ms",
     },
 
     // BODY STYLES (Typography baseline)
@@ -546,5 +551,68 @@ export default (options = {}) => {
       {
         "margin-bottom": "0",
       },
+
+    // ACCESSIBILITY: Disable all animations for users who prefer reduced motion.
+    // Respects the OS-level "Reduce Motion" setting on macOS, Windows, iOS, and Android.
+    "@media (prefers-reduced-motion: reduce)": {
+      [scope(":where(*)")]: {
+        "animation-duration": "0.01ms",
+        "animation-iteration-count": "1",
+        "transition-duration": "0.01ms",
+        "scroll-behavior": "auto",
+        // Kill the clampography theme transition token too
+        "--clampography-transition-duration": "0ms",
+      },
+    },
+
+    // PRINT OPTIMIZATION: Force clean, ink-friendly output for printing and PDF export.
+    // Overrides all theme colors, removes backgrounds, and converts fluid vw units to
+    // static sizes so text renders correctly on physical paper (A4/Letter).
+    "@media print": {
+      [root === ":root" ? "body" : root]: {
+        // Static sizes — vw-based clamp() is meaningless on paper
+        "font-size": "12pt",
+        "line-height": "1.6",
+        // Force black-on-white for max legibility and ink saving
+        "color": "black",
+        "background": "white",
+        // Disable all transitions
+        "transition": "none",
+      },
+      [scope(":where(h1, h2, h3, h4, h5, h6)")]: {
+        "color": "black",
+        // Static heading sizes to replace fluid clamp() math
+        "page-break-after": "avoid",
+      },
+      [scope("h1")]: { "font-size": "28pt" },
+      [scope("h2")]: { "font-size": "22pt" },
+      [scope("h3")]: { "font-size": "18pt" },
+      [scope("h4")]: { "font-size": "14pt" },
+      [scope("h5")]: { "font-size": "12pt" },
+      [scope("h6")]: { "font-size": "11pt" },
+      [scope("a")]: {
+        // Show full URLs after links when printing
+        "color": "black",
+        "text-decoration": "underline",
+      },
+      [scope("pre, blockquote")]: {
+        // Avoid cutting code blocks and blockquotes across page breaks
+        "page-break-inside": "avoid",
+        "border": "1px solid #ccc",
+        "background": "#f5f5f5",
+      },
+      [scope("table")]: {
+        "page-break-inside": "avoid",
+        "border": "1px solid #ccc",
+      },
+      [scope("th, td")]: {
+        "border": "1px solid #ccc",
+      },
+      [scope("img, figure")]: {
+        // Prevent images from overflowing the page
+        "max-width": "100%",
+        "page-break-inside": "avoid",
+      },
+    },
   };
 };

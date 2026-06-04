@@ -38,6 +38,12 @@ export default (options = {}) => {
       // --font-sans is Tailwind v4's way to expose the user's font choice.
       // If the user sets a font in their project, it wins. If not, fallback to clampography's system stack.
       "font-family": "var(--font-sans, var(--font-family-base))",
+      // Smooth theme transitions: all color CSS variables animate when data-theme changes.
+      // Duration is driven by the token set in base.js (default 200ms).
+      // Automatically disabled by the prefers-reduced-motion media query in base.js.
+      "transition-property": "color, background-color, border-color, text-decoration-color, fill, stroke",
+      "transition-duration": "var(--clampography-transition-duration, 200ms)",
+      "transition-timing-function": "ease",
     },
 
     [scope(":where(h1, h2, h3, h4, h5, h6)")]: {
@@ -169,6 +175,49 @@ export default (options = {}) => {
     [scope("details[open] > summary")]: {
       "border-bottom-width": "1px",
       "padding-bottom": "var(--spacing-sm)",
+    },
+
+    // ACCESSIBILITY: High-contrast mode for users who need maximum legibility.
+    // Triggered automatically by the OS "Increase Contrast" setting on macOS,
+    // Windows High Contrast Mode, or Android's Accessibility settings.
+    "@media (prefers-contrast: more)": {
+      [root === ":root" ? "body" : root]: {
+        // Override theme colors with absolute black/white for maximum legibility
+        "background-color": "white",
+        "color": "black",
+      },
+      [scope(":where(h1, h2, h3, h4, h5, h6)")]: {
+        "color": "black",
+      },
+      [scope("a")]: {
+        "color": "black",
+        "text-decoration": "underline",
+        "text-decoration-thickness": "2px",
+        "font-weight": "700",
+      },
+      [scope(":where(code:not(pre code), kbd, samp)")]: {
+        "background-color": "#f0f0f0",
+        "color": "black",
+        "border": "2px solid black",
+      },
+      [scope("pre")]: {
+        "background-color": "#f0f0f0",
+        "color": "black",
+        "border": "2px solid black",
+      },
+      [scope("blockquote")]: {
+        "background-color": "#f0f0f0",
+        "border-left-color": "black",
+        "border-left-width": "6px",
+        "color": "black",
+      },
+      [scope("th, td")]: {
+        "border": "2px solid black",
+      },
+      [scope("hr")]: {
+        "background-color": "black",
+        "height": "2px",
+      },
     },
   };
 };
