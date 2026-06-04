@@ -47,8 +47,12 @@ export default plugin.withOptions(
         const includeKbd = resolveBool(options.kbd, false);   // Default: false
         const includePrint = resolveBool(options.print, false); // Default: false
 
+        // Extract fluid bounds for clampography math engine
+        const fluidMin = parseInt(options["fluid-min"] || options.fluidMin || "320");
+        const fluidMax = parseInt(options["fluid-max"] || options.fluidMax || "1280");
+
         // Pass options to the style functions to enable scoping
-        includeBase && addBase(baseStyles(options));
+        includeBase && addBase(baseStyles({ ...options, fluidMin, fluidMax }));
         includeExtra && addBase(extraStyles(options));
         includeForms && addBase(formsStyles(options));
         includeKbd && addBase(kbdStyles(options));

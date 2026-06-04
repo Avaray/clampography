@@ -31,28 +31,47 @@ export default (options = {}) => {
       .join(", ");
   };
 
+  // Fluid math engine: Generates mathematically perfect clamp() strings
+  // dynamically based on the configured min and max screen sizes.
+  const minScreenRem = (options.fluidMin || 320) / 16;
+  const maxScreenRem = (options.fluidMax || 1280) / 16;
+
+  const makeFluid = (minRem, maxRem) => {
+    // If min and max are the same, or if we have invalid screens, just return the static value
+    if (minRem === maxRem || minScreenRem >= maxScreenRem) return `${minRem}rem`;
+
+    const slope = (maxRem - minRem) / (maxScreenRem - minScreenRem);
+    const intersection = minRem - slope * minScreenRem;
+
+    const format = (num) => parseFloat(num.toFixed(4));
+    
+    return `clamp(${minRem}rem, ${format(intersection)}rem + ${format(slope * 100)}vw, ${maxRem}rem)`;
+  };
+
   return {
     // ROOT CONFIGURATION (CSS variables)
     // Uses :where() for zero specificity so user overrides always win regardless of layer/source order
     [`:where(${root})`]: {
-      "--spacing-xs": "clamp(0.25rem, 1.25vw, 0.75rem)",
-      "--spacing-sm": "clamp(0.375rem, -0.0625rem + 2.1875vw, 1.25rem)",
-      "--spacing-md": "clamp(0.5rem, 2.5vw, 1.5rem)",
-      "--spacing-lg": "clamp(0.75rem, -0.125rem + 4.375vw, 2.5rem)",
-      "--spacing-xl": "clamp(1rem, 5vw, 3rem)",
-      "--list-indent": "clamp(1.5rem, 1.25rem + 1.25vw, 2rem)",
+      // FLUID SPACING SYSTEM
+      "--spacing-xs": makeFluid(0.25, 0.75),
+      "--spacing-sm": makeFluid(0.375, 1.25),
+      "--spacing-md": makeFluid(0.5, 1.5),
+      "--spacing-lg": makeFluid(0.75, 2.5),
+      "--spacing-xl": makeFluid(1, 3),
+      "--list-indent": makeFluid(1.5, 2),
       "--scroll-offset": "5rem",
       "--font-family-base":
         "Inter, system-ui, -apple-system, 'Segoe UI Variable Display', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif",
       "--font-family-mono":
         "ui-monospace, 'Cascadia Code', 'Cascadia Mono', 'Segoe UI Mono', 'Ubuntu Mono', SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
 
-      // Heading size tokens (30→54px, 22→30px, 18→24px, 16→20px, static)
+      // HEADINGS FLUID TYPOGRAPHY
+      // Matches Tailwind CSS sizes: sm (min) to 2xl (max)
       // Override any of these in :root to customize individual headings.
-      "--clampography-h1-size": "clamp(1.875rem, 1.375rem + 2.5vw, 3.375rem)",
-      "--clampography-h2-size": "clamp(1.375rem, 1.2rem + 0.85vw, 1.875rem)",
-      "--clampography-h3-size": "clamp(1.125rem, 1rem + 0.625vw, 1.5rem)",
-      "--clampography-h4-size": "clamp(1rem, 0.917rem + 0.42vw, 1.25rem)",
+      "--clampography-h1-size": makeFluid(1.875, 4),
+      "--clampography-h2-size": makeFluid(1.25, 3),
+      "--clampography-h3-size": makeFluid(1.125, 2.25),
+      "--clampography-h4-size": makeFluid(1, 1.5),
       "--clampography-h5-size": "1rem",
       "--clampography-h6-size": "0.875rem",
 
@@ -74,7 +93,7 @@ export default (options = {}) => {
     // Note: font-family is intentionally NOT set here.
     // It is applied in extra.js with user-font priority via --font-sans.
     [root === ":root" ? "body" : root]: {
-      "font-size": "clamp(1rem, 0.95rem + 0.25vw, 1.125rem)",
+      "font-size": makeFluid(0.875, 1.125),
       "line-height": "1.75",
       "text-rendering": "optimizeLegibility",
       "-webkit-font-smoothing": "antialiased",
