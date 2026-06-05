@@ -5,6 +5,23 @@
  * Do not manually edit this file unless you know what you're doing.
  */
 
+export const bubbles = {
+  "color-scheme": "dark",
+  "--clampography-background": "oklch(0.212 0.056 270.2)",
+  "--clampography-border": "oklch(0.786 0.0 89.9)",
+  "--clampography-error": "oklch(0.753 0.138 19.2)",
+  "--clampography-heading": "oklch(1.0 0.0 89.9)",
+  "--clampography-info": "oklch(0.683 0.154 255.7)",
+  "--clampography-link": "oklch(0.661 0.151 242.1)",
+  "--clampography-muted": "oklch(0.431 0.0 89.9)",
+  "--clampography-primary": "oklch(0.554 0.127 252.0)",
+  "--clampography-secondary": "oklch(0.52 0.138 326.8)",
+  "--clampography-success": "oklch(0.706 0.125 171.9)",
+  "--clampography-surface": "oklch(0.86 0.07 255.3)",
+  "--clampography-text": "oklch(1.0 0.0 89.9)",
+  "--clampography-warning": "oklch(0.971 0.186 109.4)",
+};
+
 export const dark = {
   "color-scheme": "dark",
   "--clampography-background": "oklch(10% 0 0)",
@@ -40,9 +57,9 @@ export const light = {
 };
 
 export const themes = {
+  "bubbles": bubbles,
   "dark": dark,
   "light": light
 };
 
 export const themesList = Object.keys(themes);
-
