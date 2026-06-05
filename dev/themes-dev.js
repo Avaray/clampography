@@ -768,6 +768,22 @@ export const brightLights = {
   "--clampography-warning": "oklch(0.846 0.147 79.5)",
 };
 
+export const broadcast = {
+  "--clampography-background": "oklch(26.4% 0.000 89.9)",
+  "--clampography-surface": "oklch(32.1% 0.000 89.9)",
+  "--clampography-text": "oklch(90.9% 0.009 67.7)",
+  "--clampography-heading": "oklch(100.0% 0.000 89.9)",
+  "--clampography-primary": "oklch(82.7% 0.070 240.3)",
+  "--clampography-secondary": "oklch(87.0% 0.066 284.0)",
+  "--clampography-muted": "oklch(29.3% 0.000 89.9)",
+  "--clampography-border": "oklch(100.0% 0.000 89.9)",
+  "--clampography-link": "oklch(66.3% 0.073 241.4)",
+  "--clampography-success": "oklch(78.5% 0.139 143.9)",
+  "--clampography-warning": "oklch(97.4% 0.156 109.0)",
+  "--clampography-error": "oklch(72.7% 0.169 28.7)",
+  "--clampography-info": "oklch(82.6% 0.071 239.8)",
+};
+
 export const brogrammer = {
   "color-scheme": "dark",
   "--clampography-background": "oklch(0.155 0.0 89.9)",
@@ -7699,6 +7715,7 @@ export const themes = {
   "borland": borland,
   "breeze": breeze,
   "bright-lights": brightLights,
+  "broadcast": broadcast,
   "brogrammer": brogrammer,
   "brutalist-web": brutalistWeb,
   "bubbles": bubbles,
