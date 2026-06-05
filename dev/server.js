@@ -179,9 +179,9 @@ serve({
   },
 });
 
-// Helper to convert kebab-case to camelCase
+// Helper to convert kebab-case to camelCase (handles digits: synthwave-84 → synthwave84)
 function toCamelCase(str) {
-  return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+  return str.replace(/-([a-z0-9])/g, (_, char) => char.toUpperCase());
 }
 
 // Function to regenerate src/themes.js
