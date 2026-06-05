@@ -10,6 +10,10 @@ Complete guide from basic setup to advanced theming scenarios.
 - [Basic Usage](#basic-usage)
 - [Custom Fonts](#custom-fonts)
 - [Customizing Headings](#customizing-headings)
+  - [Adjusting Fluid Bounds (Min / Max)](#adjusting-fluid-bounds-min--max)
+  - [Global Scaling](#global-scaling)
+  - [Individual Heading Scaling](#individual-heading-scaling)
+  - [Completely Custom Sizes](#completely-custom-sizes)
 - [Advanced Fluid Math](#advanced-fluid-math)
 - [Scope Isolation (Prose Mode)](#scope-isolation-prose-mode)
 - [Configuration Options](#configuration-options)
@@ -280,7 +284,64 @@ Clampography internally uses the CSS cascade `var(--font-sans, var(--font-family
 
 ## Customizing Headings
 
-Clampography provides beautiful fluid typography defaults (using `clamp()`), but gives you absolute pixel-perfect control over heading sizes through zero-specificity CSS variables.
+Clampography provides beautiful fluid typography defaults (using `clamp()`), but gives you absolute control over heading sizes through zero-specificity CSS variables. You can tweak just the minimum or maximum size, proportionally scale all headings at once, or replace the entire fluid formula for any heading.
+
+### Adjusting Fluid Bounds (Min / Max)
+
+Every heading exposes its fluid bounds as plain **unitless rem values** that you can override directly in CSS:
+
+| Variable | Default | Description |
+|---|---|---|
+| `--clampography-h1-min` | `1.875` | H1 minimum size (mobile) |
+| `--clampography-h1-max` | `4` | H1 maximum size (large screen) |
+| `--clampography-h2-min` | `1.25` | H2 minimum size |
+| `--clampography-h2-max` | `3` | H2 maximum size |
+| `--clampography-h3-min` | `1.125` | H3 minimum size |
+| `--clampography-h3-max` | `2.25` | H3 maximum size |
+| `--clampography-h4-min` | `1` | H4 minimum size |
+| `--clampography-h4-max` | `1.5` | H4 maximum size |
+| `--clampography-h5-min` | `1` | H5 size (static by default) |
+| `--clampography-h5-max` | `1` | H5 max — set different from min to make it fluid |
+| `--clampography-h6-min` | `0.875` | H6 size (static by default) |
+| `--clampography-h6-max` | `0.875` | H6 max — set different from min to make it fluid |
+
+The `slope` and `base` for the linear interpolation are computed automatically using CSS `calc()` — you only need to touch `--min` and/or `--max`.
+
+```css
+@layer base {
+  :root {
+    /* Reduce H1 max size on large screens (from 4rem → 3rem) */
+    --clampography-h1-max: 3;
+
+    /* Reduce all headings on large screens */
+    --clampography-h2-max: 2.25;
+    --clampography-h3-max: 1.75;
+
+    /* Increase H1 minimum on small screens (from 1.875rem → 2.25rem) */
+    --clampography-h1-min: 2.25;
+
+    /* Make H5 fluid (it's static by default) */
+    --clampography-h5-max: 1.25;
+  }
+}
+```
+
+> [!NOTE]
+> Values are **unitless rem multipliers** (not `rem`, not `px`). Write `3` to mean `3rem`.
+
+You can also override the viewport bounds that all headings use for interpolation:
+
+```css
+@layer base {
+  :root {
+    /* Change the fluid engine viewport range */
+    /* These are set automatically from plugin options (fluid-min / fluid-max) */
+    /* but can be overridden in CSS if needed */
+    --clampography-v-min: 23.4375; /* 375px / 16 */
+    --clampography-v-max: 90;      /* 1440px / 16 */
+  }
+}
+```
 
 ### Global Scaling
 

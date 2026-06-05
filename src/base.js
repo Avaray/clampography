@@ -73,15 +73,66 @@ export default (options = {}) => {
       "--font-family-mono":
         "ui-monospace, 'Cascadia Code', 'Cascadia Mono', 'Segoe UI Mono', 'Ubuntu Mono', SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
 
+      // FLUID TYPOGRAPHY ENGINE — Viewport Bounds
+      // Unitless rem values derived from plugin options: fluid-min and fluid-max.
+      // e.g. 320px → 20rem, 1280px → 80rem
+      "--clampography-v-min": String(minScreenRem),
+      "--clampography-v-max": String(maxScreenRem),
+
       // HEADINGS FLUID TYPOGRAPHY
-      // Matches Tailwind CSS sizes: sm (min) to 2xl (max)
-      // Override any of these in :root to customize individual headings.
-      "--clampography-h1-size": makeFluid(1.875, 4),
-      "--clampography-h2-size": makeFluid(1.25, 3),
-      "--clampography-h3-size": makeFluid(1.125, 2.25),
-      "--clampography-h4-size": makeFluid(1, 1.5),
-      "--clampography-h5-size": "1rem",
-      "--clampography-h6-size": "0.875rem",
+      // Each heading exposes --min and --max as unitless rem values.
+      // Override these in :root to change font-size bounds without rewriting the full clamp().
+      //
+      //   Example — reduce H1 max size on large screens:
+      //   :root { --clampography-h1-max: 3; }
+      //
+      //   Example — increase H2 minimum size on mobile:
+      //   :root { --clampography-h2-min: 1.5; }
+      //
+      // --clampography-h*-slope and --clampography-h*-base are computed automatically via CSS calc().
+      // --clampography-h*-size is the final fluid clamp() value used by the heading element.
+
+      // H1
+      "--clampography-h1-min": "1.875",
+      "--clampography-h1-max": "4",
+      "--clampography-h1-slope": "calc((var(--clampography-h1-max) - var(--clampography-h1-min)) / (var(--clampography-v-max) - var(--clampography-v-min)))",
+      "--clampography-h1-base": "calc(var(--clampography-h1-min) - var(--clampography-h1-slope) * var(--clampography-v-min))",
+      "--clampography-h1-size": "clamp(calc(var(--clampography-h1-min) * 1rem), calc(var(--clampography-h1-base) * 1rem + var(--clampography-h1-slope) * 100vw), calc(var(--clampography-h1-max) * 1rem))",
+
+      // H2
+      "--clampography-h2-min": "1.25",
+      "--clampography-h2-max": "3",
+      "--clampography-h2-slope": "calc((var(--clampography-h2-max) - var(--clampography-h2-min)) / (var(--clampography-v-max) - var(--clampography-v-min)))",
+      "--clampography-h2-base": "calc(var(--clampography-h2-min) - var(--clampography-h2-slope) * var(--clampography-v-min))",
+      "--clampography-h2-size": "clamp(calc(var(--clampography-h2-min) * 1rem), calc(var(--clampography-h2-base) * 1rem + var(--clampography-h2-slope) * 100vw), calc(var(--clampography-h2-max) * 1rem))",
+
+      // H3
+      "--clampography-h3-min": "1.125",
+      "--clampography-h3-max": "2.25",
+      "--clampography-h3-slope": "calc((var(--clampography-h3-max) - var(--clampography-h3-min)) / (var(--clampography-v-max) - var(--clampography-v-min)))",
+      "--clampography-h3-base": "calc(var(--clampography-h3-min) - var(--clampography-h3-slope) * var(--clampography-v-min))",
+      "--clampography-h3-size": "clamp(calc(var(--clampography-h3-min) * 1rem), calc(var(--clampography-h3-base) * 1rem + var(--clampography-h3-slope) * 100vw), calc(var(--clampography-h3-max) * 1rem))",
+
+      // H4
+      "--clampography-h4-min": "1",
+      "--clampography-h4-max": "1.5",
+      "--clampography-h4-slope": "calc((var(--clampography-h4-max) - var(--clampography-h4-min)) / (var(--clampography-v-max) - var(--clampography-v-min)))",
+      "--clampography-h4-base": "calc(var(--clampography-h4-min) - var(--clampography-h4-slope) * var(--clampography-v-min))",
+      "--clampography-h4-size": "clamp(calc(var(--clampography-h4-min) * 1rem), calc(var(--clampography-h4-base) * 1rem + var(--clampography-h4-slope) * 100vw), calc(var(--clampography-h4-max) * 1rem))",
+
+      // H5 — static by default (min === max); set --clampography-h5-max to a different value to make it fluid
+      "--clampography-h5-min": "1",
+      "--clampography-h5-max": "1",
+      "--clampography-h5-slope": "calc((var(--clampography-h5-max) - var(--clampography-h5-min)) / (var(--clampography-v-max) - var(--clampography-v-min)))",
+      "--clampography-h5-base": "calc(var(--clampography-h5-min) - var(--clampography-h5-slope) * var(--clampography-v-min))",
+      "--clampography-h5-size": "clamp(calc(var(--clampography-h5-min) * 1rem), calc(var(--clampography-h5-base) * 1rem + var(--clampography-h5-slope) * 100vw), calc(var(--clampography-h5-max) * 1rem))",
+
+      // H6 — static by default (min === max)
+      "--clampography-h6-min": "0.875",
+      "--clampography-h6-max": "0.875",
+      "--clampography-h6-slope": "calc((var(--clampography-h6-max) - var(--clampography-h6-min)) / (var(--clampography-v-max) - var(--clampography-v-min)))",
+      "--clampography-h6-base": "calc(var(--clampography-h6-min) - var(--clampography-h6-slope) * var(--clampography-v-min))",
+      "--clampography-h6-size": "clamp(calc(var(--clampography-h6-min) * 1rem), calc(var(--clampography-h6-base) * 1rem + var(--clampography-h6-slope) * 100vw), calc(var(--clampography-h6-max) * 1rem))",
 
       // Global heading scale multiplier (default: 1 = no scaling).
       // Override in :root to proportionally scale all headings at once.

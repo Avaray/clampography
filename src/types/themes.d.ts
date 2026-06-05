@@ -20,6 +20,7 @@ declare module "clampography/themes" {
   export interface Themes {
     light: ThemeColors;
     dark: ThemeColors;
+    [themeName: string]: ThemeColors;
   }
 
   export const themes: Themes;
