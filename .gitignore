@@ -6,3 +6,4 @@ node_modules/
 .npm-cache/
 dev/css/
 temp/
+scratch/
