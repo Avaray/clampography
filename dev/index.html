@@ -386,7 +386,12 @@
           <div v-for="item in COLOR_VARS" :key="item.id" class="pg-color-row">
             <span class="pg-color-name">{{ item.label }}</span>
             <div style="display: flex; align-items: center; gap: 0.3rem">
+              <span
+                v-if="colorMsg[item.id]"
+                style="font-size: 0.65rem; font-family: monospace; color: var(--clampography-success, #22c55e); min-width: 50px; text-align: right"
+              >{{ colorMsg[item.id] }}</span>
               <input
+                v-else
                 type="text"
                 readonly
                 :value="hexToOklch(colors[item.id])"
@@ -398,7 +403,10 @@
                 type="color"
                 v-model="colors[item.id]"
                 @input="updateVar(item.v, colors[item.id])"
+                @click="onColorClick($event, item)"
+                @contextmenu.prevent="onColorRightClick($event, item)"
                 style="margin: 0"
+                :title="'Click: open picker  •  Ctrl+Click: copy  •  Ctrl+RightClick: paste'"
               >
             </div>
           </div>
@@ -1675,6 +1683,60 @@ document.getElementById("meter-demo").textContent = this.value + "%"'
               document.body.style.setProperty(cssVar, hexToOklch(val));
             }
 
+            // ─ Color clipboard (Ctrl+Click / Ctrl+RightClick) ─
+            let colorClipboard = null;
+
+            function onColorClick(e, item) {
+              if (e.ctrlKey) {
+                // Ctrl+Click → copy current OKLCH to internal clipboard + system clipboard
+                e.preventDefault();
+                colorClipboard = hexToOklch(colors[item.id]);
+                navigator.clipboard.writeText(colorClipboard).catch(() => {});
+                showColorMsg(item.id, 'Copied!');
+              }
+              // Without Ctrl: let the native color picker open normally
+            }
+
+            function onColorRightClick(e, item) {
+              if (e.ctrlKey) {
+                e.preventDefault();
+                // Try system clipboard first, fall back to internal
+                navigator.clipboard.readText().then((text) => {
+                  const oklchVal = text.trim();
+                  const hex = oklchToHex(...parseOklchParts(oklchVal));
+                  if (hex) {
+                    colors[item.id] = hex;
+                    updateVar(item.v, hex);
+                    colorClipboard = oklchVal;
+                    showColorMsg(item.id, 'Pasted!');
+                  }
+                }).catch(() => {
+                  // Clipboard denied — use internal clipboard
+                  if (colorClipboard) {
+                    const hex = oklchToHex(...parseOklchParts(colorClipboard));
+                    if (hex) {
+                      colors[item.id] = hex;
+                      updateVar(item.v, hex);
+                      showColorMsg(item.id, 'Pasted!');
+                    }
+                  }
+                });
+              }
+            }
+
+            // Parse `oklch(L% C H)` into [L, C, H] strings for oklchToHex
+            function parseOklchParts(oklchStr) {
+              const m = oklchStr.match(/oklch\(\s*([\d.]+%?)\s+([\d.e-]+)\s+([\d.e-]+)/);
+              return m ? [m[1], m[2], m[3]] : [null, null, null];
+            }
+
+            // Temporary label for each color row
+            const colorMsg = reactive({});
+            function showColorMsg(id, msg) {
+              colorMsg[id] = msg;
+              setTimeout(() => { delete colorMsg[id]; }, 1500);
+            }
+
             // ─ Export Theme ─
             const isCopied = ref(false);
 
@@ -1850,7 +1912,10 @@ document.getElementById("meter-demo").textContent = this.value + "%"'
               saveMessage,
               saveTheme,
               cloneTheme,
-              deleteTheme
+              deleteTheme,
+              colorMsg,
+              onColorClick,
+              onColorRightClick
             };
           },
         }).mount("#pg-sidebar");
