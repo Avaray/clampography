@@ -5,7 +5,7 @@
  * Do not manually edit this file unless you know what you're doing.
  */
 
-export const theme3024Day = {
+export const 3024Day = {
   "color-scheme": "light",
   "--clampography-background": "oklch(0.975 0.0 89.9)",
   "--clampography-border": "oklch(0.446 0.007 59.5)",
@@ -22,7 +22,7 @@ export const theme3024Day = {
   "--clampography-warning": "oklch(0.374 0.008 43.2)",
 };
 
-export const theme3024Night = {
+export const 3024Night = {
   "color-scheme": "dark",
   "--clampography-background": "oklch(0.109 0.024 66.2)",
   "--clampography-border": "oklch(0.706 0.004 17.2)",
@@ -7670,8 +7670,8 @@ export const zeonica = {
 };
 
 export const themes = {
-  "3024-day": theme3024Day,
-  "3024-night": theme3024Night,
+  "3024-day": 3024Day,
+  "3024-night": 3024Night,
   "aardvark-blue": aardvarkBlue,
   "abernathy": abernathy,
   "adventure": adventure,
