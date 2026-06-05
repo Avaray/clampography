@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Fira+Mono&family=Inter&family=Josefin+Sans:wght@300&family=Nunito:wght@300&family=Playfair+Display&family=Quando&family=Roboto&display=swap">
+    href="https://fonts.googleapis.com/css2?family=Comic+Neue&family=Fira+Mono&family=Inter&family=Josefin+Sans:wght@300&family=Lato&family=Lora&family=Merriweather&family=Montserrat&family=Nunito:wght@300&family=Open+Sans&family=Oswald&family=Playfair+Display&family=Poppins&family=Quando&family=Roboto&family=Space+Grotesk&family=Ubuntu&display=swap">
   <link rel="stylesheet" href="/css/tefk.css" id="main-css">
   <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
   <style>
@@ -336,14 +336,16 @@
 
     <!-- Theme switcher -->
     <div class="pg-sidebar-section" :style="{ opacity: themes ? 1 : 0.4, pointerEvents: themes ? 'auto' : 'none', transition: 'opacity 0.3s' }">
-      <span class="pg-sidebar-label">Theme</span>
-      <div class="pg-carousel" style="padding: 0.1rem;">
+      <span class="pg-sidebar-label" style="display: flex; align-items: center; justify-content: space-between;">
+        Theme
+        <strong v-if="currentThemeName !== 'auto' && !isOfficialTheme" style="color:var(--clampography-warning, #f59e0b); font-size: 0.65rem;" title="Experimental Theme">[dev]</strong>
+      </span>
+      <div class="pg-carousel" style="padding: 0.1rem; transition: border-color 0.2s;" :style="{ borderColor: (currentThemeName !== 'auto' && !isOfficialTheme) ? 'var(--clampography-warning, #f59e0b)' : '' }">
         <button @click="prevTheme" title="Previous Theme">&larr;</button>
         
         <span v-if="currentThemeName === 'auto'" style="flex: 1; text-align: center; font-family: monospace; font-size: 0.78rem;">auto</span>
         
         <div v-else style="display: flex; flex: 1; align-items: center; justify-content: center; gap: 0.2rem;">
-          <strong v-if="!isOfficialTheme" style="color:var(--clampography-warning, #f59e0b); font-size: 0.65rem;" title="Experimental Theme">[Dev]</strong>
           <input type="text" v-model="editableThemeName" style="flex: 1; width: 0; min-width: 60px; font-size: 0.75rem; border: none; border-bottom: 1px dashed var(--clampography-border, #ccc); padding: 0; background: transparent; color: var(--clampography-text, #333); font-family: monospace; text-align: center; outline: none;" title="Edit Theme Name">
         </div>
 
@@ -1243,11 +1245,21 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
         { label: "System", stack: "system-ui, sans-serif" },
         { label: "Inter", stack: "'Inter', sans-serif" },
         { label: "Roboto", stack: "'Roboto', sans-serif" },
+        { label: "Poppins", stack: "'Poppins', sans-serif" },
+        { label: "Montserrat", stack: "'Montserrat', sans-serif" },
+        { label: "Open Sans", stack: "'Open Sans', sans-serif" },
+        { label: "Lato", stack: "'Lato', sans-serif" },
+        { label: "Ubuntu", stack: "'Ubuntu', sans-serif" },
+        { label: "Oswald", stack: "'Oswald', sans-serif" },
+        { label: "Space Grotesk", stack: "'Space Grotesk', sans-serif" },
         { label: "Playfair", stack: "'Playfair Display', serif" },
+        { label: "Merriweather", stack: "'Merriweather', serif" },
+        { label: "Lora", stack: "'Lora', serif" },
         { label: "Quando", stack: "'Quando', serif" },
-        { label: "Fira Mono", stack: "'Fira Mono', monospace" },
         { label: "Josefin Light", stack: "'Josefin Sans', sans-serif" },
         { label: "Nunito Light", stack: "'Nunito', sans-serif" },
+        { label: "Fira Mono", stack: "'Fira Mono', monospace" },
+        { label: "Comic Neue", stack: "'Comic Neue', cursive" },
       ];
 
       const COLOR_VARS = [
