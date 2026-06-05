@@ -1,6 +1,6 @@
 import fs from "fs";
 import { resolve } from "path";
-import * as themes from "./themes.js";
+import { themes } from "./themes.js";
 
 const OUTPUT_DIR = "css";
 const OUTPUT_FILE = "figma-tokens.json";
