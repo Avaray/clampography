@@ -2,7 +2,7 @@ import { themes } from "./themes.js";
 
 /**
  * CDN Theme Generator
- * Extracts light/dark themes from themes.js and structures them
+ * Extracts all themes from themes.js and structures them
  * for the Vanilla CSS build process.
  */
 export default (options = {}) => {
@@ -12,22 +12,22 @@ export default (options = {}) => {
   // 1. Default Theme (Light)
   if (themes["light"]) {
     // :where() lowers specificity so users can override it easily
-    themeStyles[`:where(${root}), [data-theme="light"]`] = themes["light"];
+    themeStyles[`:where(${root})`] = themes["light"];
   }
 
   // 2. Dark Mode (prefers-color-scheme)
   if (themes["dark"]) {
     themeStyles["@media (prefers-color-scheme: dark)"] = {
       // Default to dark if system prefers dark
-      [root]: themes["dark"],
-      // Keep data-theme="dark" inside media query for completeness
-      [`[data-theme="dark"]`]: themes["dark"],
-      // Allow overriding back to light even if system is dark
-      [`[data-theme="light"]`]: themes["light"]
+      [root]: themes["dark"]
     };
-    
-    // 3. Explicit Data Theme (Dark) - works regardless of system preference
-    themeStyles[`[data-theme="dark"]`] = themes["dark"];
+  }
+
+  // 3. Explicit Data Themes (Handles all themes, including light and dark)
+  // Because these are generated after the media query, they have equal
+  // specificity to :root but appear later in the CSS, thus overriding system preference.
+  for (const [name, themeData] of Object.entries(themes)) {
+    themeStyles[`[data-theme="${name}"]`] = themeData;
   }
 
   return themeStyles;

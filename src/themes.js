@@ -5,6 +5,22 @@
  * Do not manually edit this file unless you know what you're doing.
  */
 
+export const broadcast = {
+  "--clampography-background": "oklch(26.4% 0.000 89.9)",
+  "--clampography-surface": "oklch(32.1% 0.000 89.9)",
+  "--clampography-text": "oklch(90.9% 0.009 67.7)",
+  "--clampography-heading": "oklch(100.0% 0.000 89.9)",
+  "--clampography-primary": "oklch(82.7% 0.070 240.3)",
+  "--clampography-secondary": "oklch(87.0% 0.066 284.0)",
+  "--clampography-muted": "oklch(29.3% 0.000 89.9)",
+  "--clampography-border": "oklch(100.0% 0.000 89.9)",
+  "--clampography-link": "oklch(66.3% 0.073 241.4)",
+  "--clampography-success": "oklch(78.5% 0.139 143.9)",
+  "--clampography-warning": "oklch(97.4% 0.156 109.0)",
+  "--clampography-error": "oklch(72.7% 0.169 28.7)",
+  "--clampography-info": "oklch(82.6% 0.071 239.8)",
+};
+
 export const dark = {
   "color-scheme": "dark",
   "--clampography-background": "oklch(10% 0 0)",
@@ -40,6 +56,7 @@ export const light = {
 };
 
 export const themes = {
+  "broadcast": broadcast,
   "dark": dark,
   "light": light
 };

@@ -1647,7 +1647,8 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
               return;
             }
 
-            const themeData = {};
+            const existingTheme = THEME_DATA[currentThemeName.value] || {};
+            const themeData = { ...existingTheme };
             COLOR_VARS.forEach(({ id, v }) => {
               themeData[v] = hexToOklch(colors[id]);
             });
@@ -1699,7 +1700,8 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
             if (!newName) return;
 
             isSaving.value = true;
-            const themeData = {};
+            const existingTheme = THEME_DATA[currentThemeName.value] || {};
+            const themeData = { ...existingTheme };
             COLOR_VARS.forEach(({ id, v }) => {
               themeData[v] = hexToOklch(colors[id]);
             });
