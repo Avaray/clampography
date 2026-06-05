@@ -1764,8 +1764,8 @@ document.getElementById("meter-demo").textContent = this.value + "%"'
               isSaving.value = true;
               
               const themeData = {};
-              COLOR_VARS.forEach(({ id }) => {
-                themeData[id] = hexToOklch(colors[id]);
+              COLOR_VARS.forEach(({ id, v }) => {
+                themeData[v] = hexToOklch(colors[id]);
               });
               
               try {
@@ -1798,8 +1798,8 @@ document.getElementById("meter-demo").textContent = this.value + "%"'
               
               isSaving.value = true;
               const themeData = {};
-              COLOR_VARS.forEach(({ id }) => {
-                themeData[id] = hexToOklch(colors[id]);
+              COLOR_VARS.forEach(({ id, v }) => {
+                themeData[v] = hexToOklch(colors[id]);
               });
 
               try {
