@@ -373,11 +373,16 @@
         <div style="display: flex; gap: 0.3rem; margin-top: 0.5rem">
           <button @click="saveTheme" :disabled="isSaving || currentThemeName === 'auto'"
             style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-border, #ccc); border-radius: 4px; background: var(--clampography-primary, #3b82f6); color: #fff; transition: opacity 0.2s">
-            {{ isSaving ? 'Saving...' : 'Save Theme' }}
+            {{ isSaving ? 'Saving...' : 'Save' }}
           </button>
           <button @click="cloneTheme" :disabled="isSaving"
             style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-border, #ccc); border-radius: 4px; background: transparent; color: var(--clampography-text, #333); transition: color 0.2s">
-            Clone as New
+            Clone
+          </button>
+          <button @click="resetTheme" :disabled="isSaving || currentThemeName === 'auto'"
+            style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-border, #ccc); border-radius: 4px; background: transparent; color: var(--clampography-text, #333); transition: color 0.2s"
+            title="Reset changes back to last saved state">
+            Reset
           </button>
         </div>
         <div style="display: flex; gap: 0.3rem; margin-top: 0.5rem">
@@ -1732,6 +1737,16 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
             }
           }
 
+          function resetTheme() {
+            if (currentThemeName.value === 'auto') return;
+            editableThemeName.value = currentThemeName.value;
+            COLOR_VARS.forEach(({ v }) =>
+              document.body.style.removeProperty(v)
+            );
+            syncColors();
+            showMessage("🔄 Changes reset!");
+          }
+
           async function deleteTheme() {
             if (currentThemeName.value === 'auto') return;
             if (!confirm(`Are you sure you want to permanently delete the theme "${currentThemeName.value}"?`)) return;
@@ -1868,6 +1883,7 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
             saveMessage,
             saveTheme,
             cloneTheme,
+            resetTheme,
             deleteTheme,
             publishTheme,
             unpublishTheme,
