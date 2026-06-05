@@ -404,24 +404,30 @@
           </div>
           <div style="display: flex; gap: 0.3rem; margin-top: 0.5rem">
             <button
-              @click="copyTheme"
-              style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-border, #ccc); border-radius: 4px; background: transparent; color: var(--clampography-text, #333); transition: color 0.2s"
+              @click="saveTheme"
+              :disabled="isSaving || currentThemeName === 'auto'"
+              style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-border, #ccc); border-radius: 4px; background: var(--clampography-primary, #3b82f6); color: #fff; transition: opacity 0.2s"
             >
-              {{ isCopied ? 'Copied JSON!' : 'Copy JSON' }}
+              {{ isSaving ? 'Saving...' : 'Save Theme' }}
             </button>
             <button
-              @click="copyCss"
+              @click="cloneTheme"
+              :disabled="isSaving"
               style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-border, #ccc); border-radius: 4px; background: transparent; color: var(--clampography-text, #333); transition: color 0.2s"
             >
-              {{ isCopiedCss ? 'Copied CSS!' : 'Copy CSS' }}
+              Clone as New
             </button>
           </div>
           <button
-            @click="resetColors"
-            style="width: 100%; margin-top: 0.5rem; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-border, #ccc); border-radius: 4px; background: var(--clampography-surface, #f0f0f0); color: var(--clampography-text, #333)"
+            @click="deleteTheme"
+            :disabled="isSaving || currentThemeName === 'auto'"
+            style="width: 100%; margin-top: 0.5rem; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-error, #ef4444); border-radius: 4px; background: transparent; color: var(--clampography-error, #ef4444)"
           >
-            Reset to defaults
+            Delete Theme
           </button>
+          <div v-if="saveMessage" style="margin-top: 0.5rem; font-size: 0.7rem; text-align: center; color: var(--clampography-success, #22c55e)">
+            {{ saveMessage }}
+          </div>
         </div>
       </details>
 
@@ -1682,37 +1688,127 @@ document.getElementById("meter-demo").textContent = this.value + "%"'
               return JSON.stringify(themeObj, null, 2);
             }
 
-            function copyTheme() {
-              navigator.clipboard.writeText(generateThemeJson()).then(() => {
-                isCopied.value = true;
-                setTimeout(() => isCopied.value = false, 2000);
-              });
+            // ─ API Interactions ─
+            const isSaving = ref(false);
+            const saveMessage = ref("");
+
+            function showMessage(msg) {
+              saveMessage.value = msg;
+              setTimeout(() => saveMessage.value = "", 3000);
             }
 
-            const isCopiedCss = ref(false);
-            function copyCss() {
-              let css = ":root {\n";
-              COLOR_VARS.forEach(({ id, v }) => {
-                css += `  ${v}: ${hexToOklch(colors[id])};\n`;
+            async function saveTheme() {
+              if (currentThemeName.value === 'auto') return;
+              isSaving.value = true;
+              
+              const themeData = {};
+              COLOR_VARS.forEach(({ id }) => {
+                themeData[id] = hexToOklch(colors[id]);
               });
-              css += "}";
-              navigator.clipboard.writeText(css).then(() => {
-                isCopiedCss.value = true;
-                setTimeout(() => isCopiedCss.value = false, 2000);
-              });
+              
+              try {
+                const res = await fetch("/api/themes", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    action: "UPDATE",
+                    name: currentThemeName.value,
+                    data: themeData
+                  })
+                });
+                if (!res.ok) throw new Error("Failed to save");
+                
+                // Reload CSS without refreshing the page
+                const timestamp = new Date().getTime();
+                cssLink.href = `/css/${cssSuffix.value}.css?t=${timestamp}`;
+                
+                showMessage("✅ Theme saved successfully!");
+              } catch (e) {
+                showMessage("❌ Error saving theme");
+              } finally {
+                isSaving.value = false;
+              }
             }
 
-            function downloadTheme() {
-              const jsonStr = generateThemeJson();
-              const blob = new Blob([jsonStr], { type: "application/json" });
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement("a");
-              a.href = url;
-              a.download = `${currentThemeName.value || "custom-theme"}.json`;
-              document.body.appendChild(a);
-              a.click();
-              document.body.removeChild(a);
-              URL.revokeObjectURL(url);
+            async function cloneTheme() {
+              const newName = prompt("Enter a name for the new theme (e.g., my-awesome-theme):", `${currentThemeName.value === 'auto' ? 'custom' : currentThemeName.value}-clone`);
+              if (!newName) return;
+              
+              isSaving.value = true;
+              const themeData = {};
+              COLOR_VARS.forEach(({ id }) => {
+                themeData[id] = hexToOklch(colors[id]);
+              });
+
+              try {
+                const res = await fetch("/api/themes", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    action: "CREATE",
+                    name: newName,
+                    data: themeData
+                  })
+                });
+                
+                const responseData = await res.json();
+                if (!responseData.success) throw new Error(responseData.error || "Failed to create");
+                
+                // Update local available themes list
+                AVAILABLE_THEMES.length = 0; // Clear array
+                AVAILABLE_THEMES.push("auto", ...responseData.themesList);
+                
+                // Switch to the new theme
+                currentThemeIndex.value = AVAILABLE_THEMES.indexOf(newName);
+                
+                // Reload CSS
+                const timestamp = new Date().getTime();
+                cssLink.href = `/css/${cssSuffix.value}.css?t=${timestamp}`;
+                
+                showMessage("✨ Theme created successfully!");
+              } catch (e) {
+                showMessage("❌ Error creating theme");
+              } finally {
+                isSaving.value = false;
+              }
+            }
+
+            async function deleteTheme() {
+              if (currentThemeName.value === 'auto') return;
+              if (!confirm(`Are you sure you want to permanently delete the theme "${currentThemeName.value}"?`)) return;
+              
+              isSaving.value = true;
+              
+              try {
+                const res = await fetch("/api/themes", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    action: "DELETE",
+                    name: currentThemeName.value
+                  })
+                });
+                
+                const responseData = await res.json();
+                if (!responseData.success) throw new Error("Failed to delete");
+                
+                // Update local available themes list
+                AVAILABLE_THEMES.length = 0; // Clear array
+                AVAILABLE_THEMES.push("auto", ...responseData.themesList);
+                
+                // Switch back to auto
+                currentThemeIndex.value = 0;
+                
+                // Reload CSS
+                const timestamp = new Date().getTime();
+                cssLink.href = `/css/${cssSuffix.value}.css?t=${timestamp}`;
+                
+                showMessage("🗑️ Theme deleted!");
+              } catch (e) {
+                showMessage("❌ Error deleting theme");
+              } finally {
+                isSaving.value = false;
+              }
             }
 
             // Keyboard shortcuts
@@ -1744,18 +1840,17 @@ document.getElementById("meter-demo").textContent = this.value + "%"'
               currentFont,
               currentThemeName,
               colors,
-              isCopied,
-              isCopiedCss,
               prevFont,
               nextFont,
               prevTheme,
               nextTheme,
-              resetColors,
               updateVar,
               hexToOklch,
-              copyTheme,
-              copyCss,
-              downloadTheme,
+              isSaving,
+              saveMessage,
+              saveTheme,
+              cloneTheme,
+              deleteTheme
             };
           },
         }).mount("#pg-sidebar");
