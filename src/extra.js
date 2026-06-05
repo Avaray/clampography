@@ -172,7 +172,7 @@ export default (options = {}) => {
 
     // Deleted Text
     [scope("del")]: {
-      "text-decoration-color": "var(--clampography-secondary)",
+      "text-decoration-color": "var(--clampography-error)",
       "text-decoration-thickness": "2px",
     },
 
