@@ -1458,6 +1458,7 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
           const kbd = ref(lsBool("clampography-dev-kbd"));
           const themes = ref(lsBool("clampography-dev-themes-enabled"));
 
+          const currentFontIndex = ref(0);
           const themeFilter = ref(ls("clampography-dev-theme-filter") || "all");
 
           watch(themeFilter, (newVal) => {
