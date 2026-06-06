@@ -336,8 +336,15 @@
 
     <!-- Theme switcher -->
     <div class="pg-sidebar-section" :style="{ opacity: themes ? 1 : 0.4, pointerEvents: themes ? 'auto' : 'none', transition: 'opacity 0.3s' }">
-      <span class="pg-sidebar-label" style="display: flex; align-items: center; justify-content: space-between;">
-        Theme
+      <span class="pg-sidebar-label" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+        <span style="display: flex; align-items: center; gap: 0.4rem;">
+          Theme
+          <select v-model="themeFilter" style="font-size: 0.6rem; padding: 0 2px; border: 1px solid var(--clampography-border, #ccc); border-radius: 3px; background: var(--clampography-surface, #fff); color: var(--clampography-text, #333); outline: none; cursor: pointer;">
+            <option value="all">All</option>
+            <option value="official">Official</option>
+            <option value="dev">Dev</option>
+          </select>
+        </span>
         <strong v-if="currentThemeName !== 'auto' && !isOfficialTheme" style="color:var(--clampography-warning, #f59e0b); font-size: 0.65rem;" title="Experimental Theme">[dev]</strong>
       </span>
       <div class="pg-carousel" style="padding: 0.1rem; transition: border-color 0.2s;" :style="{ borderColor: (currentThemeName !== 'auto' && !isOfficialTheme) ? 'var(--clampography-warning, #f59e0b)' : '' }">
@@ -1445,6 +1452,12 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
             savedThemeIdx !== -1 ? savedThemeIdx : 0,
           );
           const currentFontIndex = ref(0);
+          const themeFilter = ref(ls("clampography-dev-theme-filter") || "all");
+
+          watch(themeFilter, (newVal) => {
+            localStorage.setItem("clampography-dev-theme-filter", newVal);
+            currentThemeIndex.value = 0;
+          });
 
           const colors = reactive(
             Object.fromEntries(COLOR_VARS.map(({ id }) => [id, "#888888"])),
@@ -1453,8 +1466,19 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
           // ─ Computed ─
           const currentFont = computed(() => FONTS[currentFontIndex.value]);
           const officialThemesRef = ref([...OFFICIAL_THEMES]);
+          
+          const filteredThemes = computed(() => {
+            return AVAILABLE_THEMES.filter(t => {
+              if (t === "auto") return true;
+              const isOfficial = officialThemesRef.value.includes(t);
+              if (themeFilter.value === "official") return isOfficial;
+              if (themeFilter.value === "dev") return !isOfficial;
+              return true;
+            });
+          });
+
           const currentThemeName = computed(() =>
-            AVAILABLE_THEMES[currentThemeIndex.value] ?? ""
+            filteredThemes.value[currentThemeIndex.value] ?? "auto"
           );
           const isOfficialTheme = computed(() =>
             officialThemesRef.value.includes(currentThemeName.value)
@@ -1475,16 +1499,16 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
               FONTS.length;
           };
           const prevTheme = () => {
-            if (AVAILABLE_THEMES.length) {
+            if (filteredThemes.value.length) {
               currentThemeIndex.value =
-                (currentThemeIndex.value - 1 + AVAILABLE_THEMES.length) %
-                AVAILABLE_THEMES.length;
+                (currentThemeIndex.value - 1 + filteredThemes.value.length) %
+                filteredThemes.value.length;
             }
           };
           const nextTheme = () => {
-            if (AVAILABLE_THEMES.length) {
+            if (filteredThemes.value.length) {
               currentThemeIndex.value = (currentThemeIndex.value + 1) %
-                AVAILABLE_THEMES.length;
+                filteredThemes.value.length;
             }
           };
 
@@ -1888,6 +1912,7 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
             forms,
             kbd,
             themes,
+            themeFilter,
             currentFont,
             currentThemeName,
             colors,
