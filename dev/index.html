@@ -1497,31 +1497,42 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
             officialThemesRef.value.includes(currentThemeName.value)
           );
           
-          const contrastWarning = computed(() => {
-            if (currentThemeName.value === 'auto') return null;
-            const bg = colors['background'];
-            const text = colors['text'];
-            const heading = colors['heading'];
-            
-            if (!bg) return null;
-            
-            let issues = [];
-            if (text) {
-              const textContrast = getContrastRatio(bg, text);
-              if (textContrast < 4.5) issues.push("text");
-            }
-            if (heading) {
-              const headingContrast = getContrastRatio(bg, heading);
-              // WCAG AA for large text is 3.0, but headings can be small too. 
-              // We'll use 4.5 for text and 3.0 for heading.
-              if (headingContrast < 3.0) issues.push("heading");
-            }
-            
-            if (issues.length > 0) {
-              return "Low contrast (" + issues.join(", ") + ")";
-            }
-            return null;
-          });
+          const contrastWarning = ref(null);
+          let contrastTimeout;
+          
+          watch([colors, currentThemeName], () => {
+            clearTimeout(contrastTimeout);
+            contrastTimeout = setTimeout(() => {
+              if (currentThemeName.value === 'auto') {
+                contrastWarning.value = null;
+                return;
+              }
+              const bg = colors['background'];
+              const text = colors['text'];
+              const heading = colors['heading'];
+              
+              if (!bg) {
+                contrastWarning.value = null;
+                return;
+              }
+              
+              let issues = [];
+              if (text) {
+                const textContrast = getContrastRatio(bg, text);
+                if (textContrast < 4.5) issues.push("text");
+              }
+              if (heading) {
+                const headingContrast = getContrastRatio(bg, heading);
+                if (headingContrast < 3.0) issues.push("heading");
+              }
+              
+              if (issues.length > 0) {
+                contrastWarning.value = "Low contrast (" + issues.join(", ") + ")";
+              } else {
+                contrastWarning.value = null;
+              }
+            }, 300);
+          }, { deep: true, immediate: true });
 
           const editableThemeName = ref("");
           const cssSuffix = computed(() =>
