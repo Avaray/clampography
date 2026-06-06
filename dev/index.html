@@ -1850,7 +1850,6 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
 
           async function deleteTheme() {
             if (currentThemeName.value === 'auto') return;
-            if (!confirm(`Are you sure you want to permanently delete the theme "${currentThemeName.value}"?`)) return;
 
             isSaving.value = true;
 
