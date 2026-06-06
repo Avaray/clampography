@@ -1458,18 +1458,10 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
           const kbd = ref(lsBool("clampography-dev-kbd"));
           const themes = ref(lsBool("clampography-dev-themes-enabled"));
 
-          const savedThemeIdx = AVAILABLE_THEMES.indexOf(
-            ls("clampography-dev-theme"),
-          );
-          const currentThemeIndex = ref(
-            savedThemeIdx !== -1 ? savedThemeIdx : 0,
-          );
-          const currentFontIndex = ref(0);
           const themeFilter = ref(ls("clampography-dev-theme-filter") || "all");
 
           watch(themeFilter, (newVal) => {
             localStorage.setItem("clampography-dev-theme-filter", newVal);
-            currentThemeIndex.value = 0;
           });
 
           const colors = reactive(
@@ -1482,7 +1474,7 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
           
           const filteredThemes = computed(() => {
             return AVAILABLE_THEMES.filter(t => {
-              if (t === "auto") return true;
+              if (t === "auto") return false;
               const isOfficial = officialThemesRef.value.includes(t);
               if (themeFilter.value === "official") return isOfficial;
               if (themeFilter.value === "dev") return !isOfficial;
@@ -1490,8 +1482,16 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
             });
           });
 
+          const currentThemeIndex = ref(0);
+
+          watch(filteredThemes, (newThemes) => {
+             const saved = ls("clampography-dev-theme");
+             const idx = newThemes.indexOf(saved);
+             currentThemeIndex.value = idx !== -1 ? idx : 0;
+          }, { immediate: true });
+
           const currentThemeName = computed(() =>
-            filteredThemes.value[currentThemeIndex.value] ?? "auto"
+            filteredThemes.value[currentThemeIndex.value] || "light"
           );
           const isOfficialTheme = computed(() =>
             officialThemesRef.value.includes(currentThemeName.value)
@@ -1814,10 +1814,10 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
 
               // Update local available themes list
               AVAILABLE_THEMES.length = 0; // Clear array
-              AVAILABLE_THEMES.push("auto", ...responseData.themesList);
+              AVAILABLE_THEMES.push(...responseData.themesList);
 
               // Switch to the new theme
-              currentThemeIndex.value = AVAILABLE_THEMES.indexOf(newName);
+              currentThemeIndex.value = filteredThemes.value.indexOf(newName);
 
               // Reload CSS
               const timestamp = new Date().getTime();
@@ -1864,14 +1864,14 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
 
               // Update local available themes list
               AVAILABLE_THEMES.length = 0; // Clear array
-              AVAILABLE_THEMES.push("auto", ...responseData.themesList);
+              AVAILABLE_THEMES.push(...responseData.themesList);
 
               const idx = officialThemesRef.value.indexOf(currentThemeName.value);
               if (idx > -1) officialThemesRef.value.splice(idx, 1);
 
               // Select the next theme in the list (or the previous if we deleted the last one)
-              if (currentIndex >= AVAILABLE_THEMES.length) {
-                currentThemeIndex.value = Math.max(0, AVAILABLE_THEMES.length - 1);
+              if (currentIndex >= filteredThemes.value.length) {
+                currentThemeIndex.value = Math.max(0, filteredThemes.value.length - 1);
               } else {
                 currentThemeIndex.value = currentIndex;
               }

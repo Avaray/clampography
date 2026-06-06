@@ -126,7 +126,7 @@ serve({
         let html = readFileSync(join(DIR, "index.html"), "utf8");
         html = html.replace(
           "const AVAILABLE_THEMES = [];",
-          `const AVAILABLE_THEMES = ["auto", ...${JSON.stringify(themesList)}];`
+          `const AVAILABLE_THEMES = ${JSON.stringify(themesList)};`
         );
         html = html.replace(
           "const THEME_DATA = {};",
