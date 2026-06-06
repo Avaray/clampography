@@ -37,8 +37,8 @@ async function loadJSModule(filePath) {
 /**
  * Convert JS object to CSS string
  */
-function toCSSString(obj, indent = 0) {
-  const spaces = " ".repeat(indent);
+function toCSSString(obj, indentLevel = 0) {
+  const spaces = "  ".repeat(indentLevel);
   const lines = [];
 
   for (const [key, value] of Object.entries(obj)) {
@@ -48,7 +48,7 @@ function toCSSString(obj, indent = 0) {
       // Special handling for @layer base wrapper if present in object
       if (key === "@layer base") {
         lines.push(`${spaces}@layer base {`);
-        lines.push(toCSSString(value, indent + 1));
+        lines.push(toCSSString(value, indentLevel + 1));
         lines.push(`${spaces}}`);
       } else {
         lines.push("");
@@ -75,7 +75,7 @@ function toCSSString(obj, indent = 0) {
           // This handles nesting if the JS structure supports it (like SCSS nesting)
           // Standard CSS doesn't support nesting without post-processing,
           // but we'll output it as nested blocks for clarity if present.
-          lines.push(toCSSString(nestedObjects, indent + 1));
+          lines.push(toCSSString(nestedObjects, indentLevel + 1));
         }
 
         lines.push(`${spaces}}`);
@@ -145,7 +145,7 @@ async function convertFile(inputFile) {
     const jsObject = await loadJSModule(inputFile);
 
     console.log(`⚙️ Converting to CSS...`);
-    let cssContent = toCSSString(jsObject, 0);
+    let cssContent = toCSSString(jsObject, 1);
 
     // Explicitly wrap in @layer base for the final file
     // (Assuming the JS object is just the rules, without @layer wrapper)
