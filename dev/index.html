@@ -1517,9 +1517,10 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
           // ─ Computed ─
           const currentFont = computed(() => FONTS[currentFontIndex.value]);
           const officialThemesRef = ref([...OFFICIAL_THEMES]);
+          const availableThemesRef = ref([...AVAILABLE_THEMES]);
           
           const filteredThemes = computed(() => {
-            return AVAILABLE_THEMES.filter(t => {
+            return availableThemesRef.value.filter(t => {
               if (t === "auto") return false;
               const isOfficial = officialThemesRef.value.includes(t);
               if (themeFilter.value === "official") return isOfficial;
@@ -1808,15 +1809,16 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
 
               // Update local available themes list if name changed
               if (currentThemeName.value !== newName) {
-                AVAILABLE_THEMES.length = 0;
-                AVAILABLE_THEMES.push(...responseData.themesList);
+                availableThemesRef.value = responseData.themesList || [];
                 
-                // If it was official and we renamed it, it stays official (handled by server).
-                // Let's update OFFICIAL_THEMES locally just in case.
+                // Update OFFICIAL_THEMES locally if renamed.
                 const idx = officialThemesRef.value.indexOf(currentThemeName.value);
                 if (idx > -1) {
-                  officialThemesRef.value.splice(idx, 1);
-                  officialThemesRef.value.push(newName);
+                  officialThemesRef.value = [
+                    ...officialThemesRef.value.slice(0, idx),
+                    newName,
+                    ...officialThemesRef.value.slice(idx + 1)
+                  ];
                 }
                 
                 currentThemeIndex.value = filteredThemes.value.indexOf(newName);
@@ -1857,8 +1859,7 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
               const responseData = await res.json();
               if (!responseData.success) throw new Error(responseData.error || "Failed to create");
 
-              AVAILABLE_THEMES.length = 0;
-              AVAILABLE_THEMES.push(...responseData.themesList);
+              availableThemesRef.value = responseData.themesList || [];
 
               currentThemeIndex.value = filteredThemes.value.indexOf(newName);
 
@@ -1885,19 +1886,17 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
             const themeToDelete = currentThemeName.value;
             if (themeToDelete === 'auto') return;
 
-            // Optimistic UI update
-            const availIdx = AVAILABLE_THEMES.indexOf(themeToDelete);
-            if (availIdx > -1) AVAILABLE_THEMES.splice(availIdx, 1);
+            // Optimistic UI update — remove from reactive ref so Vue re-renders immediately
+            availableThemesRef.value = availableThemesRef.value.filter(t => t !== themeToDelete);
 
             const offIdx = officialThemesRef.value.indexOf(themeToDelete);
             let wasOfficial = false;
             if (offIdx > -1) {
               wasOfficial = true;
-              officialThemesRef.value.splice(offIdx, 1);
+              officialThemesRef.value = officialThemesRef.value.filter(t => t !== themeToDelete);
             }
 
-            const currentIndex = currentThemeIndex.value;
-            if (currentIndex >= filteredThemes.value.length) {
+            if (currentThemeIndex.value >= filteredThemes.value.length) {
               currentThemeIndex.value = Math.max(0, filteredThemes.value.length - 1);
             }
 
@@ -1917,8 +1916,7 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
               // Explicitly filter out the deleted theme from server response
               // in case of a timing/race issue between optimistic update and server reply
               const safeList = (responseData.themesList || []).filter(t => t !== themeToDelete);
-              AVAILABLE_THEMES.length = 0;
-              AVAILABLE_THEMES.push(...safeList);
+              availableThemesRef.value = safeList;
 
               const timestamp = new Date().getTime();
               cssLink.href = `/css/${cssSuffix.value}.css?t=${timestamp}`;
@@ -1926,9 +1924,9 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
               addToast(`🗑️ Theme "${themeToDelete}" deleted!`, "success");
             } catch (e) {
               addToast(`❌ Error deleting theme "${themeToDelete}"`, "error");
-              // Revert optimistic update
-              if (availIdx > -1) AVAILABLE_THEMES.splice(availIdx, 0, themeToDelete);
-              if (wasOfficial) officialThemesRef.value.splice(offIdx, 0, themeToDelete);
+              // Revert optimistic update — restore theme back to list
+              if (wasOfficial) officialThemesRef.value = [...officialThemesRef.value, themeToDelete];
+              availableThemesRef.value = [...availableThemesRef.value, themeToDelete];
             }
           }
 
