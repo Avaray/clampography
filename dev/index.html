@@ -1914,8 +1914,11 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
               const responseData = await res.json();
               if (!responseData.success) throw new Error(responseData.error || "Failed to delete");
 
+              // Explicitly filter out the deleted theme from server response
+              // in case of a timing/race issue between optimistic update and server reply
+              const safeList = (responseData.themesList || []).filter(t => t !== themeToDelete);
               AVAILABLE_THEMES.length = 0;
-              AVAILABLE_THEMES.push(...responseData.themesList);
+              AVAILABLE_THEMES.push(...safeList);
 
               const timestamp = new Date().getTime();
               cssLink.href = `/css/${cssSuffix.value}.css?t=${timestamp}`;
