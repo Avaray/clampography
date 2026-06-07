@@ -421,35 +421,45 @@
         </div>
         <div style="display: flex; gap: 0.3rem; margin-top: 0.5rem">
           <button @click="saveTheme" :disabled="currentThemeName === 'auto'"
-            style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-border, #ccc); border-radius: 4px; background: var(--clampography-primary, #3b82f6); color: #fff; transition: opacity 0.2s">
+            style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-border, #ccc); border-radius: 4px; background: var(--clampography-primary, #3b82f6); color: #fff; transition: opacity 0.2s"
+            title="Save current theme  •  [S]">
             Save
           </button>
           <button @click="cloneTheme"
-            style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-border, #ccc); border-radius: 4px; background: transparent; color: var(--clampography-text, #333); transition: color 0.2s">
+            style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-border, #ccc); border-radius: 4px; background: transparent; color: var(--clampography-text, #333); transition: color 0.2s"
+            title="Clone current theme">
             Clone
           </button>
           <button @click="resetTheme" :disabled="currentThemeName === 'auto'"
             style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-border, #ccc); border-radius: 4px; background: transparent; color: var(--clampography-text, #333); transition: color 0.2s"
-            title="Reset changes back to last saved state">
+            title="Reset unsaved changes  •  [R]">
             Reset
           </button>
         </div>
         <div style="display: flex; gap: 0.3rem; margin-top: 0.5rem">
           <button @click="publishTheme" v-if="!isOfficialTheme && currentThemeName !== 'auto'"
             style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-success, #22c55e); border-radius: 4px; background: transparent; color: var(--clampography-success, #22c55e); transition: color 0.2s"
-            title="Move from Dev to Official (src/themes.js)">
+            title="Publish to Official (src/themes.js)  •  [P]">
             Publish
           </button>
           <button @click="unpublishTheme" v-if="isOfficialTheme && currentThemeName !== 'auto'"
             style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-warning, #f59e0b); border-radius: 4px; background: transparent; color: var(--clampography-warning, #f59e0b); transition: color 0.2s"
-            title="Move from Official to Dev (dev/themes-dev.js)">
+            title="Move back to Dev (dev/themes-dev.js)">
             Unpublish
           </button>
         </div>
-        <button @click="deleteTheme" :disabled="currentThemeName === 'auto'"
-          style="width: 100%; margin-top: 0.5rem; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-error, #ef4444); border-radius: 4px; background: transparent; color: var(--clampography-error, #ef4444)">
-          Delete Theme
-        </button>
+        <div style="display: flex; gap: 0.3rem; margin-top: 0.5rem">
+          <button @click="deleteTheme" :disabled="currentThemeName === 'auto'"
+            style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-error, #ef4444); border-radius: 4px; background: transparent; color: var(--clampography-error, #ef4444)"
+            title="Delete theme permanently  •  [Del]">
+            Delete
+          </button>
+          <button @click="restoreTheme" :disabled="deleteHistory.length === 0"
+            style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-border, #ccc); border-radius: 4px; background: transparent; color: var(--clampography-muted, #888); transition: color 0.2s"
+            title="Restore last deleted theme  •  [Backspace]">
+            Restore
+          </button>
+        </div>
         <div class="pg-toast-container">
           <div v-for="toast in toasts" :key="toast.id" class="pg-toast" :class="toast.type">
             {{ toast.text }}
@@ -1886,13 +1896,18 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
             const themeToDelete = currentThemeName.value;
             if (themeToDelete === 'auto') return;
 
+            // Snapshot theme data for potential restore via Backspace
+            const wasOfficial = officialThemesRef.value.includes(themeToDelete);
+            const snapshot = {
+              name: themeToDelete,
+              data: { ...(THEME_DATA[themeToDelete] || {}) },
+              wasOfficial
+            };
+
             // Optimistic UI update — remove from reactive ref so Vue re-renders immediately
             availableThemesRef.value = availableThemesRef.value.filter(t => t !== themeToDelete);
 
-            const offIdx = officialThemesRef.value.indexOf(themeToDelete);
-            let wasOfficial = false;
-            if (offIdx > -1) {
-              wasOfficial = true;
+            if (wasOfficial) {
               officialThemesRef.value = officialThemesRef.value.filter(t => t !== themeToDelete);
             }
 
@@ -1922,6 +1937,8 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
               cssLink.href = `/css/${cssSuffix.value}.css?t=${timestamp}`;
 
               addToast(`🗑️ Theme "${themeToDelete}" deleted!`, "success");
+              // Push to history only on success
+              deleteHistory.value.push(snapshot);
             } catch (e) {
               addToast(`❌ Error deleting theme "${themeToDelete}"`, "error");
               // Revert optimistic update — restore theme back to list
@@ -1973,24 +1990,121 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
             }
           }
 
+          // Delete history for Backspace restore
+          const deleteHistory = ref([]);
+
           // Keyboard shortcuts
           onMounted(() => {
             // On mount: poll until CSS is ready (handles cold cache and cached loads alike)
             syncColorsWhenReady();
 
             document.addEventListener("keydown", (e) => {
-              if (e.ctrlKey) {
-                if (e.key === "ArrowLeft") {
-                  e.preventDefault();
-                  prevTheme();
+              // Don't fire shortcuts when user is typing in an input/textarea/select
+              const tag = document.activeElement?.tagName;
+              if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+
+              // ← / → / Space: navigate themes
+              if (e.key === "ArrowLeft" && !e.ctrlKey) {
+                e.preventDefault();
+                prevTheme();
+              }
+              if (e.key === "ArrowRight" && !e.ctrlKey) {
+                e.preventDefault();
+                nextTheme();
+              }
+              if (e.key === " ") {
+                e.preventDefault();
+                nextTheme();
+              }
+
+              // Ctrl+← / Ctrl+→: legacy - keep working
+              if (e.ctrlKey && e.key === "ArrowLeft") {
+                e.preventDefault();
+                prevTheme();
+              }
+              if (e.ctrlKey && e.key === "ArrowRight") {
+                e.preventDefault();
+                nextTheme();
+              }
+
+              // S: save
+              if (e.key === "s" || e.key === "S") {
+                e.preventDefault();
+                saveTheme();
+              }
+
+              // R: reset
+              if (e.key === "r" || e.key === "R") {
+                e.preventDefault();
+                resetTheme();
+              }
+
+              // P: publish / unpublish (toggle)
+              if (e.key === "p" || e.key === "P") {
+                e.preventDefault();
+                if (isOfficialTheme.value) {
+                  unpublishTheme();
+                } else if (currentThemeName.value !== 'auto') {
+                  publishTheme();
                 }
-                if (e.key === "ArrowRight") {
-                  e.preventDefault();
-                  nextTheme();
-                }
+              }
+
+              // Delete: delete theme
+              if (e.key === "Delete") {
+                e.preventDefault();
+                deleteTheme();
+              }
+
+              // Backspace: restore last deleted theme
+              if (e.key === "Backspace") {
+                e.preventDefault();
+                restoreTheme();
               }
             });
           });
+
+          async function restoreTheme() {
+            if (deleteHistory.value.length === 0) {
+              addToast("📭 Nothing to restore", "info");
+              return;
+            }
+
+            const entry = deleteHistory.value[deleteHistory.value.length - 1];
+
+            try {
+              const res = await fetch("/api/themes", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  action: "CREATE",
+                  name: entry.name,
+                  data: entry.data
+                })
+              });
+
+              const responseData = await res.json();
+              if (!responseData.success) throw new Error(responseData.error || "Failed to restore");
+
+              deleteHistory.value.pop();
+
+              availableThemesRef.value = responseData.themesList || [];
+              if (entry.wasOfficial) {
+                officialThemesRef.value = [...officialThemesRef.value, entry.name];
+              }
+
+              // Switch to the restored theme
+              await new Promise(r => setTimeout(r, 0)); // let filteredThemes recompute
+              const idx = filteredThemes.value.indexOf(entry.name);
+              if (idx > -1) currentThemeIndex.value = idx;
+
+              const timestamp = new Date().getTime();
+              cssLink.href = `/css/${cssSuffix.value}.css?t=${timestamp}`;
+
+              addToast(`↩️ Theme "${entry.name}" restored!`, "success");
+            } catch (e) {
+              addToast(`❌ Error restoring theme "${entry.name}"`, "error");
+            }
+          }
 
           return {
             FONTS,
@@ -2012,10 +2126,12 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
             updateVar,
             hexToOklch,
             toasts,
+            deleteHistory,
             saveTheme,
             cloneTheme,
             resetTheme,
             deleteTheme,
+            restoreTheme,
             publishTheme,
             unpublishTheme,
             isOfficialTheme,
