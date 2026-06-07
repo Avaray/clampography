@@ -1971,45 +1971,49 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
           }
 
           async function publishTheme() {
-            if (currentThemeName.value === 'auto') return;
+            const themeName = currentThemeName.value;
+            if (themeName === 'auto') return;
             try {
               const res = await fetch("/api/themes", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                   action: "PUBLISH",
-                  name: currentThemeName.value
+                  name: themeName
                 })
               });
               const responseData = await res.json();
               if (!responseData.success) throw new Error(responseData.error || "Failed to publish");
               
-              officialThemesRef.value.push(currentThemeName.value);
-              addToast(`🎉 "${currentThemeName.value}" published!`, "success");
+              if (!officialThemesRef.value.includes(themeName)) {
+                officialThemesRef.value.push(themeName);
+              }
+              addToast(`🎉 "${themeName}" published!`, "success");
             } catch (e) {
-              addToast(`❌ Error publishing "${currentThemeName.value}"`, "error");
+              addToast(`❌ Error publishing "${themeName}"`, "error");
             }
           }
 
           async function unpublishTheme() {
-            if (currentThemeName.value === 'auto') return;
+            const themeName = currentThemeName.value;
+            if (themeName === 'auto') return;
             try {
               const res = await fetch("/api/themes", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                   action: "UNPUBLISH",
-                  name: currentThemeName.value
+                  name: themeName
                 })
               });
               const responseData = await res.json();
               if (!responseData.success) throw new Error(responseData.error || "Failed to unpublish");
               
-              const idx = officialThemesRef.value.indexOf(currentThemeName.value);
+              const idx = officialThemesRef.value.indexOf(themeName);
               if (idx > -1) officialThemesRef.value.splice(idx, 1);
-              addToast(`📥 "${currentThemeName.value}" moved to Dev!`, "info");
+              addToast(`📥 "${themeName}" moved to Dev!`, "info");
             } catch (e) {
-              addToast(`❌ Error unpublishing "${currentThemeName.value}"`, "error");
+              addToast(`❌ Error unpublishing "${themeName}"`, "error");
             }
           }
 
