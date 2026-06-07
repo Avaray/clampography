@@ -2026,9 +2026,19 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
             syncColorsWhenReady();
 
             document.addEventListener("keydown", (e) => {
-              // Don't fire shortcuts when user is typing in an input/textarea/select
-              const tag = document.activeElement?.tagName;
-              if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+              // Don't fire shortcuts when user is typing in a text input, textarea, or select
+              const active = document.activeElement;
+              if (active) {
+                const tag = active.tagName;
+                const isTextInput = tag === "TEXTAREA" || (tag === "INPUT" && active.type === "text");
+                if (isTextInput || tag === "SELECT") return;
+                
+                // If focus is on a button, color input, etc., blur it on any shortcut key 
+                // (except Tab) so Space doesn't trigger it again.
+                if (e.key !== "Tab") {
+                  active.blur();
+                }
+              }
 
               // ← / → / Space: navigate themes
               if (e.key === "ArrowLeft" && !e.ctrlKey) {
