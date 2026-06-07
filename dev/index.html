@@ -1850,9 +1850,9 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
               const timestamp = new Date().getTime();
               cssLink.href = `/css/${cssSuffix.value}.css?t=${timestamp}`;
 
-              addToast("✅ Theme saved successfully!", "success");
+              addToast(`✅ "${newName}" saved!`, "success");
             } catch (e) {
-              addToast("❌ Error saving theme", "error");
+              addToast(`❌ Error saving "${currentThemeName.value}"`, "error");
             }
           }
 
@@ -1888,9 +1888,9 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
               const timestamp = new Date().getTime();
               cssLink.href = `/css/${cssSuffix.value}.css?t=${timestamp}`;
 
-              addToast("✨ Theme created successfully!", "success");
+              addToast(`✨ "${newName}" created!`, "success");
             } catch (e) {
-              addToast("❌ Error creating theme", "error");
+              addToast(`❌ Error creating "${newName}"`, "error");
             }
           }
 
@@ -1901,7 +1901,7 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
               document.body.style.removeProperty(v)
             );
             syncColors();
-            addToast("🔄 Changes reset!", "info");
+            addToast(`🔄 "${currentThemeName.value}" reset!`, "info");
           }
 
           async function deleteTheme() {
@@ -1985,9 +1985,9 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
               if (!responseData.success) throw new Error(responseData.error || "Failed to publish");
               
               officialThemesRef.value.push(currentThemeName.value);
-              addToast("🎉 Theme published to Official!", "success");
+              addToast(`🎉 "${currentThemeName.value}" published!`, "success");
             } catch (e) {
-              addToast("❌ Error publishing theme", "error");
+              addToast(`❌ Error publishing "${currentThemeName.value}"`, "error");
             }
           }
 
@@ -2007,9 +2007,9 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
               
               const idx = officialThemesRef.value.indexOf(currentThemeName.value);
               if (idx > -1) officialThemesRef.value.splice(idx, 1);
-              addToast("📥 Theme unpublished back to Dev.", "info");
+              addToast(`📥 "${currentThemeName.value}" moved to Dev!`, "info");
             } catch (e) {
-              addToast("❌ Error unpublishing theme", "error");
+              addToast(`❌ Error unpublishing "${currentThemeName.value}"`, "error");
             }
           }
 
