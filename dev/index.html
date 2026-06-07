@@ -1916,15 +1916,26 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
               wasOfficial
             };
 
+            // Determine which theme to land on after deletion:
+            // prefer the next one at same index, fallback to previous
+            const currentIdx = currentThemeIndex.value;
+            const currentList = filteredThemes.value;
+            const nextThemeName =
+              currentList[currentIdx + 1] ||           // next in list
+              currentList[currentIdx - 1] ||           // or previous
+              currentList.find(t => t !== themeToDelete) || // any other
+              null;
+
+            // Pre-write to localStorage so the filteredThemes watcher lands here
+            if (nextThemeName) {
+              localStorage.setItem("clampography-dev-theme", nextThemeName);
+            }
+
             // Optimistic UI update — remove from reactive ref so Vue re-renders immediately
             availableThemesRef.value = availableThemesRef.value.filter(t => t !== themeToDelete);
 
             if (wasOfficial) {
               officialThemesRef.value = officialThemesRef.value.filter(t => t !== themeToDelete);
-            }
-
-            if (currentThemeIndex.value >= filteredThemes.value.length) {
-              currentThemeIndex.value = Math.max(0, filteredThemes.value.length - 1);
             }
 
             try {
