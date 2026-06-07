@@ -427,7 +427,7 @@
           </button>
           <button @click="cloneTheme"
             style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-border, #ccc); border-radius: 4px; background: transparent; color: var(--clampography-text, #333); transition: color 0.2s"
-            title="Clone current theme">
+            title="Clone current theme  •  [C]">
             Clone
           </button>
           <button @click="resetTheme" :disabled="currentThemeName === 'auto'"
@@ -2025,6 +2025,12 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
               if (e.ctrlKey && e.key === "ArrowRight") {
                 e.preventDefault();
                 nextTheme();
+              }
+
+              // C: clone
+              if (e.key === "c" || e.key === "C") {
+                e.preventDefault();
+                cloneTheme();
               }
 
               // S: save
