@@ -247,6 +247,14 @@
       border: none;
     }
 
+    /* ── Sidebar Buttons Click Animation ─────────────────────────────────── */
+    .pg-sidebar button {
+      transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s, color 0.2s, background-color 0.2s !important;
+    }
+    .pg-sidebar button:active {
+      transform: scale(0.95);
+    }
+
     /* ── Theme editor details ────────────────────────────────────────────── */
     .pg-theme-editor {
       padding: 0;
