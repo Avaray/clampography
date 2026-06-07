@@ -394,11 +394,18 @@
         
         <span v-if="currentThemeName === 'auto'" style="flex: 1; text-align: center; font-family: monospace; font-size: 0.78rem;">auto</span>
         
-        <div v-else style="display: flex; flex: 1; align-items: center; justify-content: center; gap: 0.2rem;">
+        <div v-else style="display: flex; flex: 1; align-items: center; justify-content: center; gap: 0.2rem; position: relative;">
           <input type="text" v-model="editableThemeName" style="flex: 1; width: 0; min-width: 60px; font-size: 0.75rem; border: none; border-bottom: 1px dashed var(--clampography-border, #ccc); padding: 0; background: transparent; color: var(--clampography-text, #333); font-family: monospace; text-align: center; outline: none;" title="Edit Theme Name">
+          <select
+            @change="jumpToTheme($event.target.value); $event.target.value = ''"
+            style="flex-shrink: 0; appearance: none; -webkit-appearance: none; background: transparent; border: none; color: var(--clampography-muted, #888); cursor: pointer; font-size: 0.7rem; padding: 0 2px; line-height: 1; width: 14px; text-align: center;"
+            title="Jump to theme…">
+            <option value="" disabled selected>&#9660;</option>
+            <option v-for="t in filteredThemes" :key="t" :value="t" :selected="t === currentThemeName">{{ t }}</option>
+          </select>
         </div>
 
-        <button @click="nextTheme" title="Next Theme">&rarr;</button>
+        <button @click="nextTheme" title="Next Theme  •  [&#8594;] or [Space]">&rarr;</button>
       </div>
     </div>
 
@@ -1620,6 +1627,11 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
             }
           };
 
+          function jumpToTheme(name) {
+            const idx = filteredThemes.value.indexOf(name);
+            if (idx > -1) currentThemeIndex.value = idx;
+          }
+
           function syncColors() {
             const name = currentThemeName.value;
             const themeObj = THEME_DATA[name]; // direct lookup — no CSS parsing needed
@@ -2128,6 +2140,8 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
             nextFont,
             prevTheme,
             nextTheme,
+            jumpToTheme,
+            filteredThemes,
             editableThemeName,
             updateVar,
             hexToOklch,
