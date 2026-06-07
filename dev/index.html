@@ -286,6 +286,37 @@
       margin: 0 auto;
       padding: 0 1rem;
     }
+
+    /* ── Toast Notifications ─────────────────────────────────────────────── */
+    .pg-toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 9999;
+      pointer-events: none;
+    }
+    .pg-toast {
+      background: var(--clampography-surface, #fff);
+      color: var(--clampography-text, #333);
+      border: 1px solid var(--clampography-border, #ccc);
+      border-left: 4px solid var(--clampography-success, #22c55e);
+      padding: 12px 20px;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      font-size: 0.85rem;
+      font-weight: 500;
+      animation: pg-toast-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    .pg-toast.error { border-left-color: var(--clampography-error, #ef4444); }
+    .pg-toast.warning { border-left-color: var(--clampography-warning, #f59e0b); }
+    .pg-toast.info { border-left-color: var(--clampography-info, #3b82f6); }
+    @keyframes pg-toast-in {
+      from { transform: translateX(120%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
   </style>
 </head>
 
@@ -381,41 +412,41 @@
           </div>
         </div>
         <div style="display: flex; gap: 0.3rem; margin-top: 0.5rem">
-          <button @click="saveTheme" :disabled="isSaving || currentThemeName === 'auto'"
+          <button @click="saveTheme" :disabled="currentThemeName === 'auto'"
             style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-border, #ccc); border-radius: 4px; background: var(--clampography-primary, #3b82f6); color: #fff; transition: opacity 0.2s">
-            {{ isSaving ? 'Saving...' : 'Save' }}
+            Save
           </button>
-          <button @click="cloneTheme" :disabled="isSaving"
+          <button @click="cloneTheme"
             style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-border, #ccc); border-radius: 4px; background: transparent; color: var(--clampography-text, #333); transition: color 0.2s">
             Clone
           </button>
-          <button @click="resetTheme" :disabled="isSaving || currentThemeName === 'auto'"
+          <button @click="resetTheme" :disabled="currentThemeName === 'auto'"
             style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-border, #ccc); border-radius: 4px; background: transparent; color: var(--clampography-text, #333); transition: color 0.2s"
             title="Reset changes back to last saved state">
             Reset
           </button>
         </div>
         <div style="display: flex; gap: 0.3rem; margin-top: 0.5rem">
-          <button @click="publishTheme" v-if="!isOfficialTheme && currentThemeName !== 'auto'" :disabled="isSaving"
+          <button @click="publishTheme" v-if="!isOfficialTheme && currentThemeName !== 'auto'"
             style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-success, #22c55e); border-radius: 4px; background: transparent; color: var(--clampography-success, #22c55e); transition: color 0.2s"
             title="Move from Dev to Official (src/themes.js)">
             Publish
           </button>
-          <button @click="unpublishTheme" v-if="isOfficialTheme && currentThemeName !== 'auto'" :disabled="isSaving"
+          <button @click="unpublishTheme" v-if="isOfficialTheme && currentThemeName !== 'auto'"
             style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-warning, #f59e0b); border-radius: 4px; background: transparent; color: var(--clampography-warning, #f59e0b); transition: color 0.2s"
             title="Move from Official to Dev (dev/themes-dev.js)">
             Unpublish
           </button>
         </div>
-        <button @click="deleteTheme" :disabled="isSaving || currentThemeName === 'auto'"
+        <button @click="deleteTheme" :disabled="currentThemeName === 'auto'"
           style="width: 100%; margin-top: 0.5rem; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-error, #ef4444); border-radius: 4px; background: transparent; color: var(--clampography-error, #ef4444)">
           Delete Theme
         </button>
-        <div v-if="saveMessage"
-          style="margin-top: 0.5rem; font-size: 0.7rem; text-align: center; color: var(--clampography-success, #22c55e)">
-          {{ saveMessage }}
+        <div class="pg-toast-container">
+          <div v-for="toast in toasts" :key="toast.id" class="pg-toast" :class="toast.type">
+            {{ toast.text }}
+          </div>
         </div>
-      </div>
       </div>
     </div>
   </aside>
@@ -1724,23 +1755,25 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
           }
 
           // ─ API Interactions ─
-          const isSaving = ref(false);
-          const saveMessage = ref("");
+          const toasts = ref([]);
+          let toastIdCounter = 0;
 
-          function showMessage(msg) {
-            saveMessage.value = msg;
-            setTimeout(() => saveMessage.value = "", 3000);
+          function addToast(msg, type = 'success') {
+            const id = ++toastIdCounter;
+            toasts.value.push({ id, text: msg, type });
+            setTimeout(() => {
+              const idx = toasts.value.findIndex(t => t.id === id);
+              if (idx > -1) toasts.value.splice(idx, 1);
+            }, 3000);
           }
 
           async function saveTheme() {
             if (currentThemeName.value === 'auto') return;
-            isSaving.value = true;
             
             // Format name to kebab-case just to be safe
             const newName = editableThemeName.value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
             if (!newName) {
-              showMessage("❌ Invalid name");
-              isSaving.value = false;
+              addToast("❌ Invalid name", "error");
               return;
             }
 
@@ -1768,7 +1801,7 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
               // Update local available themes list if name changed
               if (currentThemeName.value !== newName) {
                 AVAILABLE_THEMES.length = 0;
-                AVAILABLE_THEMES.push("auto", ...responseData.themesList);
+                AVAILABLE_THEMES.push(...responseData.themesList);
                 
                 // If it was official and we renamed it, it stays official (handled by server).
                 // Let's update OFFICIAL_THEMES locally just in case.
@@ -1778,26 +1811,23 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
                   officialThemesRef.value.push(newName);
                 }
                 
-                currentThemeIndex.value = AVAILABLE_THEMES.indexOf(newName);
+                currentThemeIndex.value = filteredThemes.value.indexOf(newName);
               }
 
               // Reload CSS without refreshing the page
               const timestamp = new Date().getTime();
               cssLink.href = `/css/${cssSuffix.value}.css?t=${timestamp}`;
 
-              showMessage("✅ Theme saved successfully!");
+              addToast("✅ Theme saved successfully!", "success");
             } catch (e) {
-              showMessage("❌ Error saving theme");
-            } finally {
-              isSaving.value = false;
+              addToast("❌ Error saving theme", "error");
             }
           }
 
           async function cloneTheme() {
-            const newName = prompt("Enter a name for the new theme (e.g., my-awesome-theme):", `${currentThemeName.value === 'auto' ? 'custom' : currentThemeName.value}-clone`);
+            const newName = prompt("Enter a name for the new theme (e.g., my-awesome-theme):", `${currentThemeName.value}-clone`);
             if (!newName) return;
 
-            isSaving.value = true;
             const existingTheme = THEME_DATA[currentThemeName.value] || {};
             const themeData = { ...existingTheme };
             themeData["color-scheme"] = getThemeScheme(colors.bg);
@@ -1819,22 +1849,17 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
               const responseData = await res.json();
               if (!responseData.success) throw new Error(responseData.error || "Failed to create");
 
-              // Update local available themes list
-              AVAILABLE_THEMES.length = 0; // Clear array
+              AVAILABLE_THEMES.length = 0;
               AVAILABLE_THEMES.push(...responseData.themesList);
 
-              // Switch to the new theme
               currentThemeIndex.value = filteredThemes.value.indexOf(newName);
 
-              // Reload CSS
               const timestamp = new Date().getTime();
               cssLink.href = `/css/${cssSuffix.value}.css?t=${timestamp}`;
 
-              showMessage("✨ Theme created successfully!");
+              addToast("✨ Theme created successfully!", "success");
             } catch (e) {
-              showMessage("❌ Error creating theme");
-            } finally {
-              isSaving.value = false;
+              addToast("❌ Error creating theme", "error");
             }
           }
 
@@ -1845,13 +1870,28 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
               document.body.style.removeProperty(v)
             );
             syncColors();
-            showMessage("🔄 Changes reset!");
+            addToast("🔄 Changes reset!", "info");
           }
 
           async function deleteTheme() {
-            if (currentThemeName.value === 'auto') return;
+            const themeToDelete = currentThemeName.value;
+            if (themeToDelete === 'auto') return;
 
-            isSaving.value = true;
+            // Optimistic UI update
+            const availIdx = AVAILABLE_THEMES.indexOf(themeToDelete);
+            if (availIdx > -1) AVAILABLE_THEMES.splice(availIdx, 1);
+
+            const offIdx = officialThemesRef.value.indexOf(themeToDelete);
+            let wasOfficial = false;
+            if (offIdx > -1) {
+              wasOfficial = true;
+              officialThemesRef.value.splice(offIdx, 1);
+            }
+
+            const currentIndex = currentThemeIndex.value;
+            if (currentIndex >= filteredThemes.value.length) {
+              currentThemeIndex.value = Math.max(0, filteredThemes.value.length - 1);
+            }
 
             try {
               const res = await fetch("/api/themes", {
@@ -1859,44 +1899,30 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                   action: "DELETE",
-                  name: currentThemeName.value
+                  name: themeToDelete
                 })
               });
 
               const responseData = await res.json();
               if (!responseData.success) throw new Error(responseData.error || "Failed to delete");
 
-              const currentIndex = currentThemeIndex.value;
-
-              // Update local available themes list
-              AVAILABLE_THEMES.length = 0; // Clear array
+              AVAILABLE_THEMES.length = 0;
               AVAILABLE_THEMES.push(...responseData.themesList);
 
-              const idx = officialThemesRef.value.indexOf(currentThemeName.value);
-              if (idx > -1) officialThemesRef.value.splice(idx, 1);
-
-              // Select the next theme in the list (or the previous if we deleted the last one)
-              if (currentIndex >= filteredThemes.value.length) {
-                currentThemeIndex.value = Math.max(0, filteredThemes.value.length - 1);
-              } else {
-                currentThemeIndex.value = currentIndex;
-              }
-
-              // Reload CSS
               const timestamp = new Date().getTime();
               cssLink.href = `/css/${cssSuffix.value}.css?t=${timestamp}`;
 
-              showMessage("🗑️ Theme deleted!");
+              addToast(`🗑️ Theme "${themeToDelete}" deleted!`, "success");
             } catch (e) {
-              showMessage("❌ Error deleting theme");
-            } finally {
-              isSaving.value = false;
+              addToast(`❌ Error deleting theme "${themeToDelete}"`, "error");
+              // Revert optimistic update
+              if (availIdx > -1) AVAILABLE_THEMES.splice(availIdx, 0, themeToDelete);
+              if (wasOfficial) officialThemesRef.value.splice(offIdx, 0, themeToDelete);
             }
           }
 
           async function publishTheme() {
             if (currentThemeName.value === 'auto') return;
-            isSaving.value = true;
             try {
               const res = await fetch("/api/themes", {
                 method: "POST",
@@ -1910,17 +1936,14 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
               if (!responseData.success) throw new Error(responseData.error || "Failed to publish");
               
               officialThemesRef.value.push(currentThemeName.value);
-              showMessage("🎉 Theme published to Official!");
+              addToast("🎉 Theme published to Official!", "success");
             } catch (e) {
-              showMessage("❌ Error publishing theme");
-            } finally {
-              isSaving.value = false;
+              addToast("❌ Error publishing theme", "error");
             }
           }
 
           async function unpublishTheme() {
             if (currentThemeName.value === 'auto') return;
-            isSaving.value = true;
             try {
               const res = await fetch("/api/themes", {
                 method: "POST",
@@ -1935,11 +1958,9 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
               
               const idx = officialThemesRef.value.indexOf(currentThemeName.value);
               if (idx > -1) officialThemesRef.value.splice(idx, 1);
-              showMessage("📥 Theme unpublished back to Dev.");
+              addToast("📥 Theme unpublished back to Dev.", "info");
             } catch (e) {
-              showMessage("❌ Error unpublishing theme");
-            } finally {
-              isSaving.value = false;
+              addToast("❌ Error unpublishing theme", "error");
             }
           }
 
@@ -1981,8 +2002,7 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
             editableThemeName,
             updateVar,
             hexToOklch,
-            isSaving,
-            saveMessage,
+            toasts,
             saveTheme,
             cloneTheme,
             resetTheme,
