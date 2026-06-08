@@ -63,7 +63,7 @@ function makeInputCSS({ themes: enableThemes, extra, forms, kbd }) {
   // Inject all themes (dev and official) as raw CSS so they are available in dev preview
   // without relying on Tailwind plugin cache to reload src/themes.js
   if (enableThemes !== "false") {
-    const allThemes = { ...officialThemes, ...devThemes };
+    const allThemes = { ...devThemes, ...officialThemes };
     for (const name of Object.keys(allThemes)) {
       // Double the attribute selector to force higher specificity (0,2,1) vs plugin's (0,1,1).
       // This ensures dev injected CSS always overrides cached plugin output, even if 
