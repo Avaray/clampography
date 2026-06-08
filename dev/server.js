@@ -65,7 +65,10 @@ function makeInputCSS({ themes: enableThemes, extra, forms, kbd }) {
   if (enableThemes !== "false") {
     const allThemes = { ...officialThemes, ...devThemes };
     for (const name of Object.keys(allThemes)) {
-      css += `\nhtml[data-theme="${name}"], [data-theme="${name}"] {\n`;
+      // Double the attribute selector to force higher specificity (0,2,1) vs plugin's (0,1,1).
+      // This ensures dev injected CSS always overrides cached plugin output, even if 
+      // Tailwind sorts the plugin's @media queries to the very end of the file.
+      css += `\nhtml[data-theme="${name}"][data-theme="${name}"], [data-theme="${name}"][data-theme="${name}"] {\n`;
       for (const [k, v] of Object.entries(allThemes[name])) {
         if (k !== "color-scheme") css += `  ${k}: ${v};\n`;
       }
