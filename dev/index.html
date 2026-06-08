@@ -421,7 +421,9 @@
             <input v-else type="text" readonly :value="hexToOklch(colors[item.id])"
               style="width: 130px; font-size: 0.65rem; border: 1px solid var(--clampography-border, #ccc); border-radius: 3px; padding: 2px 4px; background: transparent; color: var(--clampography-muted, #888); font-family: monospace; cursor: copy"
               @click="$event.target.select()" title="Click to copy OKLCH">
-            <input type="color" v-model="colors[item.id]" @input="updateVar(item.v, colors[item.id])"
+            <input type="color" :value="colors[item.id]"
+              @input="updateVar(item.v, $event.target.value)"
+              @change="colors[item.id] = $event.target.value"
               @click="onColorClick($event, item)" @contextmenu.prevent="onColorRightClick($event, item)"
               style="margin: 0" :title="'Click: open picker  •  Ctrl+Click: copy  •  Ctrl+RightClick: paste'">
           </div>
