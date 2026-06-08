@@ -60,12 +60,13 @@ function makeInputCSS({ themes: enableThemes, extra, forms, kbd }) {
 }
 `;
   
-  // Inject dev themes as raw CSS so they are available in dev preview
-  // without needing to be published to src/themes.js
+  // Inject all themes (dev and official) as raw CSS so they are available in dev preview
+  // without relying on Tailwind plugin cache to reload src/themes.js
   if (enableThemes !== "false") {
-    for (const name of Object.keys(devThemes)) {
+    const allThemes = { ...officialThemes, ...devThemes };
+    for (const name of Object.keys(allThemes)) {
       css += `\n[data-theme="${name}"] {\n`;
-      for (const [k, v] of Object.entries(devThemes[name])) {
+      for (const [k, v] of Object.entries(allThemes[name])) {
         if (k !== "color-scheme") css += `  ${k}: ${v};\n`;
       }
       css += `}\n`;
