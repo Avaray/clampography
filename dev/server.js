@@ -65,7 +65,7 @@ function makeInputCSS({ themes: enableThemes, extra, forms, kbd }) {
   if (enableThemes !== "false") {
     const allThemes = { ...officialThemes, ...devThemes };
     for (const name of Object.keys(allThemes)) {
-      css += `\n[data-theme="${name}"] {\n`;
+      css += `\nhtml[data-theme="${name}"], [data-theme="${name}"] {\n`;
       for (const [k, v] of Object.entries(allThemes[name])) {
         if (k !== "color-scheme") css += `  ${k}: ${v};\n`;
       }
