@@ -1829,6 +1829,10 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
               const responseData = await res.json();
               if (!res.ok) throw new Error("Failed to save");
 
+              // Keep browser-side THEME_DATA in sync so syncColors() reads fresh values
+              THEME_DATA[newName] = themeData;
+              if (currentThemeName.value !== newName) delete THEME_DATA[currentThemeName.value];
+
               // Update local available themes list if name changed
               if (currentThemeName.value !== newName) {
                 availableThemesRef.value = responseData.themesList || [];
@@ -1880,6 +1884,9 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
 
               const responseData = await res.json();
               if (!responseData.success) throw new Error(responseData.error || "Failed to create");
+
+              // Keep browser-side THEME_DATA in sync
+              THEME_DATA[newName] = themeData;
 
               availableThemesRef.value = responseData.themesList || [];
 
@@ -2127,6 +2134,9 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
 
               const responseData = await res.json();
               if (!responseData.success) throw new Error(responseData.error || "Failed to restore");
+
+              // Keep browser-side THEME_DATA in sync
+              THEME_DATA[entry.name] = entry.data;
 
               deleteHistory.value.pop();
 
