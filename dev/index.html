@@ -1714,8 +1714,21 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
             requestAnimationFrame(() => requestAnimationFrame(syncColors));
           }, { immediate: true });
 
+          // Throttle CSS property writes to one per animation frame
+          let _colorRafId = null;
+          const _pendingColors = {};
+
           function updateVar(cssVar, val) {
-            document.body.style.setProperty(cssVar, hexToOklch(val));
+            _pendingColors[cssVar] = val;
+            if (!_colorRafId) {
+              _colorRafId = requestAnimationFrame(() => {
+                for (const [v, hex] of Object.entries(_pendingColors)) {
+                  document.body.style.setProperty(v, hexToOklch(hex));
+                  delete _pendingColors[v];
+                }
+                _colorRafId = null;
+              });
+            }
           }
 
           // ─ Color clipboard (Ctrl+Click / Ctrl+RightClick) ─
