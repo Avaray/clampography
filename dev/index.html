@@ -1822,27 +1822,11 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
               return;
             }
 
-            // Ensure all colors are synced before saving (fixes incomplete theme bug)
-            syncColors();
-            
             const existingTheme = THEME_DATA[currentThemeName.value] || {};
             const themeData = { ...existingTheme };
             themeData["color-scheme"] = getThemeScheme(colors.background);
-            
-            // Collect all colors, using current theme values as fallback if colors[id] is missing
             COLOR_VARS.forEach(({ id, v }) => {
-              let colorValue = colors[id];
-              // Fallback: if colors[id] is undefined/invalid, use existing theme value or read from CSS
-              if (!colorValue || colorValue.length !== 7) {
-                if (existingTheme[v]) {
-                  colorValue = existingTheme[v]; // Use existing theme's value
-                } else {
-                  colorValue = varToHex(v); // Read from computed styles
-                }
-              }
-              themeData[v] = typeof colorValue === 'string' && colorValue.startsWith('oklch') 
-                ? colorValue 
-                : hexToOklch(colorValue);
+              themeData[v] = hexToOklch(colors[id]);
             });
 
             try {
@@ -1894,26 +1878,11 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
             const newName = prompt("Enter a name for the new theme (e.g., my-awesome-theme):", `${currentThemeName.value}-clone`);
             if (!newName) return;
 
-            // Ensure all colors are synced before saving (fixes incomplete theme bug)
-            syncColors();
-
             const existingTheme = THEME_DATA[currentThemeName.value] || {};
             const themeData = { ...existingTheme };
             themeData["color-scheme"] = getThemeScheme(colors.background);
-            
-            // Collect all colors with same protection as saveTheme
             COLOR_VARS.forEach(({ id, v }) => {
-              let colorValue = colors[id];
-              if (!colorValue || colorValue.length !== 7) {
-                if (existingTheme[v]) {
-                  colorValue = existingTheme[v];
-                } else {
-                  colorValue = varToHex(v);
-                }
-              }
-              themeData[v] = typeof colorValue === 'string' && colorValue.startsWith('oklch')
-                ? colorValue
-                : hexToOklch(colorValue);
+              themeData[v] = hexToOklch(colors[id]);
             });
 
             try {
