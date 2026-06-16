@@ -1,5 +1,11 @@
 # 🙌 Clampography
 
+> ⚠️ **DEPRECATION NOTICE: VERSION 1**
+> 
+> Version 1 of Clampography (currently `0.9.11`) is no longer being developed and will soon be replaced by a new version. Please note that the upcoming release will introduce major **breaking changes**. Version 1 has multiple known bugs and **should not be used**.
+> 
+> If you are interested, you can try the upcoming beta from the [v2](https://github.com/Avaray/clampography/tree/v2) branch, which is available on [NPM here](https://www.npmjs.com/package/clampography?activeTab=versions).
+
 **Clampography** is a pure CSS typography system that uses the
 [clamp()](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/clamp)
 function for fluid, responsive text scaling. It's designed as an alternative to
