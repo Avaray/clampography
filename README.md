@@ -1,6 +1,6 @@
 # 🙌 Clampography
 
-> **WARNING**: Beta 2.0.0 is in development and currently unstable.
+> **WARNING**: Beta 2.0.0 is in development.
 
 **Clampography** is a CSS typography system designed mainly for blogs and
 documentation sites. It uses the CSS `clamp()` function for fluid, responsive
