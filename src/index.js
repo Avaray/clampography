@@ -51,11 +51,14 @@ export default plugin.withOptions(
         const fluidMin = parseInt(options["fluid-min"] || options.fluidMin || "320");
         const fluidMax = parseInt(options["fluid-max"] || options.fluidMax || "1280");
 
+        // Extract scaleMode: 'viewport' (default, uses vw) or 'container' (uses cqi)
+        const scaleMode = options["scale-mode"] || options.scaleMode || "viewport";
+
         // Extract typography scope option (default: global)
         const typography = options.typography || "global";
 
         // Pass options to the style functions to enable scoping
-        includeBase && addBase(baseStyles({ ...options, fluidMin, fluidMax, typography }));
+        includeBase && addBase(baseStyles({ ...options, fluidMin, fluidMax, scaleMode, typography }));
         includeExtra && addBase(extraStyles({ ...options, typography }));
         includeForms && addBase(formsStyles({ ...options, typography }));
         includeKbd && addBase(kbdStyles({ ...options, typography }));

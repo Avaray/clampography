@@ -7,11 +7,11 @@ describe("Base Styles Generation", () => {
     const styles = baseStyles({ root: ":root" });
     expect(styles).toBeTypeOf("object");
     expect(styles[":where(:root)"]).toBeDefined();
-    
+
     // Check if typography fluid scales exist
     expect(styles[":where(:root)"]["--spacing-md"]).toBeDefined();
     expect(styles[":where(:root)"]["--font-family-base"]).toBeDefined();
-    
+
     // Check scoped tags
     expect(styles[":root h1"]).toBeDefined();
     expect(styles[":root h1"]["font-weight"]).toBe("800");
@@ -21,7 +21,7 @@ describe("Base Styles Generation", () => {
     const styles = baseStyles({ root: "#my-app" });
     expect(styles[":where(#my-app)"]).toBeDefined();
     expect(styles["#my-app h1"]).toBeDefined();
-    
+
     // Ensure :root wasn't leaked
     expect(styles[":root"]).toBeUndefined();
   });
@@ -30,7 +30,7 @@ describe("Base Styles Generation", () => {
     // Generate styles with default limits (320-1280)
     const defaultStyles = baseStyles({});
     const defaultSpacingMd = defaultStyles[":where(:root)"]["--spacing-md"];
-    
+
     // Generate styles with custom limits
     const customStyles = baseStyles({ fluidMin: 500, fluidMax: 1500 });
     const customSpacingMd = customStyles[":where(:root)"]["--spacing-md"];
@@ -43,15 +43,31 @@ describe("Base Styles Generation", () => {
   it("should isolate typography scope when typography option is provided", () => {
     // With typography isolation
     const isolatedStyles = baseStyles({ typography: ".prose" });
-    
+
     // Base variables should still be on :where(:root)
     expect(isolatedStyles[":where(:root)"]).toBeDefined();
-    
+
     // Tag selectors should be prefixed with the typography class
     expect(isolatedStyles[":root .prose h1"]).toBeDefined();
-    
+
     // Ensure global tag selectors do NOT exist
     expect(isolatedStyles[":root h1"]).toBeUndefined();
+  });
+
+  it("should use vw by default (scaleMode: 'viewport')", () => {
+    const styles = baseStyles({});
+    const root = styles[":where(:root)"];
+    expect(root["--spacing-md"]).toContain("vw");
+    expect(root["--clampography-h1-size"]).toContain("100vw");
+    expect(root["--clampography-h1-size"]).not.toContain("cqi");
+  });
+
+  it("should use cqi when scaleMode is 'container'", () => {
+    const styles = baseStyles({ scaleMode: "container" });
+    const root = styles[":where(:root)"];
+    expect(root["--spacing-md"]).toContain("cqi");
+    expect(root["--clampography-h1-size"]).toContain("100cqi");
+    expect(root["--clampography-h1-size"]).not.toContain("vw");
   });
 });
 
@@ -59,7 +75,7 @@ describe("Extra Styles Generation", () => {
   it("should return a valid object of extra opinionated styles", () => {
     const styles = extraStyles({ root: ":root" });
     expect(styles).toBeTypeOf("object");
-    
+
     // Ensure colored links exist
     expect(styles[":root a"]).toBeDefined();
     expect(styles[":root a"]["text-decoration-line"]).toBe("underline");

@@ -416,6 +416,41 @@ By default, Clampography scales everything between **320px** (mobile) and **1280
 
 When you change these bounds, **all** font sizes, margins, and padding variables in `base.js` will automatically mathematically stretch to fit your new bounds perfectly, ensuring a flawless linear scale.
 
+### Container Query Mode (`scaleMode: 'container'`)
+
+By default, all fluid sizes scale relative to the **browser window** (`vw` units). This works perfectly for classic blog-style layouts. For more complex applications where the same component is reused inside narrow sidebars, wide content areas, or modal dialogs, you can switch to **container-relative scaling** (`cqi` units):
+
+```css
+@plugin "clampography" {
+  themes: all;
+  scale-mode: "container";
+}
+```
+
+With `scale-mode: "container"`, font sizes and spacing will scale relative to the **nearest `@container` ancestor** in your HTML, not the browser window. This makes components fully self-contained.
+
+**Usage in HTML (Tailwind v4):**
+
+```html
+<!-- Narrow sidebar: typography shrinks to fit the 260px space -->
+<aside class="@container w-[260px]">
+  <h2>Small heading</h2>
+  <p>Compact text for a tight layout.</p>
+</aside>
+
+<!-- Wide article: typography grows to fill the 800px space -->
+<main class="@container max-w-[800px]">
+  <h2>Large heading</h2>
+  <p>Comfortable reading text with generous spacing.</p>
+</main>
+```
+
+> [!NOTE]
+> If no `@container` ancestor is defined, `cqi` automatically falls back to the `<html>` element — behaving exactly like `vw`. This means `scale-mode: "container"` is **fully backward-compatible** with the default `viewport` mode.
+
+> [!TIP]
+> Browser support for Container Queries (`cqi`) is excellent as of 2024: Chrome 105+, Safari 16+, Firefox 110+. Check [caniuse.com/css-container-queries](https://caniuse.com/css-container-queries) for the latest data.
+
 ### Tailwind Typography Alignment
 
 Clampography's fluid sizes are mathematically audited to perfectly match the official `@tailwindcss/typography` plugin at the minimum and maximum boundaries:
@@ -497,6 +532,9 @@ You can isolate Clampography's styling to a specific class using the `typography
   /* Advanced: Custom viewport scaling bounds for fluid math engine */
   fluid-min: "320px"; /* default: "320" */
   fluid-max: "1280px"; /* default: "1280" */
+
+  /* Fluid scaling context: 'viewport' (vw) or 'container' (cqi) */
+  scale-mode: "viewport" | "container"; /* default: "viewport" */
 
   /* Enable/disable console logs */
   logs: true | false; /* default: true */
