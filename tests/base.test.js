@@ -53,21 +53,88 @@ describe("Base Styles Generation", () => {
     // Ensure global tag selectors do NOT exist
     expect(isolatedStyles[":root h1"]).toBeUndefined();
   });
+});
 
-  it("should use vw by default (scaleMode: 'viewport')", () => {
-    const styles = baseStyles({});
-    const root = styles[":where(:root)"];
-    expect(root["--spacing-md"]).toContain("vw");
-    expect(root["--clampography-h1-size"]).toContain("100vw");
-    expect(root["--clampography-h1-size"]).not.toContain("cqi");
+describe("scaleMode option", () => {
+  const ALL_HEADING_SIZES = [
+    "--clampography-h1-size",
+    "--clampography-h2-size",
+    "--clampography-h3-size",
+    "--clampography-h4-size",
+    "--clampography-h5-size",
+    "--clampography-h6-size",
+  ];
+
+  const ALL_SPACING = [
+    "--spacing-xs",
+    "--spacing-sm",
+    "--spacing-md",
+    "--spacing-lg",
+    "--spacing-xl",
+    "--list-indent",
+  ];
+
+  it("defaults to 'viewport' mode (vw) when scaleMode is not set", () => {
+    const root = baseStyles({})[":where(:root)"];
+    for (const key of ALL_SPACING) {
+      expect(root[key]).toContain("vw");
+    }
+    for (const key of ALL_HEADING_SIZES) {
+      expect(root[key]).toContain("100vw");
+      expect(root[key]).not.toContain("cqi");
+    }
   });
 
-  it("should use cqi when scaleMode is 'container'", () => {
-    const styles = baseStyles({ scaleMode: "container" });
-    const root = styles[":where(:root)"];
+  it("uses vw when scaleMode is explicitly 'viewport'", () => {
+    const root = baseStyles({ scaleMode: "viewport" })[":where(:root)"];
+    for (const key of ALL_HEADING_SIZES) {
+      expect(root[key]).toContain("100vw");
+    }
+    expect(root["--spacing-md"]).toContain("vw");
+  });
+
+  it("uses cqi for all spacing when scaleMode is 'container'", () => {
+    const root = baseStyles({ scaleMode: "container" })[":where(:root)"];
+    for (const key of ALL_SPACING) {
+      // static values (min===max) won't have a unit — filter them out
+      if (root[key].startsWith("clamp(")) {
+        expect(root[key]).toContain("cqi");
+        expect(root[key]).not.toContain("vw");
+      }
+    }
+  });
+
+  it("uses cqi for all heading sizes when scaleMode is 'container'", () => {
+    const root = baseStyles({ scaleMode: "container" })[":where(:root)"];
+    for (const key of ALL_HEADING_SIZES) {
+      // static headings (h5, h6 have min===max) won't have a unit
+      if (root[key].startsWith("clamp(")) {
+        expect(root[key]).toContain("100cqi");
+        expect(root[key]).not.toContain("100vw");
+      }
+    }
+  });
+
+  it("accepts kebab-case alias 'scale-mode'", () => {
+    const root = baseStyles({ "scale-mode": "container" })[":where(:root)"];
     expect(root["--spacing-md"]).toContain("cqi");
     expect(root["--clampography-h1-size"]).toContain("100cqi");
-    expect(root["--clampography-h1-size"]).not.toContain("vw");
+  });
+
+  it("falls back to vw for any unknown scaleMode value", () => {
+    const root = baseStyles({ scaleMode: "something-random" })[":where(:root)"];
+    expect(root["--spacing-md"]).toContain("vw");
+    expect(root["--clampography-h1-size"]).toContain("100vw");
+  });
+
+  it("scaleMode 'container' produces mathematically identical clamp bounds as 'viewport'", () => {
+    const rootVw = baseStyles({ scaleMode: "viewport" })[":where(:root)"];
+    const rootCqi = baseStyles({ scaleMode: "container" })[":where(:root)"];
+
+    // The numeric bounds in clamp() should be identical — only the unit differs
+    const stripUnit = (str) => str.replace(/vw|cqi/g, "UNIT");
+    expect(stripUnit(rootCqi["--spacing-md"])).toBe(stripUnit(rootVw["--spacing-md"]));
+    expect(stripUnit(rootCqi["--clampography-h1-size"])).toBe(stripUnit(rootVw["--clampography-h1-size"]));
   });
 });
 
