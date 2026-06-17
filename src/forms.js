@@ -119,7 +119,7 @@ export default (options = {}) => {
       "background-position": "right 0.5rem center",
       "background-repeat": "no-repeat",
       "background-size": "1.5em 1.5em",
-      "padding-right": "2.5rem",
+      "padding-inline-end": "2.5rem",
     },
 
     // ── File Input ────────────────────────────────────────────────────────────
@@ -134,7 +134,7 @@ export default (options = {}) => {
       "display": "inline-flex",
       "align-items": "center",
       "padding": "var(--spacing-xs) var(--spacing-sm)",
-      "margin-right": "var(--spacing-sm)",
+      "margin-inline-end": "var(--spacing-sm)",
       "background-color": "var(--clampography-surface)",
       "color": "var(--clampography-text)",
       "border": "1px solid var(--clampography-border)",

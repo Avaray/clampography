@@ -232,7 +232,7 @@ export default (options = {}) => {
     [scope("menu")]: {
       "list-style": "none",
       "margin-bottom": "var(--spacing-md)",
-      "padding-left": "0",
+      "padding-inline-start": "0",
     },
 
     [scope("menu > li::before")]: {
@@ -352,13 +352,13 @@ export default (options = {}) => {
     [scope("blockquote")]: {
       "margin-top": "var(--spacing-lg)",
       "margin-bottom": "var(--spacing-lg)",
-      "padding-left": "var(--spacing-md)",
+      "padding-inline-start": "var(--spacing-md)",
     },
 
     [scope("blockquote blockquote")]: {
       "margin-top": "var(--spacing-sm)",
       "margin-bottom": "var(--spacing-sm)",
-      "padding-left": "var(--spacing-sm)",
+      "padding-inline-start": "var(--spacing-sm)",
     },
 
     [scope("q")]: {
@@ -369,7 +369,7 @@ export default (options = {}) => {
     [scope(":where(ul, ol)")]: {
       "list-style": "none",
       "margin-bottom": "var(--spacing-md)",
-      "padding-left": "var(--list-indent)",
+      "padding-inline-start": "var(--list-indent)",
     },
 
     [scope("li")]: {
@@ -402,8 +402,8 @@ export default (options = {}) => {
     [scope("ul > li::before")]: {
       content: "''",
       position: "absolute",
-      right: "100%",
-      "margin-right": "0.75em",
+      "inset-inline-end": "100%",
+      "margin-inline-end": "0.75em",
       top: "0.65em",
       width: "0.375em",
       height: "0.375em",
@@ -422,11 +422,11 @@ export default (options = {}) => {
     [scope("ol > li::before")]: {
       content: "counter(list-counter) '.'",
       position: "absolute",
-      right: "100%",
-      "margin-right": "0.5em",
+      "inset-inline-end": "100%",
+      "margin-inline-end": "0.5em",
       "font-weight": "600",
       "font-variant-numeric": "tabular-nums",
-      "text-align": "right",
+      "text-align": "end",
       color: "currentColor",
     },
 
@@ -446,7 +446,7 @@ export default (options = {}) => {
     },
 
     [scope("dd")]: {
-      "margin-left": "var(--spacing-md)",
+      "margin-inline-start": "var(--spacing-md)",
     },
 
     [scope("dt + dd")]: {
@@ -555,12 +555,12 @@ export default (options = {}) => {
       "margin-bottom": "var(--spacing-xs)",
       "font-size": "0.875em",
       "font-weight": "600",
-      "text-align": "left",
+      "text-align": "start",
     },
 
     [scope("th, td")]: {
       padding: "var(--spacing-xs) var(--spacing-sm)",
-      "text-align": "left",
+      "text-align": "start",
     },
 
     [scope("th")]: {

@@ -153,8 +153,8 @@ export default (options = {}) => {
 
     // Blockquote
     [scope("blockquote")]: {
-      "border-left-width": "4px",
-      "border-left-color": "var(--clampography-primary)",
+      "border-inline-start-width": "4px",
+      "border-inline-start-color": "var(--clampography-primary)",
       "background-color": "var(--clampography-surface)",
       "padding": "var(--spacing-md)",
       "border-radius": "0.25rem",
@@ -241,8 +241,8 @@ export default (options = {}) => {
       },
       [scope("blockquote")]: {
         "background-color": "#f0f0f0",
-        "border-left-color": "black",
-        "border-left-width": "6px",
+        "border-inline-start-color": "black",
+        "border-inline-start-width": "6px",
         "color": "black",
       },
       [scope("th, td")]: {
