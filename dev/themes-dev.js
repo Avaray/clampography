@@ -818,6 +818,23 @@ export const brutalistWeb = {
   "--clampography-warning": "oklch(0.80 0.25 90)",
 };
 
+export const bubbles = {
+  "color-scheme": "dark",
+  "--clampography-background": "oklch(0.212 0.056 270.2)",
+  "--clampography-border": "oklch(0.786 0.0 89.9)",
+  "--clampography-error": "oklch(0.753 0.138 19.2)",
+  "--clampography-heading": "oklch(1.0 0.0 89.9)",
+  "--clampography-info": "oklch(0.683 0.154 255.7)",
+  "--clampography-link": "oklch(0.661 0.151 242.1)",
+  "--clampography-muted": "oklch(0.431 0.0 89.9)",
+  "--clampography-primary": "oklch(0.554 0.127 252.0)",
+  "--clampography-secondary": "oklch(0.52 0.138 326.8)",
+  "--clampography-success": "oklch(0.706 0.125 171.9)",
+  "--clampography-surface": "oklch(0.86 0.07 255.3)",
+  "--clampography-text": "oklch(1.0 0.0 89.9)",
+  "--clampography-warning": "oklch(0.971 0.186 109.4)",
+};
+
 export const builtinDark = {
   "color-scheme": "dark",
   "--clampography-background": "oklch(0.0 0.0 0.0)",
@@ -7701,6 +7718,7 @@ export const themes = {
   "broadcast": broadcast,
   "brogrammer": brogrammer,
   "brutalist-web": brutalistWeb,
+  "bubbles": bubbles,
   "builtin-dark": builtinDark,
   "builtin-light": builtinLight,
   "builtin-pastel-dark": builtinPastelDark,
