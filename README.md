@@ -150,8 +150,8 @@ Create your own theme with OKLCH colors:
 
 📖 **[Complete Usage Guide](docs/usage.md)** - Detailed documentation covering:
 
-- Installation (NPM & CDN)
-- Basic configuration options
+- Installation
+- Basic configuration
 - Built-in themes
 - Creating custom themes
 - Scoped themes for widgets
