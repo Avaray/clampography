@@ -1,4 +1,4 @@
-import type { Config, PluginCreator } from "tailwindcss/types/config";
+import type { Config, PluginCreator } from "tailwindcss/plugin";
 
 interface ClampographyOptions {
   themes?: string | string[] | boolean;

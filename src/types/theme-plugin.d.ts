@@ -1,4 +1,4 @@
-import type { PluginCreator } from "tailwindcss/types/config";
+import type { PluginCreator } from "tailwindcss/plugin";
 
 interface ThemePluginOptions {
   name: string;
