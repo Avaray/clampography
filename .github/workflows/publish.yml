@@ -1,11 +1,10 @@
 name: Publish to NPM
 
-# Trigger the workflow when code is pushed to main or v2 branches
+# Trigger the workflow when code is pushed to main branch
 on:
   push:
     branches:
       - main
-      - v2
 
 jobs:
   check-version:
