@@ -66,16 +66,16 @@ export default (options = {}) => {
     // Uses :where() for zero specificity so user overrides always win regardless of layer/source order
     [`:where(${root})`]: {
       // FLUID SPACING SYSTEM
-      "--spacing-xs": makeFluid(0.25, 0.75),
-      "--spacing-sm": makeFluid(0.375, 1.25),
-      "--spacing-md": makeFluid(0.5, 1.5),
-      "--spacing-lg": makeFluid(0.75, 2.5),
-      "--spacing-xl": makeFluid(1, 3),
-      "--list-indent": makeFluid(1.5, 2),
-      "--scroll-offset": "5rem",
-      "--font-family-base":
+      "--clampography-spacing-xs": makeFluid(0.25, 0.75),
+      "--clampography-spacing-sm": makeFluid(0.375, 1.25),
+      "--clampography-spacing-md": makeFluid(0.5, 1.5),
+      "--clampography-spacing-lg": makeFluid(0.75, 2.5),
+      "--clampography-spacing-xl": makeFluid(1, 3),
+      "--clampography-list-indent": makeFluid(1.5, 2),
+      "--clampography-scroll-offset": "5rem",
+      "--clampography-font-base":
         "Inter, system-ui, -apple-system, 'Segoe UI Variable Display', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif",
-      "--font-family-mono":
+      "--clampography-font-mono":
         "ui-monospace, 'Cascadia Code', 'Cascadia Mono', 'Segoe UI Mono', 'Ubuntu Mono', SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
 
       // FLUID TYPOGRAPHY ENGINE — Viewport Bounds
@@ -172,7 +172,7 @@ export default (options = {}) => {
     // HEADINGS (H1-H6)
     [scope(":where(h1, h2, h3, h4, h5, h6)")]: {
       "font-weight": "600",
-      "scroll-margin-top": "var(--scroll-offset)",
+      "scroll-margin-top": "var(--clampography-scroll-offset)",
     },
 
     [scope("h1")]: {
@@ -180,43 +180,43 @@ export default (options = {}) => {
       "line-height": "1.1111",
       "font-weight": "800",
       "margin-top": "0",
-      "margin-bottom": "var(--spacing-xl)",
+      "margin-bottom": "var(--clampography-spacing-xl)",
     },
 
     [scope("h2")]: {
       "font-size": "calc(var(--clampography-h2-size) * var(--clampography-h2-scale))",
       "line-height": "1.3333",
       "font-weight": "700",
-      "margin-top": "var(--spacing-xl)",
-      "margin-bottom": "var(--spacing-md)",
+      "margin-top": "var(--clampography-spacing-xl)",
+      "margin-bottom": "var(--clampography-spacing-md)",
     },
 
     [scope("h3")]: {
       "font-size": "calc(var(--clampography-h3-size) * var(--clampography-h3-scale))",
       "line-height": "1.5",
-      "margin-top": "var(--spacing-lg)",
-      "margin-bottom": "var(--spacing-sm)",
+      "margin-top": "var(--clampography-spacing-lg)",
+      "margin-bottom": "var(--clampography-spacing-sm)",
     },
 
     [scope("h4")]: {
       "font-size": "calc(var(--clampography-h4-size) * var(--clampography-h4-scale))",
       "line-height": "1.5",
-      "margin-top": "var(--spacing-lg)",
-      "margin-bottom": "var(--spacing-sm)",
+      "margin-top": "var(--clampography-spacing-lg)",
+      "margin-bottom": "var(--clampography-spacing-sm)",
     },
 
     [scope("h5")]: {
       "font-size": "calc(var(--clampography-h5-size) * var(--clampography-h5-scale))",
       "line-height": "1.5",
-      "margin-top": "var(--spacing-md)",
-      "margin-bottom": "var(--spacing-xs)",
+      "margin-top": "var(--clampography-spacing-md)",
+      "margin-bottom": "var(--clampography-spacing-xs)",
     },
 
     [scope("h6")]: {
       "font-size": "calc(var(--clampography-h6-size) * var(--clampography-h6-scale))",
       "line-height": "1.5",
-      "margin-top": "var(--spacing-md)",
-      "margin-bottom": "var(--spacing-xs)",
+      "margin-top": "var(--clampography-spacing-md)",
+      "margin-bottom": "var(--clampography-spacing-xs)",
     },
 
     [scope(":is(h1, h2, h3, h4, h5, h6):first-child")]: {
@@ -236,7 +236,7 @@ export default (options = {}) => {
     // MENU
     [scope("menu")]: {
       "list-style": "none",
-      "margin-bottom": "var(--spacing-md)",
+      "margin-bottom": "var(--clampography-spacing-md)",
       "padding-inline-start": "0",
     },
 
@@ -246,11 +246,11 @@ export default (options = {}) => {
 
     // HGROUP
     [scope("hgroup")]: {
-      "margin-bottom": "var(--spacing-lg)",
+      "margin-bottom": "var(--clampography-spacing-lg)",
     },
 
     [scope("hgroup :where(h1, h2, h3, h4, h5, h6)")]: {
-      "margin-bottom": "var(--spacing-xs)",
+      "margin-bottom": "var(--clampography-spacing-xs)",
     },
 
     [scope("hgroup :where(p)")]: {
@@ -264,7 +264,7 @@ export default (options = {}) => {
     // TEXT CONTENT
     [scope("p")]: {
       "line-height": "1.75",
-      "margin-bottom": "var(--spacing-md)",
+      "margin-bottom": "var(--clampography-spacing-md)",
     },
 
     [scope(":where(strong, b)")]: {
@@ -286,7 +286,7 @@ export default (options = {}) => {
     },
 
     [scope(":where(code, kbd, samp)")]: {
-      "font-family": "var(--font-family-mono)",
+      "font-family": "var(--clampography-font-mono)",
       "font-size": "0.875em",
       "-webkit-font-smoothing": "auto",
       "-moz-osx-font-smoothing": "auto",
@@ -344,8 +344,8 @@ export default (options = {}) => {
 
     [scope("address")]: {
       "font-style": "italic",
-      "margin-top": "var(--spacing-md)",
-      "margin-bottom": "var(--spacing-md)",
+      "margin-top": "var(--clampography-spacing-md)",
+      "margin-bottom": "var(--clampography-spacing-md)",
     },
 
     [scope("time")]: {
@@ -355,15 +355,15 @@ export default (options = {}) => {
 
     // BLOCKQUOTES
     [scope("blockquote")]: {
-      "margin-top": "var(--spacing-lg)",
-      "margin-bottom": "var(--spacing-lg)",
-      "padding-inline-start": "var(--spacing-md)",
+      "margin-top": "var(--clampography-spacing-lg)",
+      "margin-bottom": "var(--clampography-spacing-lg)",
+      "padding-inline-start": "var(--clampography-spacing-md)",
     },
 
     [scope("blockquote blockquote")]: {
-      "margin-top": "var(--spacing-sm)",
-      "margin-bottom": "var(--spacing-sm)",
-      "padding-inline-start": "var(--spacing-sm)",
+      "margin-top": "var(--clampography-spacing-sm)",
+      "margin-bottom": "var(--clampography-spacing-sm)",
+      "padding-inline-start": "var(--clampography-spacing-sm)",
     },
 
     [scope("q")]: {
@@ -373,8 +373,8 @@ export default (options = {}) => {
     // LISTS
     [scope(":where(ul, ol)")]: {
       "list-style": "none",
-      "margin-bottom": "var(--spacing-md)",
-      "padding-inline-start": "var(--list-indent)",
+      "margin-bottom": "var(--clampography-spacing-md)",
+      "padding-inline-start": "var(--clampography-list-indent)",
     },
 
     [scope("li")]: {
@@ -382,7 +382,7 @@ export default (options = {}) => {
     },
 
     [scope("li + li")]: {
-      "margin-top": "var(--spacing-xs)",
+      "margin-top": "var(--clampography-spacing-xs)",
     },
 
     // Collapse margins for text-like block elements inside li
@@ -393,14 +393,14 @@ export default (options = {}) => {
     },
 
     [scope("li > blockquote")]: {
-      "margin-top": "var(--spacing-sm)",
-      "margin-bottom": "var(--spacing-sm)",
+      "margin-top": "var(--clampography-spacing-sm)",
+      "margin-bottom": "var(--clampography-spacing-sm)",
     },
 
-    // Nested lists: top gap matches sibling spacing (--spacing-xs).
+    // Nested lists: top gap matches sibling spacing (--clampography-spacing-xs).
     // No bottom margin — the next li already gets margin-top from li+li.
     [scope("li > :where(ul, ol)")]: {
-      "margin-top": "var(--spacing-xs)",
+      "margin-top": "var(--clampography-spacing-xs)",
       "margin-bottom": "0",
     },
 
@@ -437,13 +437,13 @@ export default (options = {}) => {
 
     // DEFINITION LISTS
     [scope("dl")]: {
-      "margin-top": "var(--spacing-md)",
-      "margin-bottom": "var(--spacing-md)",
+      "margin-top": "var(--clampography-spacing-md)",
+      "margin-bottom": "var(--clampography-spacing-md)",
     },
 
     [scope("dt")]: {
       "font-weight": "600",
-      "margin-top": "var(--spacing-sm)",
+      "margin-top": "var(--clampography-spacing-sm)",
     },
 
     [scope("dt:first-child")]: {
@@ -451,15 +451,15 @@ export default (options = {}) => {
     },
 
     [scope("dd")]: {
-      "margin-inline-start": "var(--spacing-md)",
+      "margin-inline-start": "var(--clampography-spacing-md)",
     },
 
     [scope("dt + dd")]: {
-      "margin-top": "var(--spacing-xs)",
+      "margin-top": "var(--clampography-spacing-xs)",
     },
 
     [scope("dd + dd")]: {
-      "margin-top": "var(--spacing-xs)",
+      "margin-top": "var(--clampography-spacing-xs)",
     },
 
     [scope("dd:last-child")]: {
@@ -468,9 +468,9 @@ export default (options = {}) => {
 
     // CODE BLOCKS
     [scope("pre")]: {
-      "margin-top": "var(--spacing-md)",
-      "margin-bottom": "var(--spacing-md)",
-      "font-family": "var(--font-family-mono)",
+      "margin-top": "var(--clampography-spacing-md)",
+      "margin-bottom": "var(--clampography-spacing-md)",
+      "font-family": "var(--clampography-font-mono)",
       "line-height": "1.6",
       "overflow-x": "auto",
       "-webkit-font-smoothing": "auto",
@@ -502,20 +502,20 @@ export default (options = {}) => {
     },
 
     [scope("fieldset")]: {
-      "margin-top": "var(--spacing-md)",
-      "margin-bottom": "var(--spacing-md)",
-      padding: "var(--spacing-sm)",
+      "margin-top": "var(--clampography-spacing-md)",
+      "margin-bottom": "var(--clampography-spacing-md)",
+      padding: "var(--clampography-spacing-sm)",
     },
 
     [scope("legend")]: {
       "font-weight": "600",
-      padding: "0 var(--spacing-xs)",
+      padding: "0 var(--clampography-spacing-xs)",
     },
 
     [scope("label")]: {
       display: "inline-block",
       "font-weight": "600",
-      "margin-bottom": "var(--spacing-xs)",
+      "margin-bottom": "var(--clampography-spacing-xs)",
     },
 
     [scope("output")]: {
@@ -536,8 +536,8 @@ export default (options = {}) => {
     },
 
     [scope("figure")]: {
-      "margin-top": "var(--spacing-lg)",
-      "margin-bottom": "var(--spacing-lg)",
+      "margin-top": "var(--clampography-spacing-lg)",
+      "margin-bottom": "var(--clampography-spacing-lg)",
     },
 
     [scope("figcaption")]: {
@@ -549,22 +549,22 @@ export default (options = {}) => {
     // TABLES
     [scope("table")]: {
       width: "100%",
-      "margin-top": "var(--spacing-md)",
-      "margin-bottom": "var(--spacing-md)",
+      "margin-top": "var(--clampography-spacing-md)",
+      "margin-bottom": "var(--clampography-spacing-md)",
       "border-collapse": "collapse",
       "font-size": "1em",
       "line-height": "1.6",
     },
 
     [scope("caption")]: {
-      "margin-bottom": "var(--spacing-xs)",
+      "margin-bottom": "var(--clampography-spacing-xs)",
       "font-size": "0.875em",
       "font-weight": "600",
       "text-align": "start",
     },
 
     [scope("th, td")]: {
-      padding: "var(--spacing-xs) var(--spacing-sm)",
+      padding: "var(--clampography-spacing-xs) var(--clampography-spacing-sm)",
       "text-align": "start",
     },
 
@@ -590,8 +590,8 @@ export default (options = {}) => {
 
     // SEPARATORS
     [scope("hr")]: {
-      "margin-top": "var(--spacing-xl)",
-      "margin-bottom": "var(--spacing-xl)",
+      "margin-top": "var(--clampography-spacing-xl)",
+      "margin-bottom": "var(--clampography-spacing-xl)",
       border: "0",
       "border-top": "1px solid",
     },
@@ -602,8 +602,8 @@ export default (options = {}) => {
     },
 
     [scope("details")]: {
-      "margin-top": "var(--spacing-md)",
-      "margin-bottom": "var(--spacing-md)",
+      "margin-top": "var(--clampography-spacing-md)",
+      "margin-bottom": "var(--clampography-spacing-md)",
     },
 
     [scope("summary")]: {
@@ -612,7 +612,7 @@ export default (options = {}) => {
     },
 
     [scope("details[open] > summary")]: {
-      "margin-bottom": "var(--spacing-xs)",
+      "margin-bottom": "var(--clampography-spacing-xs)",
     },
 
     [scope("dialog")]: {

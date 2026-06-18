@@ -36,7 +36,7 @@ export default (options = {}) => {
       "align-items": "center",
       "justify-content": "center",
       "gap": "0.375em",
-      "padding": "var(--spacing-xs) var(--spacing-sm)",
+      "padding": "var(--clampography-spacing-xs) var(--clampography-spacing-sm)",
       "background-color": "var(--clampography-surface)",
       "color": "var(--clampography-text)",
       "border": "1px solid var(--clampography-border)",
@@ -66,7 +66,7 @@ export default (options = {}) => {
     [scope(":where(input:not([type='checkbox'], [type='radio'], [type='range'], [type='color']), textarea, select)")]: {
       "display": "block",
       "width": "100%",
-      "padding": "var(--spacing-xs) var(--spacing-sm)",
+      "padding": "var(--clampography-spacing-xs) var(--clampography-spacing-sm)",
       "background-color": "var(--clampography-background)",
       "color": "var(--clampography-text)",
       "border": "1px solid var(--clampography-border)",
@@ -133,8 +133,8 @@ export default (options = {}) => {
     [scope("[type='file']::file-selector-button")]: {
       "display": "inline-flex",
       "align-items": "center",
-      "padding": "var(--spacing-xs) var(--spacing-sm)",
-      "margin-inline-end": "var(--spacing-sm)",
+      "padding": "var(--clampography-spacing-xs) var(--clampography-spacing-sm)",
+      "margin-inline-end": "var(--clampography-spacing-sm)",
       "background-color": "var(--clampography-surface)",
       "color": "var(--clampography-text)",
       "border": "1px solid var(--clampography-border)",

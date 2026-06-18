@@ -16,8 +16,8 @@ describe("Base Styles Generation", () => {
     const styles = baseStyles({ root: ":root" });
     expect(styles).toBeTypeOf("object");
     expect(styles[":where(:root)"]).toBeDefined();
-    expect(styles[":where(:root)"]["--spacing-md"]).toBeDefined();
-    expect(styles[":where(:root)"]["--font-family-base"]).toBeDefined();
+    expect(styles[":where(:root)"]["--clampography-spacing-md"]).toBeDefined();
+    expect(styles[":where(:root)"]["--clampography-font-base"]).toBeDefined();
     expect(styles[":root h1"]).toBeDefined();
     expect(styles[":root h1"]["font-weight"]).toBe("800");
   });
@@ -32,10 +32,10 @@ describe("Base Styles Generation", () => {
   it("generates dynamic fluid sizes based on fluidMin and fluidMax", () => {
     const defaultStyles = baseStyles({});
     const customStyles = baseStyles({ fluidMin: 500, fluidMax: 1500 });
-    expect(defaultStyles[":where(:root)"]["--spacing-md"]).not.toBe(
-      customStyles[":where(:root)"]["--spacing-md"]
+    expect(defaultStyles[":where(:root)"]["--clampography-spacing-md"]).not.toBe(
+      customStyles[":where(:root)"]["--clampography-spacing-md"]
     );
-    expect(customStyles[":where(:root)"]["--spacing-md"]).toContain("clamp(");
+    expect(customStyles[":where(:root)"]["--clampography-spacing-md"]).toContain("clamp(");
   });
 
   it("isolates typography scope when typography option is provided", () => {
@@ -58,12 +58,12 @@ describe("scaleMode option", () => {
   ];
 
   const FLUID_SPACING = [
-    "--spacing-xs",
-    "--spacing-sm",
-    "--spacing-md",
-    "--spacing-lg",
-    "--spacing-xl",
-    "--list-indent",
+    "--clampography-spacing-xs",
+    "--clampography-spacing-sm",
+    "--clampography-spacing-md",
+    "--clampography-spacing-lg",
+    "--clampography-spacing-xl",
+    "--clampography-list-indent",
   ];
 
   it("defaults to 'viewport' mode (vw) when scaleMode is not set", () => {
@@ -84,8 +84,8 @@ describe("scaleMode option", () => {
     for (const key of ALL_HEADING_SIZES) {
       if (root[key].startsWith("clamp(")) expect(root[key]).toContain("100vw");
     }
-    if (root["--spacing-md"].startsWith("clamp(")) {
-      expect(root["--spacing-md"]).toContain("vw");
+    if (root["--clampography-spacing-md"].startsWith("clamp(")) {
+      expect(root["--clampography-spacing-md"]).toContain("vw");
     }
   });
 
@@ -111,8 +111,8 @@ describe("scaleMode option", () => {
 
   it("accepts kebab-case alias 'scale-mode'", () => {
     const root = baseStyles({ "scale-mode": "container" })[":where(:root)"];
-    if (root["--spacing-md"].startsWith("clamp(")) {
-      expect(root["--spacing-md"]).toContain("cqi");
+    if (root["--clampography-spacing-md"].startsWith("clamp(")) {
+      expect(root["--clampography-spacing-md"]).toContain("cqi");
     }
     if (root["--clampography-h1-size"].startsWith("clamp(")) {
       expect(root["--clampography-h1-size"]).toContain("100cqi");
@@ -121,8 +121,8 @@ describe("scaleMode option", () => {
 
   it("falls back to vw for unknown scaleMode values", () => {
     const root = baseStyles({ scaleMode: "unknown-value" })[":where(:root)"];
-    if (root["--spacing-md"].startsWith("clamp(")) {
-      expect(root["--spacing-md"]).toContain("vw");
+    if (root["--clampography-spacing-md"].startsWith("clamp(")) {
+      expect(root["--clampography-spacing-md"]).toContain("vw");
     }
     if (root["--clampography-h1-size"].startsWith("clamp(")) {
       expect(root["--clampography-h1-size"]).toContain("100vw");
@@ -133,7 +133,7 @@ describe("scaleMode option", () => {
     const vw = baseStyles({ scaleMode: "viewport" })[":where(:root)"];
     const cqi = baseStyles({ scaleMode: "container" })[":where(:root)"];
     const strip = (s) => s.replace(/vw|cqi/g, "UNIT");
-    expect(strip(cqi["--spacing-md"])).toBe(strip(vw["--spacing-md"]));
+    expect(strip(cqi["--clampography-spacing-md"])).toBe(strip(vw["--clampography-spacing-md"]));
     expect(strip(cqi["--clampography-h1-size"])).toBe(strip(vw["--clampography-h1-size"]));
   });
 });
@@ -157,8 +157,8 @@ describe("Fluid math engine edge cases", () => {
 
   it("returns static spacing values when fluidMin equals fluidMax (invalid range)", () => {
     const root = baseStyles({ fluidMin: 800, fluidMax: 800 })[":where(:root)"];
-    expect(root["--spacing-md"]).not.toContain("clamp(");
-    expect(root["--spacing-xs"]).not.toContain("clamp(");
+    expect(root["--clampography-spacing-md"]).not.toContain("clamp(");
+    expect(root["--clampography-spacing-xs"]).not.toContain("clamp(");
   });
 
   it("exposes --clampography-fluid-min and --clampography-fluid-max as unitless rem values", () => {
@@ -192,7 +192,7 @@ describe("Fluid math engine edge cases", () => {
     // The plugin uses parseInt() so '375px' and 375 should produce the same result
     const withPx = baseStyles({ fluidMin: parseInt("375px"), fluidMax: 1280 })[":where(:root)"];
     const withNum = baseStyles({ fluidMin: 375, fluidMax: 1280 })[":where(:root)"];
-    expect(withPx["--spacing-md"]).toBe(withNum["--spacing-md"]);
+    expect(withPx["--clampography-spacing-md"]).toBe(withNum["--clampography-spacing-md"]);
     expect(withPx["--clampography-fluid-min"]).toBe(withNum["--clampography-fluid-min"]);
   });
 });

@@ -53,7 +53,7 @@ export default (options = {}) => {
       "color": "var(--clampography-text)",
       // --font-sans is Tailwind v4's way to expose the user's font choice.
       // If the user sets a font in their project, it wins. If not, fallback to clampography's system stack.
-      "font-family": "var(--font-sans, var(--font-family-base))",
+      "font-family": "var(--font-sans, var(--clampography-font-base))",
       // Smooth theme transitions: all color CSS variables animate when data-theme changes.
       // Duration is driven by the token set in base.js (default 200ms).
       // Automatically disabled by the prefers-reduced-motion media query in base.js.
@@ -99,7 +99,7 @@ export default (options = {}) => {
       "color": "var(--clampography-heading)",
       "border": "1px solid var(--clampography-border)",
       "border-radius": "0.25rem",
-      "padding": "0.125rem var(--spacing-xs)",
+      "padding": "0.125rem var(--clampography-spacing-xs)",
       "white-space": "nowrap",
     },
 
@@ -112,12 +112,12 @@ export default (options = {}) => {
       "background-color": "var(--clampography-surface)",
       "border": "1px solid var(--clampography-border)",
       "border-radius": "0.375rem",
-      "padding": "var(--spacing-md)",
+      "padding": "var(--clampography-spacing-md)",
     },
 
     // Tables
     [scope("table")]: {
-      "padding": "var(--spacing-sm)",
+      "padding": "var(--clampography-spacing-sm)",
       "border": "1px solid var(--clampography-border)",
     },
 
@@ -146,8 +146,8 @@ export default (options = {}) => {
     [scope("hr")]: {
       "height": "1px",
       "border-width": "0",
-      "margin-top": "var(--spacing-xl)",
-      "margin-bottom": "var(--spacing-xl)",
+      "margin-top": "var(--clampography-spacing-xl)",
+      "margin-bottom": "var(--clampography-spacing-xl)",
       "background-color": "var(--clampography-border)",
     },
 
@@ -156,7 +156,7 @@ export default (options = {}) => {
       "border-inline-start-width": "4px",
       "border-inline-start-color": "var(--clampography-primary)",
       "background-color": "var(--clampography-surface)",
-      "padding": "var(--spacing-md)",
+      "padding": "var(--clampography-spacing-md)",
       "border-radius": "0.25rem",
       "font-style": "italic",
       "color": "var(--clampography-heading)",
@@ -166,7 +166,7 @@ export default (options = {}) => {
     [scope("mark")]: {
       "background-color": "var(--clampography-primary)",
       "color": "var(--clampography-background)",
-      "padding": "0.125rem var(--spacing-xs)",
+      "padding": "0.125rem var(--clampography-spacing-xs)",
       "border-radius": "0.25rem",
     },
 
@@ -180,7 +180,7 @@ export default (options = {}) => {
     [scope("details")]: {
       "border": "1px solid var(--clampography-border)",
       "border-radius": "0.375rem",
-      "padding": "var(--spacing-sm)",
+      "padding": "var(--clampography-spacing-sm)",
     },
 
     [scope("summary")]: {
@@ -190,7 +190,7 @@ export default (options = {}) => {
 
     [scope("details[open] > summary")]: {
       "border-bottom-width": "1px",
-      "padding-bottom": "var(--spacing-sm)",
+      "padding-bottom": "var(--clampography-spacing-sm)",
     },
 
     // ACCESSIBILITY: Disable all transitions for users who prefer reduced motion.

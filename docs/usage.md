@@ -278,7 +278,7 @@ By scoping your `--font-sans` variable to a specific theme selector, you guarant
 }
 ```
 
-Clampography internally uses the CSS cascade `var(--font-sans, var(--font-family-base))`. This ensures your Tailwind fonts always take priority dynamically, while falling back to a robust system font stack if needed.
+Clampography internally uses the CSS cascade `var(--font-sans, var(--clampography-font-base))`. This ensures your Tailwind fonts always take priority dynamically, while falling back to a robust system font stack if needed.
 
 ---
 
@@ -968,8 +968,8 @@ web components, shadow DOM, or specific sections of your page.
 
 /* Base styles also scoped to #my-app */
 #my-app {
-  --spacing-xs: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
-  font-family: var(--font-family-base);
+  --clampography-spacing-xs: clamp(0.5rem, 0.375rem + 0.625vw, 0.75rem);
+  font-family: var(--clampography-font-base);
   /* ... */
 }
 
