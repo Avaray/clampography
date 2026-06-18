@@ -140,9 +140,9 @@ Create your own theme with OKLCH colors:
   extra: true | false;                    /* Enhanced styling (default: false) */
   forms: true | false;                    /* Styled form elements (default: false) */
   kbd: true | false;                      /* 3D keyboard key effect on <kbd> (default: false) */
-  prefix: "clampography" | false;         /* Utility class prefix */
-  root: ":root" | "#app";                 /* Scope to element */
-  logs: true | false;                     /* Console output */
+  prefix: "clampography" | false;         /* Utility class prefix (default: "clampography") */
+  root: ":root" | "#app";                 /* Scope to element (default: ":root") */
+  logs: true | false;                     /* Console output (default: false) */
 }
 ```
 
