@@ -1,6 +1,6 @@
 # 🙌 Clampography
 
-**Clampography** is a typography and theming plugin for [Tailwind CSS](https://tailwindcss.com/). 
+**Clampography** is a typography and theming plugin for [Tailwind CSS v4](https://tailwindcss.com/). 
 
 When you use Tailwind CSS, the [Preflight](https://tailwindcss.com/docs/preflight) reset removes all browser defaults. You get a completely blank slate, which is great for UI, but terrible for blog articles or documentation pages because all your `<h1>`, `<p>`, `<ul>`, and other tags lose their styling.
 
