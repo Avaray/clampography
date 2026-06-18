@@ -46,7 +46,7 @@ This restores typography but keeps it clean. No colors are injected.
 @plugin "clampography";
 ```
 
-### 2. Full Experience (Themes + Extra Styles)
+### 2. Optimal Experience (Themes + Extra Styles)
 This adds colors, styled forms, and extra decorations.
 
 ```css
@@ -65,22 +65,6 @@ This adds colors, styled forms, and extra decorations.
 </body>
 ```
 
-### 3. Prose Mode (Isolate Styles)
-Don't want to style the whole page? Isolate the typography to a specific class.
-
-```css
-@plugin "clampography" {
-  typography: ".blog-content";
-}
-```
-
-```html
-<article class="blog-content">
-  <!-- Only text inside here gets styled -->
-  <h1>My Blog Post</h1>
-</article>
-```
-
 ## ⚙️ Configuration
 
 Clampography is highly modular. You can configure it directly in your CSS:
@@ -90,10 +74,10 @@ Clampography is highly modular. You can configure it directly in your CSS:
   /* Feature Modules */
   themes: "light, dark" | "all" | false;  /* (default: false) */
   base: true | false;                     /* (default: true) */
+  extra: true | false;                    /* (default: false) */
   forms: true | false;                    /* (default: false) */
   kbd: true | false;                      /* (default: false) */
   print: true | false;                    /* (default: false) */
-  extra: true | false;                    /* (default: false) */
 
   /* Advanced Settings */
   typography: "global" | ".your-class";   /* Scope isolation */
