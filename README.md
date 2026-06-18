@@ -7,6 +7,7 @@ When you use Tailwind CSS, the [Preflight](https://tailwindcss.com/docs/prefligh
 **Clampography solves this.** It restores typography defaults and makes them mathematically perfect. It automatically generates a fluid type scale using [CSS clamp() functions](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/clamp). Your text and spacing will scale smoothly between mobile and 4K displays - without writing a single media query.
 
 > [!NOTE]
+> Requires **Tailwind CSS v4 or later**. It will not work with Tailwind v3 or earlier.
 > Clampography is designed for projects using a build tool like [Vite](https://vitejs.dev/) or [Webpack](https://webpack.js.org/), or a framework with CSS bundling like [Astro](https://astro.build/), [Next.js](https://nextjs.org/), [Remix](https://remix.run/), or [SvelteKit](https://svelte.dev/docs/kit/introduction). With a build tool, unused modules are automatically removed, keeping your CSS bundle small.
 > A build tool is not required - CDN files are also available. However, CDN files cannot be tree-shaken, resulting in a significantly larger CSS file.
 
