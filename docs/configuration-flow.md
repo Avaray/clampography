@@ -11,6 +11,7 @@ flowchart TD
     Config --> O_Extra{extra?}
     Config --> O_Forms{forms?}
     Config --> O_Kbd{kbd?}
+    Config --> O_Print{print?}
     Config --> O_Themes{themes?}
 
     %% Base Logic
@@ -29,6 +30,10 @@ flowchart TD
     O_Kbd -- true --> K_Yes["Injects <kbd> Styles<br>- 3D isometric key effect<br>- layered box-shadow depth<br>- :active press animation"]
     O_Kbd -- false\n(default) --> K_No["No kbd styles injected"]
 
+    %% Print Logic
+    O_Print -- true --> P_Yes["Injects Print Styles<br>- @media print<br>- page break control<br>- black text only"]
+    O_Print -- false\n(default) --> P_No["No print styles injected"]
+
     %% Themes Logic
     O_Themes -- "'all' or ['theme1']" --> T_Yes["Generates Color Variables<br>--clampography-primary<br>--clampography-surface<br>etc."]
     O_Themes -- false\n(default) --> T_No["No colors generated<br>Bring Your Own Theme mode"]
@@ -46,6 +51,8 @@ flowchart TD
     K_Yes -. "Consumes CSS Variables" .-> T_Yes
     K_Yes -.-> Output
 
+    P_Yes -.-> Output
+
     T_Yes -.-> Output
 
     %% User interaction in BYOT
@@ -59,8 +66,8 @@ flowchart TD
     classDef user fill:#ea580c,stroke:#c2410c,stroke-width:2px,color:#fff
 
     class Config input
-    class B_Yes,E_Yes,F_Yes,K_Yes,T_Yes yes
-    class B_No,E_No,F_No,K_No,T_No no
+    class B_Yes,E_Yes,F_Yes,K_Yes,P_Yes,T_Yes yes
+    class B_No,E_No,F_No,K_No,P_No,T_No no
     class Output output
     class UserCSS user
 ```
@@ -71,5 +78,6 @@ flowchart TD
 2. **`extra` (Opinionated)**: Off by default. Adds advanced visual polish to specific HTML elements (like borders, shadows, backgrounds). It relies on CSS variables for its colors.
 3. **`forms` (Form Elements)**: Off by default. Styles all native HTML form controls — buttons, inputs, textarea, select, checkboxes, radios, range, file, color picker, fieldset, legend, label, output, meter, and progress. Includes `:focus`, `:disabled`, `[readonly]`, and `:user-invalid` states.
 4. **`kbd` (Keyboard Keys)**: Off by default. Applies a 3D isometric effect to `<kbd>` elements using layered `box-shadow`. Includes an `:active` press animation.
-5. **`themes` (Colors)**: Off by default. Automatically generates and injects color palettes.
+5. **`print` (Print Optimization)**: Off by default. Injects a minimal set of `@media print` rules to ensure the page prints cleanly (forces black text, handles page breaks for headings/tables, sets max-width for images).
+6. **`themes` (Colors)**: Off by default. Automatically generates and injects color palettes.
    - If `extra`, `forms`, or `kbd` are **ON** but `themes` is **OFF**, the plugin enters **Bring Your Own Theme (BYOT)** mode. The structures will render, but the developer must define `--clampography-*` variables in their own CSS to colorize the components.
