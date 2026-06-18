@@ -1,4 +1,4 @@
-import type { Config, PluginCreator } from "tailwindcss/plugin";
+import plugin from "tailwindcss/plugin";
 
 interface ClampographyOptions {
   themes?: string | string[] | boolean;
@@ -17,7 +17,7 @@ interface ClampographyOptions {
   logs?: boolean;
 }
 
-declare const clampographyPlugin: PluginCreator<ClampographyOptions>;
+declare const clampographyPlugin: ReturnType<typeof plugin.withOptions<ClampographyOptions>>;
 
 export default clampographyPlugin;
 

@@ -1,4 +1,4 @@
-import type { PluginCreator } from "tailwindcss/plugin";
+import plugin from "tailwindcss/plugin";
 
 interface ThemePluginOptions {
   name: string;
@@ -27,6 +27,6 @@ interface ThemePluginOptions {
   [key: `--${string}`]: string | undefined;
 }
 
-declare const themePlugin: PluginCreator<ThemePluginOptions>;
+declare const themePlugin: ReturnType<typeof plugin.withOptions<ThemePluginOptions>>;
 
 export default themePlugin;
