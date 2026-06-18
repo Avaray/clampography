@@ -46,7 +46,7 @@ This restores typography but keeps it clean. No colors are injected.
 @plugin "clampography";
 ```
 
-### 2. Full Experience (Themes + UI)
+### 2. Full Experience (Themes + Extra Styles)
 This adds colors, styled forms, and extra decorations.
 
 ```css
