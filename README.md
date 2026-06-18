@@ -23,7 +23,17 @@ When you use Tailwind CSS, the [Preflight](https://tailwindcss.com/docs/prefligh
 ## 📦 Install
 
 ```bash
+# Install with NPM
 npm install clampography
+
+# Install with PNPM
+pnpm add clampography
+
+# Install with Bun
+bun install clampography
+
+# Install with Deno
+deno install npm:clampography
 ```
 
 ## 🛠️ Quick Start
