@@ -8,7 +8,7 @@ When you use Tailwind CSS, the [Preflight](https://tailwindcss.com/docs/prefligh
 
 > [!NOTE]
 > Clampography is designed for projects using a build tool like [Vite](https://vitejs.dev/) or [Webpack](https://webpack.js.org/), or a framework with CSS bundling like [Astro](https://astro.build/), [Next.js](https://nextjs.org/), [Remix](https://remix.run/), or [SvelteKit](https://svelte.dev/docs/kit/introduction). With a build tool, unused modules are automatically removed, keeping your CSS bundle small.
-> A build tool is not required — CDN files are also available. However, CDN files include all modules and cannot be tree-shaken, resulting in a significantly larger CSS file.
+> A build tool is not required - CDN files are also available. However, CDN files include all modules and cannot be tree-shaken, resulting in a significantly larger CSS file.
 
 ## ✨ Features
 - 🧮 **Fluid Typography & Spacing:** Smooth scaling from mobile to desktop.
