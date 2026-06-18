@@ -142,7 +142,7 @@ Create your own theme with OKLCH colors:
   kbd: true | false;                      /* 3D keyboard key effect on <kbd> (default: false) */
   prefix: "clampography" | false;         /* Utility class prefix (default: "clampography") */
   root: ":root" | "#app";                 /* Scope to element (default: ":root") */
-  logs: true | false;                     /* Console output (default: false) */
+  logs: true | false;                     /* Console output (default: true) */
 }
 ```
 
