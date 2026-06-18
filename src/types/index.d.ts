@@ -20,3 +20,5 @@ interface ClampographyOptions {
 declare const clampographyPlugin: PluginCreator<ClampographyOptions>;
 
 export default clampographyPlugin;
+
+export type { ClampographyVars } from "./vars.js";

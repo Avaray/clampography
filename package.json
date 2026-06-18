@@ -59,7 +59,7 @@
     "url": "git+https://github.com/Avaray/clampography.git"
   },
   "scripts": {
-    "build": "bun src/convert.js && bun src/export-figma.js",
+    "build": "bun src/convert.js && bun src/export-figma.js && bun src/export-types.js",
     "dev": "bun run dev/server.js",
     "test": "bun test"
   },
