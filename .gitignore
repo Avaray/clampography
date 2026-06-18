@@ -4,3 +4,12 @@ node_modules/
 .vscode/
 css/
 scratch/
+*.lock*
+*.log*
+.vscode/
+css/
+node_modules/
+.npm-cache/
+dev/css/
+temp/
+scratch/

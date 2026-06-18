@@ -1,47 +1,26 @@
 # 🙌 Clampography
 
-> ⚠️ **DEPRECATION NOTICE: VERSION 1**
-> 
-> Version 1 of Clampography (currently `0.9.11`) is no longer being developed and will soon be replaced by a new version. Please note that the upcoming release will introduce major **breaking changes**. Version 1 has multiple known bugs and **should not be used**.
-> 
-> If you are interested, you can try the upcoming beta from the [v2](https://github.com/Avaray/clampography/tree/v2) branch, which is available on [NPM here](https://www.npmjs.com/package/clampography?activeTab=versions).
+**Clampography** is a typography and theming plugin for [Tailwind CSS v4](https://tailwindcss.com/). 
 
-**Clampography** is a pure CSS typography system that uses the
-[clamp()](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/clamp)
-function for fluid, responsive text scaling. It's designed as an alternative to
-[@tailwindcss/typography](https://github.com/tailwindlabs/tailwindcss-typography),
-but works with or without [Tailwind CSS](https://tailwindcss.com/). With
-[94% global browser support](https://caniuse.com/css-math-functions), it works
-on nearly all modern devices.
+When you use Tailwind CSS, the [Preflight](https://tailwindcss.com/docs/preflight) reset removes all browser defaults. You get a completely blank slate, which is great for UI, but terrible for blog articles or documentation pages because all your `<h1>`, `<p>`, `<ul>`, and other tags lose their styling.
 
-- **No default styling:** No colors, borders, transforms, or decorations.
-- **Structure only:** Manages size, spacing, weight, and font-family.
-- **Smart scaling:** Contextual elements use `em` (relative), blocks use
-  `clamp()` (fluid).
+**Clampography solves this.** It restores typography defaults and makes them mathematically perfect. It automatically generates a fluid type scale using [CSS clamp() functions](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/clamp). Your text and spacing will scale smoothly between mobile and 4K displays - without writing a single media query.
 
-## The purpose
+> [!NOTE]
+> Clampography is designed for projects using a build tool like [Vite](https://vitejs.dev/) or [Webpack](https://webpack.js.org/), or a framework with CSS bundling like [Astro](https://astro.build/), [Next.js](https://nextjs.org/), [Remix](https://remix.run/), or [SvelteKit](https://svelte.dev/docs/kit/introduction). With a build tool, unused modules are automatically removed, keeping your CSS bundle small.
+> A build tool is not required - CDN files are also available. However, CDN files cannot be tree-shaken, resulting in a significantly larger CSS file.
 
-[CSS resets](https://en.wikipedia.org/wiki/Reset_style_sheet) like
-[Tailwind's Preflight](https://tailwindcss.com/docs/preflight) remove all
-browser typography defaults, leaving you with unstyled text. **Clampography**
-delivers production-ready text scaling that responds to viewport changes
-automatically, while leaving all aesthetic choices to you.
+## ✨ Features
+- 🧮 **Fluid Typography & Spacing:** Smooth scaling from mobile to desktop.
+- 🎨 **Built-in Themes:** `light` and `dark` included. More themes coming soon.
+- 🧩 **Modular:** Enable only what you need.
+- 🎯 **Zero Specificity:** All styles use `:where()` - your own CSS always wins, no `!important` needed.
+- 💬 **TypeScript Ready:** Auto-generated [TypeScript](https://www.typescriptlang.org/) types for all CSS variables.
+- 🌍 **RTL Ready:** Works correctly in right-to-left languages out of the box.
+- 🎨 **Figma Design Tokens:** Theme values exported as `figma-tokens.json` (W3C Design Tokens).
+- 🖨️ **Print & A11y Optimization:** Removes decorations and forces readable black text.
 
-Visit the temporary [demo page](https://next.dav.one/clampography/) to see how
-it looks.
-
-## Requirements
-
-Use [Vite](https://vitejs.dev/), [Webpack](https://webpack.js.org/), or similar
-build tool for CSS bundling. Popular frameworks like
-[Astro](https://astro.build/), [Next.js](https://nextjs.org/),
-[Remix](https://remix.run/), and
-[SvelteKit](https://svelte.dev/docs/kit/introduction) include CSS bundling by
-default and work seamlessly with **Clampography**. Without a build tool, native
-CSS `@import` combined with `@layer` has about 91% browser coverage and only
-works in browsers released since early 2022.
-
-## Installation
+## 📦 Install
 
 ```bash
 # Install with NPM
@@ -57,21 +36,65 @@ bun install clampography
 deno install npm:clampography
 ```
 
-## Usage
+## 🛠️ Quick Start
+
+### 1. Basic (Fluid Typography Only)
+This restores typography but keeps it clean. No colors are injected.
 
 ```css
-/* First import Tailwind CSS */
 @import "tailwindcss";
+@plugin "clampography";
+```
 
-/* Then import Clampography */
-@import "clampography";
+### 2. Optimal Experience (Themes + Extra Styles)
+This adds colors, styled forms, and extra decorations.
 
-/* Then you can override Clampography's base styles */
-@layer base {
-  h1 {
-    font-size: clamp(2.35rem, 1.95rem + 1.5vw, 4rem);
-    font-weight: 400;
-    line-height: 1.15;
-  }
+```css
+@import "tailwindcss";
+@plugin "clampography" {
+  themes: all;
+  forms: true;
+  extra: true;
 }
 ```
+
+```html
+<body data-theme="dark" class="bg-clampography-background text-clampography-text">
+  <h1>Fluid Heading</h1>
+  <button class="bg-clampography-primary">Action</button>
+</body>
+```
+
+## ⚙️ Configuration
+
+Clampography is highly modular. You can configure it directly in your CSS:
+
+```css
+@plugin "clampography" {
+  /* Feature Modules */
+  themes: "light, dark" | "all" | false;  /* (default: false) */
+  base: true | false;                     /* (default: true) */
+  extra: true | false;                    /* (default: false) */
+  forms: true | false;                    /* (default: false) */
+  kbd: true | false;                      /* (default: false) */
+  print: true | false;                    /* (default: false) */
+
+  /* Advanced Settings */
+  typography: "global" | ".your-class";   /* Scope isolation */
+  fluid-min: "320px";                     /* Mobile breakpoint */
+  fluid-max: "1280px";                    /* Desktop breakpoint */
+}
+```
+
+## 📚 Documentation
+- 📖 **[Complete Usage Guide](docs/usage.md)**
+- 🔄 **[Configuration Flow Diagram](docs/configuration-flow.md)**
+- 🤝 **[Contributing](docs/contributing.md)**
+
+## 🙏 Inspirations
+- [daisyUI](https://daisyui.com/) created by [Pouya Saadeghi](https://saadeghi.com/)
+- The official **Typography** plugin for Tailwind CSS: [tailwindcss-typography](https://github.com/tailwindlabs/tailwindcss-typography)
+
+---
+
+**License:** [MIT](LICENSE)

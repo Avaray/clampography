@@ -1,0 +1,637 @@
+export default (options = {}) => {
+  const root = options.root || ":root";
+
+  // Helper to scope selectors safely (ignoring commas inside parentheses)
+  const scope = (selector) => {
+    const parts = [];
+    let current = "";
+    let depth = 0;
+
+    for (let i = 0; i < selector.length; i++) {
+      const char = selector[i];
+      if (char === "(") depth++;
+      if (char === ")") depth--;
+
+      if (char === "," && depth === 0) {
+        parts.push(current.trim());
+        current = "";
+      } else {
+        current += char;
+      }
+    }
+    parts.push(current.trim());
+
+    const typographyPrefix = options.typography && options.typography !== "global" ? ` ${options.typography}` : "";
+
+    return parts
+      .filter(Boolean) // Remove empty strings
+      .map((part) => {
+        if (part === ":root" || part === "body") return root;
+        
+        // Apply typography scope isolation if configured
+        if (typographyPrefix) {
+          return `${root}${typographyPrefix} ${part}`;
+        }
+        
+        // Avoid double spacing
+        return `${root} ${part}`;
+      })
+      .join(", ");
+  };
+
+  // Fluid math engine: Generates mathematically perfect clamp() strings
+  // dynamically based on the configured min and max screen sizes.
+  const minScreenRem = (options.fluidMin || 320) / 16;
+  const maxScreenRem = (options.fluidMax || 1280) / 16;
+
+  // scaleMode: 'viewport' (default) uses vw — scales relative to the browser window.
+  // scaleMode: 'container' uses cqi — scales relative to the nearest @container ancestor.
+  // When no @container is defined, cqi falls back to the <html> element (same as vw).
+  const fluidUnit = (options.scaleMode || options["scale-mode"] || "viewport") === "container" ? "cqi" : "vw";
+
+  const makeFluid = (minRem, maxRem) => {
+    // If min and max are the same, or if we have invalid screens, just return the static value
+    if (minRem === maxRem || minScreenRem >= maxScreenRem) return `${minRem}rem`;
+
+    const slope = (maxRem - minRem) / (maxScreenRem - minScreenRem);
+    const intersection = minRem - slope * minScreenRem;
+
+    const format = (num) => parseFloat(num.toFixed(4));
+    
+    return `clamp(${minRem}rem, ${format(intersection)}rem + ${format(slope * 100)}${fluidUnit}, ${maxRem}rem)`;
+  };
+
+  return {
+    // ROOT CONFIGURATION (CSS variables)
+    // Uses :where() for zero specificity so user overrides always win regardless of layer/source order
+    [`:where(${root})`]: {
+      // FLUID SPACING SYSTEM
+      "--clampography-spacing-xs": makeFluid(0.25, 0.75),
+      "--clampography-spacing-sm": makeFluid(0.375, 1.25),
+      "--clampography-spacing-md": makeFluid(0.5, 1.5),
+      "--clampography-spacing-lg": makeFluid(0.75, 2.5),
+      "--clampography-spacing-xl": makeFluid(1, 3),
+      "--clampography-list-indent": makeFluid(1.5, 2),
+      "--clampography-scroll-offset": "5rem",
+      "--clampography-font-base":
+        "Inter, system-ui, -apple-system, 'Segoe UI Variable Display', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif",
+      "--clampography-font-mono":
+        "ui-monospace, 'Cascadia Code', 'Cascadia Mono', 'Segoe UI Mono', 'Ubuntu Mono', SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
+
+      // FLUID TYPOGRAPHY ENGINE — Viewport Bounds
+      // Unitless rem values derived from plugin options: fluid-min and fluid-max.
+      // e.g. 320px → 20rem, 1280px → 80rem
+      "--clampography-fluid-min": String(minScreenRem),
+      "--clampography-fluid-max": String(maxScreenRem),
+
+      // HEADINGS FLUID TYPOGRAPHY
+      // Each heading exposes --min and --max as unitless rem values.
+      // Override these in :root to change font-size bounds without rewriting the full clamp().
+      //
+      //   Example — reduce H1 max size on large screens:
+      //   :root { --clampography-h1-max: 3; }
+      //
+      //   Example — increase H2 minimum size on mobile:
+      //   :root { --clampography-h2-min: 1.5; }
+      //
+      // --clampography-h*-slope and --clampography-h*-base are computed automatically via CSS calc().
+      // --clampography-h*-size is the final fluid clamp() value used by the heading element.
+
+      // H1
+      "--clampography-h1-min": "1.875",
+      "--clampography-h1-max": "4",
+      "--clampography-h1-slope": "calc((var(--clampography-h1-max) - var(--clampography-h1-min)) / (var(--clampography-fluid-max) - var(--clampography-fluid-min)))",
+      "--clampography-h1-base": "calc(var(--clampography-h1-min) - var(--clampography-h1-slope) * var(--clampography-fluid-min))",
+      [`--clampography-h1-size`]: `clamp(calc(var(--clampography-h1-min) * 1rem), calc(var(--clampography-h1-base) * 1rem + var(--clampography-h1-slope) * 100${fluidUnit}), calc(var(--clampography-h1-max) * 1rem))`,
+
+      // H2
+      "--clampography-h2-min": "1.25",
+      "--clampography-h2-max": "3",
+      "--clampography-h2-slope": "calc((var(--clampography-h2-max) - var(--clampography-h2-min)) / (var(--clampography-fluid-max) - var(--clampography-fluid-min)))",
+      "--clampography-h2-base": "calc(var(--clampography-h2-min) - var(--clampography-h2-slope) * var(--clampography-fluid-min))",
+      [`--clampography-h2-size`]: `clamp(calc(var(--clampography-h2-min) * 1rem), calc(var(--clampography-h2-base) * 1rem + var(--clampography-h2-slope) * 100${fluidUnit}), calc(var(--clampography-h2-max) * 1rem))`,
+
+      // H3
+      "--clampography-h3-min": "1.125",
+      "--clampography-h3-max": "2.25",
+      "--clampography-h3-slope": "calc((var(--clampography-h3-max) - var(--clampography-h3-min)) / (var(--clampography-fluid-max) - var(--clampography-fluid-min)))",
+      "--clampography-h3-base": "calc(var(--clampography-h3-min) - var(--clampography-h3-slope) * var(--clampography-fluid-min))",
+      [`--clampography-h3-size`]: `clamp(calc(var(--clampography-h3-min) * 1rem), calc(var(--clampography-h3-base) * 1rem + var(--clampography-h3-slope) * 100${fluidUnit}), calc(var(--clampography-h3-max) * 1rem))`,
+
+      // H4
+      "--clampography-h4-min": "1",
+      "--clampography-h4-max": "1.5",
+      "--clampography-h4-slope": "calc((var(--clampography-h4-max) - var(--clampography-h4-min)) / (var(--clampography-fluid-max) - var(--clampography-fluid-min)))",
+      "--clampography-h4-base": "calc(var(--clampography-h4-min) - var(--clampography-h4-slope) * var(--clampography-fluid-min))",
+      [`--clampography-h4-size`]: `clamp(calc(var(--clampography-h4-min) * 1rem), calc(var(--clampography-h4-base) * 1rem + var(--clampography-h4-slope) * 100${fluidUnit}), calc(var(--clampography-h4-max) * 1rem))`,
+
+      // H5 — static by default (min === max); set --clampography-h5-max to a different value to make it fluid
+      "--clampography-h5-min": "1",
+      "--clampography-h5-max": "1",
+      "--clampography-h5-slope": "calc((var(--clampography-h5-max) - var(--clampography-h5-min)) / (var(--clampography-fluid-max) - var(--clampography-fluid-min)))",
+      "--clampography-h5-base": "calc(var(--clampography-h5-min) - var(--clampography-h5-slope) * var(--clampography-fluid-min))",
+      [`--clampography-h5-size`]: `clamp(calc(var(--clampography-h5-min) * 1rem), calc(var(--clampography-h5-base) * 1rem + var(--clampography-h5-slope) * 100${fluidUnit}), calc(var(--clampography-h5-max) * 1rem))`,
+
+      // H6 — static by default (min === max)
+      "--clampography-h6-min": "0.875",
+      "--clampography-h6-max": "0.875",
+      "--clampography-h6-slope": "calc((var(--clampography-h6-max) - var(--clampography-h6-min)) / (var(--clampography-fluid-max) - var(--clampography-fluid-min)))",
+      "--clampography-h6-base": "calc(var(--clampography-h6-min) - var(--clampography-h6-slope) * var(--clampography-fluid-min))",
+      [`--clampography-h6-size`]: `clamp(calc(var(--clampography-h6-min) * 1rem), calc(var(--clampography-h6-base) * 1rem + var(--clampography-h6-slope) * 100${fluidUnit}), calc(var(--clampography-h6-max) * 1rem))`,
+
+      // Global heading scale multiplier (default: 1 = no scaling).
+      // Override in :root to proportionally scale all headings at once.
+      // Example: :root { --clampography-heading-scale: 0.85; }
+      "--clampography-heading-scale": "1",
+      
+      // Individual heading scales (default to global scale)
+      "--clampography-h1-scale": "var(--clampography-heading-scale)",
+      "--clampography-h2-scale": "var(--clampography-heading-scale)",
+      "--clampography-h3-scale": "var(--clampography-heading-scale)",
+      "--clampography-h4-scale": "var(--clampography-heading-scale)",
+      "--clampography-h5-scale": "var(--clampography-heading-scale)",
+      "--clampography-h6-scale": "var(--clampography-heading-scale)",
+    },
+
+    // BODY STYLES (Typography baseline)
+    // Note: font-family is intentionally NOT set here.
+    // It is applied in extra.js with user-font priority via --font-sans.
+    [(() => {
+      const typographyPrefix = options.typography && options.typography !== "global" ? ` ${options.typography}` : "";
+      const bodyBase = root === ":root" ? "body" : root;
+      return typographyPrefix ? `${bodyBase}${typographyPrefix}` : bodyBase;
+    })()]: {
+      "font-size": makeFluid(0.875, 1.125),
+      "line-height": "1.75",
+      "text-rendering": "optimizeLegibility",
+      "-webkit-font-smoothing": "antialiased",
+      "-moz-osx-font-smoothing": "grayscale",
+      "text-wrap": "pretty",
+    },
+
+    // HEADINGS (H1-H6)
+    [scope(":where(h1, h2, h3, h4, h5, h6)")]: {
+      "font-weight": "600",
+      "scroll-margin-top": "var(--clampography-scroll-offset)",
+    },
+
+    [scope("h1")]: {
+      "font-size": "calc(var(--clampography-h1-size) * var(--clampography-h1-scale))",
+      "line-height": "1.1111",
+      "font-weight": "800",
+      "margin-top": "0",
+      "margin-bottom": "var(--clampography-spacing-xl)",
+    },
+
+    [scope("h2")]: {
+      "font-size": "calc(var(--clampography-h2-size) * var(--clampography-h2-scale))",
+      "line-height": "1.3333",
+      "font-weight": "700",
+      "margin-top": "var(--clampography-spacing-xl)",
+      "margin-bottom": "var(--clampography-spacing-md)",
+    },
+
+    [scope("h3")]: {
+      "font-size": "calc(var(--clampography-h3-size) * var(--clampography-h3-scale))",
+      "line-height": "1.5",
+      "margin-top": "var(--clampography-spacing-lg)",
+      "margin-bottom": "var(--clampography-spacing-sm)",
+    },
+
+    [scope("h4")]: {
+      "font-size": "calc(var(--clampography-h4-size) * var(--clampography-h4-scale))",
+      "line-height": "1.5",
+      "margin-top": "var(--clampography-spacing-lg)",
+      "margin-bottom": "var(--clampography-spacing-sm)",
+    },
+
+    [scope("h5")]: {
+      "font-size": "calc(var(--clampography-h5-size) * var(--clampography-h5-scale))",
+      "line-height": "1.5",
+      "margin-top": "var(--clampography-spacing-md)",
+      "margin-bottom": "var(--clampography-spacing-xs)",
+    },
+
+    [scope("h6")]: {
+      "font-size": "calc(var(--clampography-h6-size) * var(--clampography-h6-scale))",
+      "line-height": "1.5",
+      "margin-top": "var(--clampography-spacing-md)",
+      "margin-bottom": "var(--clampography-spacing-xs)",
+    },
+
+    [scope(":is(h1, h2, h3, h4, h5, h6):first-child")]: {
+      "margin-top": "0",
+    },
+
+    // LINKS
+    [scope("a")]: {
+      "text-decoration-line": "underline",
+      cursor: "pointer",
+    },
+
+    [scope(":where(h1, h2, h3, h4, h5, h6) a")]: {
+      "text-decoration": "none",
+    },
+
+    // MENU
+    [scope("menu")]: {
+      "list-style": "none",
+      "margin-bottom": "var(--clampography-spacing-md)",
+      "padding-inline-start": "0",
+    },
+
+    [scope("menu > li::before")]: {
+      display: "none",
+    },
+
+    // HGROUP
+    [scope("hgroup")]: {
+      "margin-bottom": "var(--clampography-spacing-lg)",
+    },
+
+    [scope("hgroup :where(h1, h2, h3, h4, h5, h6)")]: {
+      "margin-bottom": "var(--clampography-spacing-xs)",
+    },
+
+    [scope("hgroup :where(p)")]: {
+      "margin-top": "0",
+      "margin-bottom": "0",
+      "font-size": "0.875em",
+      "font-weight": "400",
+      "line-height": "1.5",
+    },
+
+    // TEXT CONTENT
+    [scope("p")]: {
+      "line-height": "1.75",
+      "margin-bottom": "var(--clampography-spacing-md)",
+    },
+
+    [scope(":where(strong, b)")]: {
+      "font-weight": "700",
+    },
+
+    [scope(":where(em, i, cite, var)")]: {
+      "font-style": "italic",
+    },
+
+    [scope("dfn")]: {
+      "font-style": "italic",
+      "font-weight": "600",
+    },
+
+    [scope("small")]: {
+      "font-size": "0.875em",
+      "line-height": "1.5",
+    },
+
+    [scope(":where(code, kbd, samp)")]: {
+      "font-family": "var(--clampography-font-mono)",
+      "font-size": "0.875em",
+      "-webkit-font-smoothing": "auto",
+      "-moz-osx-font-smoothing": "auto",
+    },
+
+    [scope("kbd")]: {
+      "font-weight": "600",
+    },
+
+    [scope("data")]: {
+      "font-variant-numeric": "tabular-nums",
+    },
+
+    [scope(":where(sub, sup)")]: {
+      "font-size": "0.75em",
+      "line-height": "0",
+      position: "relative",
+      "vertical-align": "baseline",
+    },
+
+    [scope("sup")]: {
+      top: "-0.5em",
+    },
+
+    [scope("sub")]: {
+      bottom: "-0.25em",
+    },
+
+    [scope("abbr[title]")]: {
+      "text-decoration": "underline dotted",
+      "text-underline-offset": "4px",
+      cursor: "help",
+    },
+
+    [scope("del")]: {
+      "text-decoration": "line-through",
+    },
+
+    [scope("ins")]: {
+      "text-decoration": "underline",
+    },
+
+    [scope("s")]: {
+      "text-decoration": "line-through",
+    },
+
+    [scope("u")]: {
+      "text-decoration": "underline",
+    },
+
+    [scope("mark")]: {
+      "font-style": "normal",
+      "font-weight": "inherit",
+    },
+
+    [scope("address")]: {
+      "font-style": "italic",
+      "margin-top": "var(--clampography-spacing-md)",
+      "margin-bottom": "var(--clampography-spacing-md)",
+    },
+
+    [scope("time")]: {
+      "font-style": "normal",
+      "font-variant-numeric": "tabular-nums",
+    },
+
+    // BLOCKQUOTES
+    [scope("blockquote")]: {
+      "margin-top": "var(--clampography-spacing-lg)",
+      "margin-bottom": "var(--clampography-spacing-lg)",
+      "padding-inline-start": "var(--clampography-spacing-md)",
+    },
+
+    [scope("blockquote blockquote")]: {
+      "margin-top": "var(--clampography-spacing-sm)",
+      "margin-bottom": "var(--clampography-spacing-sm)",
+      "padding-inline-start": "var(--clampography-spacing-sm)",
+    },
+
+    [scope("q")]: {
+      "font-style": "inherit",
+    },
+
+    // LISTS
+    [scope(":where(ul, ol)")]: {
+      "list-style": "none",
+      "margin-bottom": "var(--clampography-spacing-md)",
+      "padding-inline-start": "var(--clampography-list-indent)",
+    },
+
+    [scope("li")]: {
+      position: "relative",
+    },
+
+    [scope("li + li")]: {
+      "margin-top": "var(--clampography-spacing-xs)",
+    },
+
+    // Collapse margins for text-like block elements inside li
+    // to prevent them from creating extra gaps around nested lists.
+    [scope("li > :where(p, dl, figure, table, pre)")]: {
+      "margin-top": "0",
+      "margin-bottom": "0",
+    },
+
+    [scope("li > blockquote")]: {
+      "margin-top": "var(--clampography-spacing-sm)",
+      "margin-bottom": "var(--clampography-spacing-sm)",
+    },
+
+    // Nested lists: top gap matches sibling spacing (--clampography-spacing-xs).
+    // No bottom margin — the next li already gets margin-top from li+li.
+    [scope("li > :where(ul, ol)")]: {
+      "margin-top": "var(--clampography-spacing-xs)",
+      "margin-bottom": "0",
+    },
+
+    [scope("ul > li::before")]: {
+      content: "''",
+      position: "absolute",
+      "inset-inline-end": "100%",
+      "margin-inline-end": "0.75em",
+      top: "0.65em",
+      width: "0.375em",
+      height: "0.375em",
+      "background-color": "currentColor",
+      "border-radius": "50%",
+    },
+
+    [scope("ol")]: {
+      "counter-reset": "list-counter",
+    },
+
+    [scope("ol > li")]: {
+      "counter-increment": "list-counter",
+    },
+
+    [scope("ol > li::before")]: {
+      content: "counter(list-counter) '.'",
+      position: "absolute",
+      "inset-inline-end": "100%",
+      "margin-inline-end": "0.5em",
+      "font-weight": "600",
+      "font-variant-numeric": "tabular-nums",
+      "text-align": "end",
+      color: "currentColor",
+    },
+
+    // DEFINITION LISTS
+    [scope("dl")]: {
+      "margin-top": "var(--clampography-spacing-md)",
+      "margin-bottom": "var(--clampography-spacing-md)",
+    },
+
+    [scope("dt")]: {
+      "font-weight": "600",
+      "margin-top": "var(--clampography-spacing-sm)",
+    },
+
+    [scope("dt:first-child")]: {
+      "margin-top": "0",
+    },
+
+    [scope("dd")]: {
+      "margin-inline-start": "var(--clampography-spacing-md)",
+    },
+
+    [scope("dt + dd")]: {
+      "margin-top": "var(--clampography-spacing-xs)",
+    },
+
+    [scope("dd + dd")]: {
+      "margin-top": "var(--clampography-spacing-xs)",
+    },
+
+    [scope("dd:last-child")]: {
+      "margin-bottom": "0",
+    },
+
+    // CODE BLOCKS
+    [scope("pre")]: {
+      "margin-top": "var(--clampography-spacing-md)",
+      "margin-bottom": "var(--clampography-spacing-md)",
+      "font-family": "var(--clampography-font-mono)",
+      "line-height": "1.6",
+      "overflow-x": "auto",
+      "-webkit-font-smoothing": "auto",
+      "-moz-osx-font-smoothing": "auto",
+    },
+
+    [scope("pre code")]: {
+      "font-size": "inherit",
+      padding: "0",
+      background: "none",
+      "border-radius": "0",
+    },
+
+    // FORMS
+    // Structural resets — inherit typography from root, no visual styling here.
+    // Visual styling (colors, borders, padding) is handled by forms.js.
+    [scope("input, button, textarea, select, optgroup")]: {
+      "font-family": "inherit",
+      "font-size": "100%",
+      "line-height": "inherit",
+    },
+
+    [scope("textarea")]: {
+      "line-height": "1.5",
+    },
+
+    [scope("button, [type='button'], [type='reset'], [type='submit']")]: {
+      cursor: "pointer",
+    },
+
+    [scope("fieldset")]: {
+      "margin-top": "var(--clampography-spacing-md)",
+      "margin-bottom": "var(--clampography-spacing-md)",
+      padding: "var(--clampography-spacing-sm)",
+    },
+
+    [scope("legend")]: {
+      "font-weight": "600",
+      padding: "0 var(--clampography-spacing-xs)",
+    },
+
+    [scope("label")]: {
+      display: "inline-block",
+      "font-weight": "600",
+      "margin-bottom": "var(--clampography-spacing-xs)",
+    },
+
+    [scope("output")]: {
+      display: "inline-block",
+      "font-variant-numeric": "tabular-nums",
+    },
+
+    [scope(":where(meter, progress)")]: {
+      display: "inline-block",
+      "vertical-align": "middle",
+    },
+
+    // MEDIA
+    [scope(":where(img, video, canvas, audio, iframe, svg)")]: {
+      "max-width": "100%",
+      height: "auto",
+      "vertical-align": "middle",
+    },
+
+    [scope("figure")]: {
+      "margin-top": "var(--clampography-spacing-lg)",
+      "margin-bottom": "var(--clampography-spacing-lg)",
+    },
+
+    [scope("figcaption")]: {
+      "margin-top": "0.375rem",
+      "font-size": "0.875em",
+      "line-height": "1.5",
+    },
+
+    // TABLES
+    [scope("table")]: {
+      width: "100%",
+      "margin-top": "var(--clampography-spacing-md)",
+      "margin-bottom": "var(--clampography-spacing-md)",
+      "border-collapse": "collapse",
+      "font-size": "1em",
+      "line-height": "1.6",
+    },
+
+    [scope("caption")]: {
+      "margin-bottom": "var(--clampography-spacing-xs)",
+      "font-size": "0.875em",
+      "font-weight": "600",
+      "text-align": "start",
+    },
+
+    [scope("th, td")]: {
+      padding: "var(--clampography-spacing-xs) var(--clampography-spacing-sm)",
+      "text-align": "start",
+    },
+
+    [scope("th")]: {
+      "font-weight": "600",
+    },
+
+    [scope("thead th")]: {
+      "vertical-align": "bottom",
+    },
+
+    [scope("tbody th, tbody td")]: {
+      "vertical-align": "top",
+    },
+
+    [scope("tfoot th, tfoot td")]: {
+      "vertical-align": "top",
+    },
+
+    [scope("tbody + tbody")]: {
+      "border-top-width": "2px",
+    },
+
+    // SEPARATORS
+    [scope("hr")]: {
+      "margin-top": "var(--clampography-spacing-xl)",
+      "margin-bottom": "var(--clampography-spacing-xl)",
+      border: "0",
+      "border-top": "1px solid",
+    },
+
+    // INTERACTIVE ELEMENTS
+    [scope(":where(:focus, :focus-visible)")]: {
+      "outline-offset": "2px",
+    },
+
+    [scope("details")]: {
+      "margin-top": "var(--clampography-spacing-md)",
+      "margin-bottom": "var(--clampography-spacing-md)",
+    },
+
+    [scope("summary")]: {
+      cursor: "pointer",
+      "font-weight": "600",
+    },
+
+    [scope("details[open] > summary")]: {
+      "margin-bottom": "var(--clampography-spacing-xs)",
+    },
+
+    [scope("dialog")]: {
+      "font-size": "inherit",
+      "line-height": "inherit",
+    },
+
+    // UTILITIES
+    [
+      scope(
+        ":where(h1, h2, h3, h4, h5, h6, p, ul:not(li > ul, li > ol), ol:not(li > ul, li > ol), dl, blockquote, figure, table, pre):first-child",
+      )
+    ]: {
+      "margin-top": "0",
+    },
+
+    [scope(":where(p, ul, ol, dl, blockquote, figure, table, pre):last-child")]:
+      {
+        "margin-bottom": "0",
+      },
+  };
+};

@@ -1,0 +1,2217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clampography Playground</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Comic+Neue&family=Fira+Mono&family=Inter&family=Josefin+Sans:wght@300&family=Lato&family=Lora&family=Merriweather&family=Montserrat&family=Nunito:wght@300&family=Open+Sans&family=Oswald&family=Playfair+Display&family=Poppins&family=Quando&family=Roboto&family=Space+Grotesk&family=Ubuntu&display=swap">
+  <link rel="stylesheet" href="/css/tefk.css" id="main-css">
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <style>
+    /* ── Playground structural styles (sidebar only — colors from Clampography vars) ── */
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    :root {
+      --sidebar-width: max-content;
+    }
+
+    /* Fallback dark theme variables for the sidebar to remain styled when plugin themes are disabled */
+    [data-theme="dark"] {
+      color-scheme: dark;
+      --clampography-background: oklch(10% 0 0);
+      --clampography-border: oklch(31% 0.03 254);
+      --clampography-error: oklch(63% 0.22 27);
+      --clampography-heading: oklch(98% 0.003 264);
+      --clampography-info: oklch(72% 0.17 254);
+      --clampography-link: oklch(72% 0.17 254);
+      --clampography-muted: oklch(68% 0.024 254);
+      --clampography-primary: oklch(63% 0.258 262);
+      --clampography-secondary: oklch(63% 0.25 300);
+      --clampography-success: oklch(65% 0.17 165);
+      --clampography-surface: oklch(12% 0 0);
+      --clampography-text: oklch(95% 0 0);
+      --clampography-warning: oklch(72% 0.17 65);
+    }
+
+    /* ── Sidebar ─────────────────────────────────────────────────────────── */
+    .pg-sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: var(--sidebar-width);
+      min-width: 280px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      overscroll-behavior: contain;
+      z-index: 1000;
+      transition: transform 0.25s ease;
+      background: var(--clampography-surface, #f0f0f0);
+      color: var(--clampography-text, #222);
+      color-scheme: dark;
+      border-right: 1px solid var(--clampography-border, #d0d0d0);
+      font-family: system-ui, sans-serif;
+      font-size: 0.85rem;
+    }
+
+    .pg-sidebar.is-closed {
+      transform: translateX(-100%);
+    }
+
+    .pg-sidebar-section {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--clampography-border, #d0d0d0);
+    }
+
+    .pg-sidebar-label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--clampography-muted, #888);
+      margin-bottom: 0.5rem;
+    }
+
+    /* ── Sidebar toggle button (always visible tab on edge) ──────────────── */
+    .pg-sidebar-btn {
+      position: fixed;
+      top: 1rem;
+      left: 270px;
+      z-index: 1001;
+      width: 24px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: left 0.25s ease;
+      background: var(--clampography-surface, #f0f0f0);
+      border: 1px solid var(--clampography-border, #d0d0d0);
+      border-left: none;
+      border-radius: 0 6px 6px 0;
+      color: var(--clampography-muted, #888);
+      font-size: 0.7rem;
+      line-height: 1;
+    }
+
+    .pg-sidebar-btn.is-closed {
+      left: 0;
+      border-left: 1px solid var(--clampography-border, #d0d0d0);
+      border-radius: 6px;
+    }
+
+    .pg-sidebar-btn:hover {
+      color: var(--clampography-text, #222);
+    }
+
+    /* ── Carousel (font + theme) ─────────────────────────────────────────── */
+    .pg-carousel {
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--clampography-border, #d0d0d0);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .pg-carousel button {
+      background: transparent;
+      border: none;
+      color: var(--clampography-muted, #888);
+      cursor: pointer;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.85rem;
+      transition: color 0.15s;
+      flex-shrink: 0;
+    }
+
+    .pg-carousel button:hover {
+      color: var(--clampography-text, #222);
+    }
+
+    .pg-carousel span {
+      flex: 1;
+      text-align: center;
+      font-family: monospace;
+      font-size: 0.78rem;
+      color: var(--clampography-text, #333);
+      padding: 0.25rem 0.25rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ── Plugin toggles ──────────────────────────────────────────────────── */
+    .pg-toggle-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85rem 0.5rem;
+    }
+
+    .pg-toggle-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.35rem;
+      cursor: pointer;
+      user-select: none;
+      color: var(--clampography-text, #333);
+      flex: 1 1 calc(50% - 0.5rem);
+    }
+
+    .pg-toggle-item input[type="checkbox"] {
+      display: none;
+    }
+
+    .pg-switch {
+      position: relative;
+      width: 30px;
+      height: 17px;
+      background: var(--clampography-border, #ccc);
+      border-radius: 9px;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+
+    .pg-switch::after {
+      content: "";
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 13px;
+      height: 13px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+
+    .pg-toggle-item input:checked+.pg-switch {
+      background: #3b82f6;
+    }
+
+    .pg-toggle-item input:checked+.pg-switch::after {
+      transform: translateX(13px);
+    }
+
+    /* ── Color editor rows ───────────────────────────────────────────────── */
+    .pg-color-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 0.3rem 0;
+      gap: 0.5rem;
+    }
+
+    .pg-color-row span.pg-color-name {
+      font-size: 0.78rem;
+      font-weight: bold;
+      color: var(--clampography-text, #333);
+    }
+
+    .pg-color-row input[type="color"] {
+      width: 28px;
+      height: 22px;
+      padding: 0;
+      border: 1px solid var(--clampography-border, #ccc);
+      border-radius: 4px;
+      cursor: pointer;
+      background: var(--clampography-background, #fff);
+      overflow: hidden;
+    }
+
+    .pg-color-row input[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+
+    .pg-color-row input[type="color"]::-webkit-color-swatch {
+      border: none;
+    }
+
+    .pg-color-row input[type="color"]::-moz-color-swatch {
+      border: none;
+    }
+
+    /* ── Sidebar Buttons Click Animation ─────────────────────────────────── */
+    .pg-sidebar button {
+      transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s, color 0.2s, background-color 0.2s !important;
+    }
+    .pg-sidebar button:active {
+      transform: scale(0.95);
+    }
+
+    /* ── Theme editor details ────────────────────────────────────────────── */
+    .pg-theme-editor {
+      padding: 0;
+      border: none;
+    }
+
+    .pg-theme-editor-body {
+      padding: 0.75rem 1rem;
+    }
+
+
+
+    /* ── Theme transitions ───────────────────────────────────────────────── */
+    *,
+    ::before,
+    ::after {
+      transition-property: color, background-color, border-color;
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      transition-duration: 200ms;
+    }
+
+    /* ── Content wrapper ─────────────────────────────────────────────────── */
+    .content-wrapper {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      transition: margin-left 0.25s ease;
+      padding: 2rem 0 4rem;
+      min-width: 0;
+    }
+
+    .content-wrapper.sidebar-closed {
+      margin-left: 0;
+    }
+
+    .content-inner {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    /* ── Toast Notifications ─────────────────────────────────────────────── */
+    .pg-toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 9999;
+      pointer-events: none;
+    }
+    .pg-toast {
+      background: var(--clampography-surface, #fff);
+      color: var(--clampography-text, #333);
+      border: 1px solid var(--clampography-border, #ccc);
+      border-left: 4px solid var(--clampography-success, #22c55e);
+      padding: 12px 20px;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      font-size: 0.85rem;
+      font-weight: 500;
+      animation: pg-toast-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    .pg-toast.error { border-left-color: var(--clampography-error, #ef4444); }
+    .pg-toast.warning { border-left-color: var(--clampography-warning, #f59e0b); }
+    .pg-toast.info { border-left-color: var(--clampography-info, #3b82f6); }
+    @keyframes pg-toast-in {
+      from { transform: translateX(120%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+  </style>
+</head>
+
+<body class="bg-clampography-background text-clampography-text">
+  <!-- ── Sidebar (Vue 3 app) ──────────────────────────────────────────────── -->
+  <aside class="pg-sidebar" id="pg-sidebar" data-theme="dark">
+    <div class="pg-sidebar-section" style="display: flex; align-items: center; justify-content: space-between">
+      <span style="font-weight: 700; font-size: 0.85rem; color: var(--clampography-heading, #111)">Clampography</span>
+      <span class="pg-version-badge">vX.X.X</span>
+    </div>
+
+    <!-- Plugin options -->
+    <div class="pg-sidebar-section">
+      <span class="pg-sidebar-label">Plugin Options</span>
+      <div class="pg-toggle-row">
+        <div class="pg-toggle-item" @click="extra = !extra" style="font-weight: bold">
+          Extra
+          <input type="checkbox" v-model="extra">
+          <div class="pg-switch"></div>
+        </div>
+        <div class="pg-toggle-item" @click="forms = !forms" style="font-weight: bold">
+          Forms
+          <input type="checkbox" v-model="forms">
+          <div class="pg-switch"></div>
+        </div>
+        <div class="pg-toggle-item" @click="kbd = !kbd" style="font-weight: bold">
+          Kbd
+          <input type="checkbox" v-model="kbd">
+          <div class="pg-switch"></div>
+        </div>
+        <div class="pg-toggle-item" @click="themes = !themes" style="font-weight: bold">
+          Themes
+          <input type="checkbox" v-model="themes">
+          <div class="pg-switch"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Font switcher -->
+    <div class="pg-sidebar-section">
+      <span class="pg-sidebar-label">Font</span>
+      <div class="pg-carousel">
+        <button @click="prevFont" title="Previous Font">&larr;</button>
+        <span>{{ currentFont.label }}</span>
+        <button @click="nextFont" title="Next Font">&rarr;</button>
+      </div>
+    </div>
+
+    <!-- Theme switcher -->
+    <div class="pg-sidebar-section" :style="{ opacity: themes ? 1 : 0.4, pointerEvents: themes ? 'auto' : 'none', transition: 'opacity 0.3s' }">
+      <span class="pg-sidebar-label" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+        <span style="display: flex; align-items: center; gap: 0.4rem;">
+          Theme
+          <select v-model="themeFilter" style="font-size: 0.6rem; padding: 0 2px; border: 1px solid var(--clampography-border, #ccc); border-radius: 3px; background: var(--clampography-surface, #fff); color: var(--clampography-text, #333); outline: none; cursor: pointer;">
+            <option value="all">All</option>
+            <option value="official">Official</option>
+            <option value="dev">Dev</option>
+          </select>
+        </span>
+        <span style="display: flex; gap: 0.3rem;">
+          <strong v-if="contrastWarning" style="color:var(--clampography-error, #ef4444); font-size: 0.65rem;" :title="'WCAG AA Contrast Warning: ' + contrastWarning">[{{ contrastWarning }}]</strong>
+          <strong v-if="currentThemeName !== 'auto' && !isOfficialTheme" style="color:var(--clampography-warning, #f59e0b); font-size: 0.65rem;" title="Experimental Theme">[dev]</strong>
+        </span>
+      </span>
+      <div class="pg-carousel" style="padding: 0.1rem; transition: border-color 0.2s;" :style="{ borderColor: (currentThemeName !== 'auto' && !isOfficialTheme) ? 'var(--clampography-warning, #f59e0b)' : '' }">
+        <button @click="prevTheme" title="Previous Theme">&larr;</button>
+        
+        <span v-if="currentThemeName === 'auto'" style="flex: 1; text-align: center; font-family: monospace; font-size: 0.78rem;">auto</span>
+        
+        <div v-else style="display: flex; flex: 1; align-items: center; justify-content: center; gap: 0.2rem; position: relative;">
+          <input type="text" v-model="editableThemeName" style="flex: 1; width: 0; min-width: 60px; font-size: 0.75rem; border: none; border-bottom: 1px dashed var(--clampography-border, #ccc); padding: 0; background: transparent; color: var(--clampography-text, #333); font-family: monospace; text-align: center; outline: none;" title="Edit Theme Name">
+          <select
+            @change="jumpToTheme($event.target.value); $event.target.value = ''"
+            style="flex-shrink: 0; appearance: none; -webkit-appearance: none; background: transparent; border: none; color: var(--clampography-muted, #888); cursor: pointer; font-size: 0.7rem; padding: 0 2px; line-height: 1; width: 14px; text-align: center;"
+            title="Jump to theme…">
+            <option value="" disabled selected>&#9660;</option>
+            <option v-for="t in filteredThemes" :key="t" :value="t" :selected="t === currentThemeName">{{ t }}</option>
+          </select>
+        </div>
+
+        <button @click="nextTheme" title="Next Theme  •  [&#8594;] or [Space]">&rarr;</button>
+      </div>
+    </div>
+
+    <!-- Theme editor -->
+    <div class="pg-theme-editor" v-if="currentThemeName !== 'auto'">
+      <div class="pg-theme-editor-body" style="border-top: 1px solid var(--clampography-border, #d0d0d0);">
+        <div v-for="item in COLOR_VARS" :key="item.id" class="pg-color-row">
+          <span class="pg-color-name">{{ item.label }}</span>
+          <div style="display: flex; align-items: center; gap: 0.3rem">
+            <span v-if="colorMsg[item.id]"
+              style="font-size: 0.65rem; font-family: monospace; color: var(--clampography-success, #22c55e); min-width: 50px; text-align: right">{{
+              colorMsg[item.id] }}</span>
+            <input v-else type="text" readonly :value="hexToOklch(colors[item.id])"
+              style="width: 130px; font-size: 0.65rem; border: 1px solid var(--clampography-border, #ccc); border-radius: 3px; padding: 2px 4px; background: transparent; color: var(--clampography-muted, #888); font-family: monospace; cursor: copy"
+              @click="$event.target.select()" title="Click to copy OKLCH">
+            <input type="color" :value="colors[item.id]"
+              @input="colors[item.id] = $event.target.value; updateVar(item.v, $event.target.value)"
+              @click="onColorClick($event, item)" @contextmenu.prevent="onColorRightClick($event, item)"
+              style="margin: 0" :title="'Click: open picker  •  Ctrl+Click: copy  •  Ctrl+RightClick: paste'">
+          </div>
+        </div>
+        <div style="display: flex; gap: 0.3rem; margin-top: 0.5rem">
+          <button @click="saveTheme" :disabled="currentThemeName === 'auto'"
+            style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-border, #ccc); border-radius: 4px; background: var(--clampography-primary, #3b82f6); color: #fff; transition: opacity 0.2s"
+            title="Save current theme  •  [S]">
+            Save
+          </button>
+          <button @click="cloneTheme"
+            style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-border, #ccc); border-radius: 4px; background: transparent; color: var(--clampography-text, #333); transition: color 0.2s"
+            title="Clone current theme  •  [C]">
+            Clone
+          </button>
+          <button @click="resetTheme" :disabled="currentThemeName === 'auto'"
+            style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-border, #ccc); border-radius: 4px; background: transparent; color: var(--clampography-text, #333); transition: color 0.2s"
+            title="Reset unsaved changes  •  [R]">
+            Reset
+          </button>
+        </div>
+        <div style="display: flex; gap: 0.3rem; margin-top: 0.5rem">
+          <button @click="publishTheme" v-if="!isOfficialTheme && currentThemeName !== 'auto'"
+            style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-success, #22c55e); border-radius: 4px; background: transparent; color: var(--clampography-success, #22c55e); transition: color 0.2s"
+            title="Publish to Official (src/themes.js)  •  [P]">
+            Publish
+          </button>
+          <button @click="unpublishTheme" v-if="isOfficialTheme && currentThemeName !== 'auto'"
+            style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-warning, #f59e0b); border-radius: 4px; background: transparent; color: var(--clampography-warning, #f59e0b); transition: color 0.2s"
+            title="Move back to Dev (dev/themes-dev.js)">
+            Unpublish
+          </button>
+        </div>
+        <div style="display: flex; gap: 0.3rem; margin-top: 0.5rem">
+          <button @click="deleteTheme" :disabled="currentThemeName === 'auto'"
+            style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-error, #ef4444); border-radius: 4px; background: transparent; color: var(--clampography-error, #ef4444)"
+            title="Delete theme permanently  •  [Del]">
+            Delete
+          </button>
+          <button @click="restoreTheme" :disabled="deleteHistory.length === 0"
+            style="flex: 1; cursor: pointer; padding: 0.3rem; font-size: 0.75rem; border: 1px solid var(--clampography-border, #ccc); border-radius: 4px; background: transparent; color: var(--clampography-muted, #888); transition: color 0.2s"
+            title="Restore last deleted theme  •  [Backspace]">
+            Restore
+          </button>
+        </div>
+        <div class="pg-toast-container">
+          <div v-for="toast in toasts" :key="toast.id" class="pg-toast" :class="toast.type">
+            {{ toast.text }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Sidebar toggle tab -->
+  <button class="pg-sidebar-btn" id="pg-sidebar-btn" title="Toggle sidebar" data-theme="dark">
+    &#8250;
+  </button>
+
+  <div class="content-wrapper" id="content-wrapper">
+    <div class="content-inner">
+      <h1>The Secret Lives of Cats</h1>
+      <p>
+        A typographic specimen exploring <a href="#">feline biology</a>, <a href="#">history</a>, and
+        <mark>mysterious behaviour</mark> across all HTML elements styled
+        exclusively by Clampography. Every heading, paragraph, list, and table
+        you see is rendered <strong>without any custom CSS</strong> &mdash;
+        just the plugin.
+      </p>
+
+      <figure>
+        <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=800&q=80"
+          alt="A curious cat looking into the camera">
+        <figcaption>
+          <cite>Felis catus</cite> in its natural environment of observation
+          and judgement. Photo via <a href="https://unsplash.com" target="_blank">Unsplash</a>.
+        </figcaption>
+      </figure>
+
+      <h2>Masters of Stealth and Silence</h2>
+      <p>
+        Cats (<strong>Felis catus</strong>) have co-habited with humans for
+        roughly <em>10,000 years</em>, yet they remain one of the most <mark>misunderstood</mark> animals on Earth.
+        Unlike dogs, cats were never
+        truly domesticated &mdash; they <em>chose</em> us. You can read more
+        about this <a href="#">feline self-selection</a> in the archaeological
+        record from the <a href="#">Fertile Crescent</a>, where <del>wolves</del> wildcats first began lurking around
+        grain stores.
+        Scholars from the <abbr title="University of California">UC</abbr>
+        system have documented <ins>over 40 distinct vocalisations</ins> that
+        domestic cats use exclusively when communicating with their human
+        companions.
+      </p>
+      <p>
+        A cat&rsquo;s hearing range spans <code>48 Hz&ndash;85 kHz</code>.
+        Press <kbd>Ctrl</kbd> + <kbd>Q</kbd> to remind yourself that a cat can
+        hear frequencies <strong>1.6 octaves</strong> higher than any human.
+        Their ears rotate up to <em>180&deg;</em> independently &mdash; acting
+        like biological satellite dishes pointed directly at the sound of a
+        treat bag opening three rooms away. The technical term for this skill
+        is
+        <dfn>pinnae rotation</dfn>, derived from the Latin <i lang="la">pinna</i> (feather, fin).
+      </p>
+
+      <blockquote>
+        <p>&ldquo;Time spent with cats is never wasted.&rdquo;</p>
+        <footer>
+          &mdash; <cite>Sigmund Freud</cite>, allegedly after his cat knocked
+          his inkwell off the desk
+        </footer>
+      </blockquote>
+
+      <h3>The Physics of the Righting Reflex</h3>
+      <p>
+        Cats have a specialised collarbone that lets them always land on their
+        feet during a fall &mdash; a phenomenon called the <em>aerial righting
+          reflex</em>. They also have <strong>no clavicle attachment</strong>
+        to their spine, allowing them to squeeze through any gap their head
+        fits through. This is sometimes called the
+        <a href="#">liquid cat hypothesis</a>, and while it&rsquo;s not a real
+        scientific paper,
+        <strong>it should be</strong>.
+      </p>
+
+      <p>
+        The minimum safe height for the righting reflex to complete is
+        approximately
+        <data value="30">30 cm</data>. Terminal velocity for a cat is roughly
+        <data value="97">97 km/h</data>, achieved at around <data value="5">5 storeys</data>. Below that, survival rate
+        is paradoxically <em>lower</em> because the cat hasn&rsquo;t had time to relax. This is
+        documented in the <abbr title="Journal of the American Veterinary Medical Association">JAVMA</abbr>
+        and confirmed by every cat who has ever stared at you from a high
+        shelf with complete contempt.
+      </p>
+
+      <h3>Sacred Animals of Ancient Egypt</h3>
+      <p>
+        In <a href="#">ancient Egypt</a>, cats were considered divine. The
+        penalties for harming one were severe, the worship was genuine, and
+        the merchandise was <em>excellent</em>. Scholars note that domestic
+        cat behaviour has remained essentially unchanged since this period.
+        The only real difference is that you are no longer <em>legally
+          required</em> to comply.
+      </p>
+      <ul>
+        <li>
+          The goddess <strong><a href="#">Bastet</a></strong> had the head of
+          a cat and was worshipped at
+          <a href="#">Bubastis</a>
+        </li>
+        <li>
+          Killing a cat, even <em>accidentally</em>, carried severe punishment
+          &mdash; sometimes fatal:
+          <blockquote>
+            <p>
+              According to <a href="#">Diodorus Siculus</a>, Roman soldiers
+              who accidentally killed cats were sometimes lynched by mobs,
+              regardless of <abbr title="Vienna Convention on Diplomatic Relations">diplomatic immunity</abbr>.
+            </p>
+          </blockquote>
+        </li>
+        <li>
+          Cats were mummified and buried alongside their owners &mdash; often
+          with <a href="#">mummified mice</a> for the afterlife journey
+        </li>
+        <li>
+          Estimated mummified cats found in Egypt: over <strong>300,000</strong>, discovered in
+          <time datetime="1888">1888</time> alone
+        </li>
+        <li>
+          <p>
+            The city of <a href="#">Per-Bast</a> was literally named after
+            Bastet. Archaeologists have found:
+          </p>
+          <ul>
+            <li>
+              <strong>Amulets</strong> &mdash; mass-produced in <code>bronze</code>, <code>faience</code>, and gold
+            </li>
+            <li>
+              Votive statues &mdash; ranging from <data value="2">2 cm</data>
+              to <data value="60">60 cm</data> tall
+            </li>
+            <li>
+              <a href="#">Temple complexes</a> described by Herodotus as
+              &ldquo;the most beautiful in all Egypt&rdquo;
+            </li>
+          </ul>
+        </li>
+      </ul>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Dynasty</th>
+            <th>Cat Goddess</th>
+            <th>Centre of Worship</th>
+            <th>Primary Role</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              Old Kingdom <small>(<time datetime="-2686">~2686 BCE</time>)</small>
+            </td>
+            <td><a href="#">Mafdet</a></td>
+            <td>Heliopolis</td>
+            <td>Protector against <em>venomous animals</em></td>
+          </tr>
+          <tr>
+            <td>Middle Kingdom</td>
+            <td><strong><a href="#">Bastet</a></strong></td>
+            <td>Bubastis</td>
+            <td>Fertility, home, <mark>cats</mark></td>
+          </tr>
+          <tr>
+            <td>New Kingdom</td>
+            <td><a href="#">Sekhmet</a></td>
+            <td>Memphis</td>
+            <td>War, plague, <del>cuddling</del> destruction</td>
+          </tr>
+        </tbody>
+        <caption>
+          Egyptian cat deities by dynasty &mdash; source: <cite><a href="#">Encyclopedia of Ancient Egypt</a></cite>
+        </caption>
+      </table>
+
+      <h2>Feline Biology and Behaviour</h2>
+
+      <hgroup>
+        <h3>Sleep, Dreams, and Professional Laziness</h3>
+        <p>A scientific overview of why your cat is asleep right now</p>
+      </hgroup>
+      <p>
+        Cats spend <strong>70% of their lives sleeping</strong> &mdash;
+        roughly
+        <data value="13">13</data>&ndash;<data value="16">16</data> hours a
+        day. During light sleep, their ears still rotate to monitor sounds. In
+        deep <abbr title="Rapid Eye Movement">REM</abbr> sleep, paws twitch
+        from vivid dreams &mdash; likely involving <a href="#">birds they&rsquo;ve never caught</a> and keyboards they
+        <em>have</em>.
+      </p>
+
+      <ul>
+        <li>
+          Cats cannot taste sweetness &mdash; they lack the <code>Tas1r2</code> gene
+          <ol>
+            <li>
+              This is a recessive mutation shared by <em>all</em> <a href="#">felids</a>
+              <ul>
+                <li>
+                  <i>Panthera leo</i> (Lions) &mdash; <strong>confirmed</strong>
+                </li>
+                <li>
+                  <i>Panthera tigris</i> (Tigers) &mdash; <strong>confirmed</strong>
+                </li>
+                <li>
+                  <i>Acinonyx jubatus</i> (Cheetahs) &mdash; <a href="#">see study</a>
+                </li>
+              </ul>
+            </li>
+            <li>
+              Lions and tigers share this same trait
+              <ul>
+                <li>
+                  Even big cats are indifferent to sugar
+                  <ol>
+                    <li>
+                      Unlike dogs, who have a <a href="#">sweet tooth</a>
+                      <ul>
+                        <li>
+                          Especially <a href="#">Golden Retrievers</a>
+                          <ol>
+                            <li>
+                              Observed in <cite>laboratory settings</cite>
+                            </li>
+                            <li>And also <em>in my backyard</em></li>
+                          </ol>
+                        </li>
+                        <li>
+                          Even Pugs love apples &mdash; <mark>this is
+                            verified</mark>
+                        </li>
+                      </ul>
+                    </li>
+                    <li>
+                      Unlike bears, who love <a href="#">honey</a> (<abbr
+                        title="As documented by Winnie the Pooh">source</abbr>)
+                    </li>
+                  </ol>
+                </li>
+                <li>
+                  They primarily rely on scent and texture &mdash; <code>olfactory.priority = 1</code>
+                </li>
+              </ul>
+            </li>
+            <li>
+              Evolutionary biologists believe this is why cats are <a href="#">obligate carnivores</a>
+            </li>
+          </ol>
+        </li>
+        <li>
+          <p>
+            A group of cats is called a <em>clowder</em>. A group of kittens
+            is called a <em>kindle</em>. A group of cats ignoring you is
+            called a <strong>Tuesday</strong>.
+          </p>
+          <ul>
+            <li>
+              Other interesting collective nouns &mdash; for <a href="#">comparison</a>:
+              <ol>
+                <li>A <em>glint</em> of goldfish</li>
+                <li>
+                  A <em>murder</em> of crows &mdash; (<mark>very
+                    on-brand</mark>)
+                </li>
+                <li>A <em>business</em> of ferrets</li>
+                <li>A <em>parliament</em> of owls</li>
+              </ol>
+            </li>
+          </ul>
+        </li>
+        <li>
+          Cats rarely meow at other cats &mdash; meowing is a <a href="#">language invented just for humans</a>
+        </li>
+        <li>
+          A cat&rsquo;s nose print is as unique as a human fingerprint &mdash;
+          <del>this has been used in court</del>
+          <ins>this has not yet been used in court, but it should be</ins>
+        </li>
+      </ul>
+
+      <h4>
+        Purring: <data value="25">25</data>&ndash;<data value="150">150</data>
+        Hz Healing Frequencies
+      </h4>
+      <p>
+        The purr frequency of <code>25&ndash;50 Hz</code> has been shown to
+        promote
+        <a href="#">bone density and wound healing</a> in humans. Which means
+        your cat is either a
+        <strong>therapeutic device</strong> or just pretending to be one in
+        exchange for food. The technical jury is still out. The cat,
+        meanwhile, has already decided: it&rsquo;s both, and the fee is
+        breakfast at <time datetime="05:00">5am</time>.
+      </p>
+
+      <p>The language of cat body signals, in order of social importance:</p>
+      <ol>
+        <li>
+          <strong>Slow blinking</strong> &mdash; recognised sign of trust.
+          Return the blink.
+          <a href="#">Here&rsquo;s how.</a>
+        </li>
+        <li>
+          <strong>Head-bunting</strong> your forehead &mdash; marks you as <em>owned territory</em>
+        </li>
+        <li>
+          <strong>Cat yawning</strong> in your presence &mdash; signals they
+          feel unthreatened. Or bored. Probably both.
+        </li>
+        <li>
+          <strong>Chirping</strong> at birds &mdash; instinctive <abbr
+            title="Chattering Attack Response">jaw-chattering</abbr> reflex, possibly from frustration
+        </li>
+        <li>
+          <strong>Kneading</strong> (&ldquo;making biscuits&rdquo;) &mdash;
+          comfort behaviour from kittenhood, now deployed on your <del>laptop</del> <ins>stomach</ins> at <time
+            datetime="03:00">3am</time>
+        </li>
+        <li>
+          <strong>Bringing you dead prey</strong> &mdash; a remedial lesson in
+          hunting. Be humble.
+          <a href="#">Read the research.</a>
+        </li>
+      </ol>
+
+      <h5>The Tail as a Real-Time Mood Barometer</h5>
+      <pre><code>// Determine if a cat is currently judging you
+function isBeingJudged(cat) {
+  const { eyeContact, tailPosition, earOrientation } = cat;
+
+  if (eyeContact === 'slow-blink') return false;   // trust established
+  if (tailPosition === 'puffed')   return 'imminent danger';
+  if (earOrientation === 'flat')   return 'maximum judgment';
+
+  // The unblinking stare: a philosophical statement
+  return eyeContact === 'unblinking-stare'; // probably yes
+}
+
+console.log(isBeingJudged(myCat)); // true, always true</code></pre>
+
+      <h2>Popular Domestic Breeds</h2>
+      <p>
+        Below is a selection of popular breeds. All weight data is from the
+        <abbr title="World Cat Federation">WCF</abbr> registry. Links lead to
+        <a href="#">breed profiles</a>
+        that may or may not exist.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Breed</th>
+            <th>Origin</th>
+            <th>Avg. Weight</th>
+            <th>Known For</th>
+            <th>Noise Level</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="#"><strong>Maine Coon</strong></a></td>
+            <td><abbr title="United States of America">USA</abbr></td>
+            <td>
+              <data value="5">5</data>&ndash;<data value="8">8</data> kg
+            </td>
+            <td>Dog-like loyalty, <a href="#">tufted ears</a></td>
+            <td><meter min="0" max="5" value="2" title="2/5"></meter></td>
+          </tr>
+          <tr>
+            <td><a href="#"><strong>Siamese</strong></a></td>
+            <td>Thailand</td>
+            <td>
+              <data value="3">3</data>&ndash;<data value="5">5</data> kg
+            </td>
+            <td><mark>Loud opinions</mark>, blue eyes</td>
+            <td><meter min="0" max="5" value="5" title="5/5"></meter></td>
+          </tr>
+          <tr>
+            <td><a href="#"><strong>Scottish Fold</strong></a></td>
+            <td>Scotland</td>
+            <td>
+              <data value="3">3</data>&ndash;<data value="6">6</data> kg
+            </td>
+            <td>Folded ears, <em>owl-like posture</em></td>
+            <td><meter min="0" max="5" value="2" title="2/5"></meter></td>
+          </tr>
+          <tr>
+            <td><a href="#"><strong>Bengal</strong></a></td>
+            <td>
+              <abbr title="United States of America">USA</abbr> (hybrid)
+            </td>
+            <td>
+              <data value="4">4</data>&ndash;<data value="7">7</data> kg
+            </td>
+            <td>
+              Leopard spots, <del>calm temperament</del> <ins>high
+                energy</ins>
+            </td>
+            <td><meter min="0" max="5" value="4" title="4/5"></meter></td>
+          </tr>
+          <tr>
+            <td><a href="#"><strong>Ragdoll</strong></a></td>
+            <td><abbr title="United States of America">USA</abbr></td>
+            <td>
+              <data value="5">5</data>&ndash;<data value="9">9</data> kg
+            </td>
+            <td>Goes limp when held &mdash; <code>floppy: true</code></td>
+            <td><meter min="0" max="5" value="1" title="1/5"></meter></td>
+          </tr>
+          <tr>
+            <td><a href="#"><strong>Sphynx</strong></a></td>
+            <td>Canada</td>
+            <td>
+              <data value="3">3</data>&ndash;<data value="5">5</data> kg
+            </td>
+            <td><em>Hairless</em>, warm to touch, demands attention</td>
+            <td><meter min="0" max="5" value="3" title="3/5"></meter></td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="5">
+              <small>Noise level rated
+                <data value="1">1</data>&ndash;<data value="5">5</data>. Data
+                last verified
+                <time datetime="2025-01">January 2025</time>.</small>
+            </td>
+          </tr>
+        </tfoot>
+        <caption>
+          Selected domestic cat breeds &mdash; source:
+          <cite><a href="#">World Cat Federation Registry</a></cite>
+        </caption>
+      </table>
+
+      <h2>Cat Jokes: A Necessary Appendix</h2>
+      <p>
+        Science requires <em>balance</em>. For every peer-reviewed paper,
+        there must be at least one terrible joke. This is known as the <a href="#">Principle of Comedic
+          Conservation</a>.
+      </p>
+
+      <blockquote>
+        <p>
+          &ldquo;My cat stared at a blank wall for 45 minutes. I moved the
+          sofa, checked for pests, called an electrician, and booked a shaman.
+          Then the cat walked away and asked for dinner.&rdquo;
+        </p>
+        <footer>
+          &mdash; <cite>Anonymous cat owner, $340 poorer</cite>
+        </footer>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          &ldquo;What do you call a cat that gets everything it wants?&rdquo;
+        </p>
+        <blockquote>
+          <p>&ldquo;A cat.&rdquo;</p>
+          <footer>
+            &mdash; <cite>Everyone who has ever owned one,
+              simultaneously</cite>
+          </footer>
+        </blockquote>
+      </blockquote>
+
+      <blockquote>
+        <p>&ldquo;Why did the cat sit on the computer?&rdquo;</p>
+        <blockquote>
+          <p>&ldquo;To keep an eye on the mouse.&rdquo;</p>
+          <blockquote>
+            <p>Specifically <code>event.target === mouse</code>.</p>
+            <footer>&mdash; <cite>A developer who owns cats</cite></footer>
+          </blockquote>
+        </blockquote>
+      </blockquote>
+
+      <dl>
+        <dt><abbr title="Felis catus">Vibrissae</abbr></dt>
+        <dd>
+          The technical term for a cat&rsquo;s <a href="#">whiskers</a>, used
+          for navigation and sensing in low-light conditions. They span
+          exactly the width of the cat&rsquo;s body &mdash; a built-in
+          <code>max-width</code> detector.
+        </dd>
+
+        <dt>Clowder</dt>
+        <dd>
+          A group of adult cats. Also known as a <em>glaring</em> when they
+          are unfamiliar with each other. Also known as a <em>Monday</em> when
+          they&rsquo;re yours.
+        </dd>
+
+        <dt>Kindle</dt>
+        <dd>
+          A group of kittens born to one mother. Not to be confused with the
+          <a href="#">electronic reader</a>, though both <mark>drain your
+            battery</mark>.
+        </dd>
+
+        <dt>Felid</dt>
+        <dd>
+          A member of the <a href="#">family Felidae</a>, which includes all
+          cats from the
+          <i>Felis catus</i> on your sofa to <i>Panthera leo</i> on the
+          savanna. All equally convinced they are superior to you. The
+          domestic variety has simply learned to make you pay the rent while
+          they supervise.
+        </dd>
+
+        <dt>Nepetalactone <sup><a href="#">[1]</a></sup></dt>
+        <dd>
+          The active compound in <a href="#">catnip</a> (<i lang="la">Nepeta cataria</i>) that binds to feline olfactory
+          receptors.
+          Affects approximately <strong>50&ndash;70%</strong> of cats. The
+          remaining <strong>30&ndash;50%</strong> are simply <em>too
+            dignified</em>.
+        </dd>
+      </dl>
+
+      <h3>Submit Feline Registry Entry</h3>
+      <p>
+        Use this form to register a new entry in the <abbr title="Global Feline Authority">GFA</abbr> database. Fields
+        marked <strong>*</strong> are required.
+        Data is transmitted via
+        <abbr title="HyperText Transfer Protocol Secure">HTTPS</abbr> to a
+        server that does not exist.
+      </p>
+
+      <!-- Developer toggles for form states -->
+      <div
+        style="display: flex; gap: 0.5rem; margin-bottom: 1rem; padding: 0.5rem; border: 1px dashed var(--clampography-border); border-radius: 4px; background: var(--clampography-surface)">
+        <label
+          style="font-size: 0.8rem; font-family: monospace; display: flex; align-items: center; gap: 0.3rem; cursor: pointer">
+          <input type="checkbox" id="dev-toggle-readonly" onchange='document.querySelectorAll(
+  "#feline-form input, #feline-form select, #feline-form textarea",
+).forEach((el) => el.readOnly = this.checked)'>
+          Force <code>readonly</code>
+        </label>
+        <label
+          style="font-size: 0.8rem; font-family: monospace; display: flex; align-items: center; gap: 0.3rem; cursor: pointer">
+          <input type="checkbox" id="dev-toggle-invalid" onchange='document.querySelectorAll(
+  "#feline-form input, #feline-form select, #feline-form textarea",
+).forEach((el) =>
+  this.checked ? el.setCustomValidity("Error") : el.setCustomValidity("")
+)'>
+          Force <code>:user-invalid</code>
+        </label>
+      </div>
+
+      <form id="feline-form" onsubmit="return false">
+        <div
+          style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); margin-bottom: var(--spacing-md)">
+          <div>
+            <label for="cat-name">Cat Name <strong>*</strong></label>
+            <input type="text" id="cat-name" placeholder="e.g. Luna">
+          </div>
+          <div>
+            <label for="cat-age">Age <small>(years)</small></label>
+            <input type="number" id="cat-age" placeholder="e.g. 4" min="0" max="30">
+          </div>
+        </div>
+        <div
+          style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); margin-bottom: var(--spacing-md)">
+          <div>
+            <label for="cat-email">Owner Email <strong>*</strong></label>
+            <input type="email" id="cat-email" placeholder="owner@example.com">
+          </div>
+          <div>
+            <label for="breed">Breed Category</label>
+            <select id="breed">
+              <optgroup label="Shorthair">
+                <option>Domestic Shorthair</option>
+                <option>Siamese</option>
+                <option>Bengal</option>
+              </optgroup>
+              <optgroup label="Longhair">
+                <option>Maine Coon</option>
+                <option>Ragdoll</option>
+                <option>Norwegian Forest Cat</option>
+              </optgroup>
+              <option>Other / Unknown</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-bottom: var(--spacing-md)">
+          <label for="notes">Behavioral Notes</label>
+          <textarea id="notes" rows="3"
+            placeholder="Describe temperament, quirks, and current crimes against furniture..."></textarea>
+        </div>
+        <div style="margin-bottom: var(--spacing-md)">
+          <label for="cat-photo">Cat Photo <small>(<abbr title="Joint Photographic Experts Group">JPG</abbr>, <abbr
+                title="Portable Network Graphics">PNG</abbr>
+              or <abbr title="Graphics Interchange Format">GIF</abbr>)</small></label>
+          <input type="file" id="cat-photo" accept="image/*">
+        </div>
+        <div
+          style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); margin-bottom: var(--spacing-md)">
+          <div>
+            <label for="fluffiness">Fluffiness Level: <output for="fluffiness" id="fluff-out">72</output>%</label>
+            <input type="range" id="fluffiness" min="0" max="100" value="72" oninput='document.getElementById("fluff-out").value = this.value;
+document.getElementById("progress-demo").value = this.value;
+document.getElementById("progress-demo").textContent = this.value + "%";
+document.getElementById("meter-demo").value = this.value;
+document.getElementById("meter-demo").textContent = this.value + "%"'>
+          </div>
+          <div>
+            <label for="fur-color">Primary Fur Color</label>
+            <input type="color" id="fur-color" value="#f4a460">
+          </div>
+        </div>
+        <div style="margin-bottom: var(--spacing-md)">
+          <label for="progress-demo">Registration Progress</label>
+          <progress id="progress-demo" value="72" max="100">72%</progress>
+        </div>
+        <div style="margin-bottom: var(--spacing-md)">
+          <label for="meter-demo">Cat Energy Level</label>
+          <meter id="meter-demo" min="0" max="100" value="72" optimum="100" high="70" low="30">
+            72%
+          </meter>
+        </div>
+        <fieldset>
+          <legend>Notification Preferences</legend>
+          <p>
+            <label style="display: flex; align-items: center; gap: 0.5rem">
+              <input type="checkbox" checked> Notify me about catnip updates
+              via
+              <abbr title="Electronic Mail">e-mail</abbr>
+            </label>
+          </p>
+          <p>
+            <label style="display: flex; align-items: center; gap: 0.5rem">
+              <input type="checkbox"> Send weekly reports on my cat&rsquo;s
+              <abbr title="Sleep Efficiency Index">SEI</abbr> score
+            </label>
+          </p>
+          <p>
+            <label style="display: flex; align-items: center; gap: 0.5rem">
+              <input type="radio" name="urgency" value="low" checked> Low
+              urgency
+              <small>(response within <time datetime="P30D">30 days</time>)</small>
+            </label>
+          </p>
+          <p>
+            <label style="display: flex; align-items: center; gap: 0.5rem">
+              <input type="radio" name="urgency" value="high"> High urgency
+              <small>(cat has knocked something off a shelf)</small>
+            </label>
+          </p>
+        </fieldset>
+        <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-md)">
+          <button type="submit">Register Feline</button>
+          <button type="reset">Clear Form</button>
+        </div>
+        <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-md)">
+          <button type="button" style="background-color: var(--clampography-success); border-color: var(--clampography-success); color: #fff;">Success</button>
+          <button type="button" style="background-color: var(--clampography-info); border-color: var(--clampography-info); color: #fff;">Info</button>
+          <button type="button" style="background-color: var(--clampography-warning); border-color: var(--clampography-warning); color: #000;">Warning</button>
+          <button type="button" style="background-color: var(--clampography-error); border-color: var(--clampography-error); color: #fff;">Error</button>
+        </div>
+      </form>
+
+      <p>
+        <small>System status: <samp>All systems
+            purring...</samp> &mdash; Last sync: <time datetime="2025-01-01T00:00:00">midnight, 1 January
+            2025</time>.</small>
+      </p>
+
+      <hr>
+
+      <h2>Keyboard Shortcuts</h2>
+      <p>
+        The <code>&lt;kbd&gt;</code> element represents user keyboard input.
+        With <code>kbd: true</code> enabled, each key is rendered with a
+        <strong>3D isometric effect</strong> &mdash; layered
+        <code>box-shadow</code> simulates the visible side face and cast
+        shadow of a real keycap. Click any key below to see the <a href="#">press animation</a>.
+      </p>
+
+      <h4>Key Combinations</h4>
+      <p>
+        Press <kbd>Ctrl</kbd> + <kbd>C</kbd> to copy, <kbd>Ctrl</kbd> + <kbd>V</kbd> to paste, and <kbd>Ctrl</kbd> +
+        <kbd>Z</kbd> to undo your
+        mistakes. Or just
+        <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>Delete</kbd> and start over
+        entirely.
+      </p>
+
+      <p>
+        Common terminal shortcuts: <kbd>Ctrl</kbd> + <kbd>D</kbd> to exit,
+        <kbd>Ctrl</kbd> + <kbd>C</kbd> to interrupt, and
+        <kbd>Ctrl</kbd> + <kbd>R</kbd> to search history.
+      </p>
+
+      <h4>Common Shortcut Reference</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Action</th>
+            <th>Windows / Linux</th>
+            <th>macOS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Copy</td>
+            <td><kbd>Ctrl</kbd> + <kbd>C</kbd></td>
+            <td><kbd>⌘</kbd> + <kbd>C</kbd></td>
+          </tr>
+          <tr>
+            <td>Paste</td>
+            <td><kbd>Ctrl</kbd> + <kbd>V</kbd></td>
+            <td><kbd>⌘</kbd> + <kbd>V</kbd></td>
+          </tr>
+          <tr>
+            <td>Undo</td>
+            <td><kbd>Ctrl</kbd> + <kbd>Z</kbd></td>
+            <td><kbd>⌘</kbd> + <kbd>Z</kbd></td>
+          </tr>
+          <tr>
+            <td>Save</td>
+            <td><kbd>Ctrl</kbd> + <kbd>S</kbd></td>
+            <td><kbd>⌘</kbd> + <kbd>S</kbd></td>
+          </tr>
+          <tr>
+            <td>Select All</td>
+            <td><kbd>Ctrl</kbd> + <kbd>A</kbd></td>
+            <td><kbd>⌘</kbd> + <kbd>A</kbd></td>
+          </tr>
+          <tr>
+            <td>Find</td>
+            <td><kbd>Ctrl</kbd> + <kbd>F</kbd></td>
+            <td><kbd>⌘</kbd> + <kbd>F</kbd></td>
+          </tr>
+          <tr>
+            <td>Switch tab</td>
+            <td><kbd>Ctrl</kbd> + <kbd>Tab</kbd></td>
+            <td><kbd>⌘</kbd> + <kbd>⌥</kbd> + <kbd>&rarr;</kbd></td>
+          </tr>
+          <tr>
+            <td>Open DevTools</td>
+            <td>
+              <kbd>F12</kbd> or <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>I</kbd>
+            </td>
+            <td><kbd>⌘</kbd> + <kbd>⌥</kbd> + <kbd>I</kbd></td>
+          </tr>
+        </tbody>
+        <caption>
+          Common keyboard shortcuts &mdash; toggle <strong>Kbd</strong> in the
+          toolbar to compare styled vs. unstyled
+        </caption>
+      </table>
+
+      <hr>
+
+      <h6>Frequently Asked Questions</h6>
+
+      <details name="demo-details">
+        <summary>Why do cats bring you dead animals?</summary>
+        <p>
+          Your cat considers you a <strong>terrible hunter</strong>. By
+          bringing you prey, it is attempting to
+          <em>teach you to survive</em>. This is not a gift &mdash; it is a
+          remedial lesson in basic predator skills.
+          <a href="#">Several studies</a> support this interpretation. The
+          correct response is to accept the offering with dignity, say
+          &ldquo;thank you&rdquo; out loud, and then spend the next ten
+          minutes pretending to eat it while your cat watches to make sure
+          you&rsquo;re doing it right.
+        </p>
+      </details>
+      <details name="demo-details">
+        <summary>Can cats get high on catnip?</summary>
+        <p>
+          Not exactly. <code>Nepetalactone</code>, the active compound in
+          catnip, binds to feline olfactory receptors and mimics a cat
+          pheromone. The reaction &mdash; rolling, drooling, vocalising
+          &mdash; lasts about
+          <strong>10 minutes</strong>. Roughly <strong>30% of cats</strong>
+          carry a recessive gene that makes them completely unresponsive. They
+          judge the other 70% silently from across the room.
+        </p>
+      </details>
+      <details open name="demo-details">
+        <summary>Why does my cat knock things off tables?</summary>
+        <p>
+          There are three leading theories: <em>(1)</em> they are testing
+          gravity to make sure it still works;
+          <em>(2)</em> they are checking if the object is alive; <em>(3)</em>
+          they simply enjoy the sound of your
+          <del>patience</del> <ins>ceramic mug</ins> shattering. Current
+          scientific consensus favours option
+          <strong>(3)</strong>. <a href="#">See: Newton&rsquo;s Third Law of Cat Physics.</a>
+        </p>
+      </details>
+    </div>
+  </div>
+
+  <script>
+    // ─── Sidebar toggle (vanilla — button is outside Vue scope) ─────────────────────
+    const pgSidebar = document.getElementById("pg-sidebar");
+    const pgSidebarBtn = document.getElementById("pg-sidebar-btn");
+    const contentWrapper = document.getElementById("content-wrapper");
+
+    let sidebarOpen =
+      localStorage.getItem("clampography-sidebar") !== "closed";
+
+    function setSidebar(open) {
+      sidebarOpen = open;
+      pgSidebar.classList.toggle("is-closed", !open);
+      pgSidebarBtn.classList.toggle("is-closed", !open);
+      pgSidebarBtn.textContent = open ? "\u2039" : "\u203a";
+
+      const w = pgSidebar.offsetWidth + "px";
+      pgSidebarBtn.style.left = open ? w : "0";
+      contentWrapper.classList.toggle("sidebar-closed", !open);
+      contentWrapper.style.marginLeft = open ? w : "0";
+
+      localStorage.setItem("clampography-sidebar", open ? "open" : "closed");
+    }
+
+    pgSidebarBtn.addEventListener("click", () => setSidebar(!sidebarOpen));
+    setSidebar(sidebarOpen);
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        if (sidebarOpen) {
+          const w = entry.target.offsetWidth + "px";
+          pgSidebarBtn.style.left = w;
+          contentWrapper.style.marginLeft = w;
+        }
+      }
+    });
+    resizeObserver.observe(pgSidebar);
+  </script>
+
+  <!-- ─── Vue 3 — Sidebar app (controls + theme editor) ──────────────────────── -->
+  <script>
+    {
+      const { createApp, ref, reactive, computed, watch, onMounted } = Vue;
+
+      // — Static data —
+      const AVAILABLE_THEMES = []; // replaced by server.js
+      const THEME_DATA = {}; // replaced by server.js
+      const OFFICIAL_THEMES = []; // replaced by server.js
+
+      const FONTS = [
+        { label: "System", stack: "system-ui, sans-serif" },
+        { label: "Inter", stack: "'Inter', sans-serif" },
+        { label: "Roboto", stack: "'Roboto', sans-serif" },
+        { label: "Poppins", stack: "'Poppins', sans-serif" },
+        { label: "Montserrat", stack: "'Montserrat', sans-serif" },
+        { label: "Open Sans", stack: "'Open Sans', sans-serif" },
+        { label: "Lato", stack: "'Lato', sans-serif" },
+        { label: "Ubuntu", stack: "'Ubuntu', sans-serif" },
+        { label: "Oswald", stack: "'Oswald', sans-serif" },
+        { label: "Space Grotesk", stack: "'Space Grotesk', sans-serif" },
+        { label: "Playfair", stack: "'Playfair Display', serif" },
+        { label: "Merriweather", stack: "'Merriweather', serif" },
+        { label: "Lora", stack: "'Lora', serif" },
+        { label: "Quando", stack: "'Quando', serif" },
+        { label: "Josefin Light", stack: "'Josefin Sans', sans-serif" },
+        { label: "Nunito Light", stack: "'Nunito', sans-serif" },
+        { label: "Fira Mono", stack: "'Fira Mono', monospace" },
+        { label: "Comic Neue", stack: "'Comic Neue', cursive" },
+      ];
+
+      const COLOR_VARS = [
+        {
+          id: "background",
+          label: "Background",
+          v: "--clampography-background",
+        },
+        { id: "surface", label: "Surface", v: "--clampography-surface" },
+        { id: "text", label: "Text", v: "--clampography-text" },
+        { id: "heading", label: "Heading", v: "--clampography-heading" },
+        { id: "primary", label: "Primary", v: "--clampography-primary" },
+        {
+          id: "secondary",
+          label: "Secondary",
+          v: "--clampography-secondary",
+        },
+        { id: "muted", label: "Muted", v: "--clampography-muted" },
+        { id: "border", label: "Border", v: "--clampography-border" },
+        { id: "link", label: "Link", v: "--clampography-link" },
+        { id: "success", label: "Success", v: "--clampography-success" },
+        { id: "warning", label: "Warning", v: "--clampography-warning" },
+        { id: "error", label: "Error", v: "--clampography-error" },
+        { id: "info", label: "Info", v: "--clampography-info" },
+      ];
+
+      // — DOM refs for side effects outside Vue scope —
+      const cssLink = document.getElementById("main-css");
+      const cw = document.getElementById("content-wrapper");
+
+      // — Utils —
+      const canvasCtx = document.createElement("canvas").getContext("2d", {
+        willReadFrequently: true,
+      });
+      canvasCtx.canvas.width = 1;
+      canvasCtx.canvas.height = 1;
+
+      // Convert OKLCH to HEX precisely (reverse engineering)
+      function oklchToHex(l, c, h) {
+        let lVal = parseFloat(l);
+        if (typeof l === "string" && l.includes("%")) {
+          lVal /= 100;
+        } else if (lVal > 1.0) {
+          lVal /= 100;
+        }
+        l = lVal;
+        c = parseFloat(c);
+        h = parseFloat(h) * Math.PI / 180;
+
+        const a = c * Math.cos(h);
+        const b_ = c * Math.sin(h);
+
+        const l_ = l + 0.3963377774 * a + 0.2158037573 * b_;
+        const m_ = l - 0.1055613458 * a - 0.0638541728 * b_;
+        const s_ = l - 0.0894841775 * a - 1.2914855480 * b_;
+
+        const l3 = l_ * l_ * l_;
+        const m3 = m_ * m_ * m_;
+        const s3 = s_ * s_ * s_;
+
+        let r = +4.0767416621 * l3 - 3.3077115913 * m3 + 0.2309699292 * s3;
+        let g = -1.2684380046 * l3 + 2.6097574011 * m3 - 0.3413193965 * s3;
+        let b = -0.0041960863 * l3 - 0.7034186147 * m3 + 1.7076147010 * s3;
+
+        r = r > 0.0031308 ? 1.055 * Math.pow(r, 1 / 2.4) - 0.055 : 12.92 * r;
+        g = g > 0.0031308 ? 1.055 * Math.pow(g, 1 / 2.4) - 0.055 : 12.92 * g;
+        b = b > 0.0031308 ? 1.055 * Math.pow(b, 1 / 2.4) - 0.055 : 12.92 * b;
+
+        r = Math.max(0, Math.min(255, Math.round(r * 255)));
+        g = Math.max(0, Math.min(255, Math.round(g * 255)));
+        b = Math.max(0, Math.min(255, Math.round(b * 255)));
+
+        return "#" +
+          [r, g, b].map((n) => n.toString(16).padStart(2, "0")).join("");
+      }
+
+      function varToHex(cssVar) {
+        // Read from body — data-theme is on body, so vars cascade there
+        // (documentElement only has :root defaults, ignoring active data-theme)
+        const raw = getComputedStyle(document.body).getPropertyValue(cssVar)
+          .trim();
+        if (!raw) return "#888888"; // CSS not loaded yet — caller should retry
+
+        if (raw.startsWith("oklch(")) {
+          const match = raw.match(
+            /oklch\(\s*([\d.]+%?)\s+([\d.e-]+)\s+([\d.e-]+)/,
+          );
+          if (match) return oklchToHex(match[1], match[2], match[3]);
+        }
+
+        // Fallback: resolve through the browser using canvas (for non-oklch values)
+        const el = Object.assign(document.createElement("div"), {
+          style: "position:absolute;visibility:hidden;",
+        });
+        el.style.color = raw; // use the raw value directly, not var()
+        document.body.appendChild(el);
+        const comp = getComputedStyle(el).color;
+        document.body.removeChild(el);
+
+        canvasCtx.clearRect(0, 0, 1, 1);
+        canvasCtx.fillStyle = "#888888";
+        if (comp) canvasCtx.fillStyle = comp;
+        canvasCtx.fillRect(0, 0, 1, 1);
+
+        const [r, g, b] = canvasCtx.getImageData(0, 0, 1, 1).data;
+        return "#" +
+          [r, g, b].map((n) => n.toString(16).padStart(2, "0")).join("");
+      }
+
+      // Convert HEX to exact OKLCH string for clampography themes
+      function hexToOklch(hex) {
+        if (!hex || hex.length !== 7) return "oklch(0% 0 0)";
+        let r = parseInt(hex.slice(1, 3), 16) / 255;
+        let g = parseInt(hex.slice(3, 5), 16) / 255;
+        let b = parseInt(hex.slice(5, 7), 16) / 255;
+
+        // sRGB to Linear sRGB
+        r = r > 0.04045 ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
+        g = g > 0.04045 ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
+        b = b > 0.04045 ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
+
+        // Linear sRGB to LMS
+        const l = 0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b;
+        const m = 0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b;
+        const s = 0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b;
+
+        // LMS to OKLab
+        const l_ = Math.cbrt(l);
+        const m_ = Math.cbrt(m);
+        const s_ = Math.cbrt(s);
+
+        const L = 0.2104542553 * l_ + 0.7936177850 * m_ - 0.0040720468 * s_;
+        const a = 1.9779984951 * l_ - 2.4285922050 * m_ + 0.4505937099 * s_;
+        const b_ = 0.0259040371 * l_ + 0.7827717662 * m_ - 0.8086757660 * s_;
+
+        // OKLab to OKLCH
+        const C = Math.sqrt(a * a + b_ * b_);
+        let h = Math.atan2(b_, a) * 180 / Math.PI;
+        if (h < 0) h += 360;
+
+        // Format exactly how clampography expects it
+        return `oklch(${(L * 100).toFixed(1)}% ${C.toFixed(3)} ${h.toFixed(1)
+          })`;
+      }
+
+      function getLuminance(hex) {
+        if (!hex || hex.length !== 7) return 0;
+        let r = parseInt(hex.slice(1, 3), 16) / 255;
+        let g = parseInt(hex.slice(3, 5), 16) / 255;
+        let b = parseInt(hex.slice(5, 7), 16) / 255;
+        
+        r = r > 0.04045 ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
+        g = g > 0.04045 ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
+        b = b > 0.04045 ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
+        
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      }
+
+      function getContrastRatio(hex1, hex2) {
+        const l1 = getLuminance(hex1);
+        const l2 = getLuminance(hex2);
+        const lighter = Math.max(l1, l2);
+        const darker = Math.min(l1, l2);
+        return (lighter + 0.05) / (darker + 0.05);
+      }
+
+      function getThemeScheme(hex) {
+        return getLuminance(hex) > 0.5 ? "light" : "dark";
+      }
+
+      // — Restore saved state from localStorage —
+      const ls = (k) => localStorage.getItem(k);
+      const lsBool = (k, def = true) =>
+        ls(k) === null ? def : ls(k) === "true";
+
+      createApp({
+        setup() {
+          // ─ Reactive state ─
+          const extra = ref(lsBool("clampography-dev-extra"));
+          const forms = ref(lsBool("clampography-dev-forms"));
+          const kbd = ref(lsBool("clampography-dev-kbd"));
+          const themes = ref(lsBool("clampography-dev-themes-enabled"));
+
+          const currentFontIndex = ref(0);
+          const themeFilter = ref(ls("clampography-dev-theme-filter") || "all");
+
+          watch(themeFilter, (newVal) => {
+            localStorage.setItem("clampography-dev-theme-filter", newVal);
+          });
+
+          const colors = reactive(
+            Object.fromEntries(COLOR_VARS.map(({ id }) => [id, "#888888"])),
+          );
+
+          // ─ Computed ─
+          const currentFont = computed(() => FONTS[currentFontIndex.value]);
+          const officialThemesRef = ref([...OFFICIAL_THEMES]);
+          const availableThemesRef = ref([...AVAILABLE_THEMES]);
+          
+          const filteredThemes = computed(() => {
+            return availableThemesRef.value.filter(t => {
+              if (t === "auto") return false;
+              const isOfficial = officialThemesRef.value.includes(t);
+              if (themeFilter.value === "official") return isOfficial;
+              if (themeFilter.value === "dev") return !isOfficial;
+              return true;
+            });
+          });
+
+          const currentThemeIndex = ref(0);
+
+          watch(filteredThemes, (newThemes) => {
+             const saved = ls("clampography-dev-theme");
+             const idx = newThemes.indexOf(saved);
+             currentThemeIndex.value = idx !== -1 ? idx : 0;
+          }, { immediate: true });
+
+          const currentThemeName = computed(() =>
+            filteredThemes.value[currentThemeIndex.value] || "light"
+          );
+          const isOfficialTheme = computed(() =>
+            officialThemesRef.value.includes(currentThemeName.value)
+          );
+          
+          const contrastWarning = ref(null);
+          let contrastTimeout;
+          
+          watch([colors, currentThemeName], () => {
+            clearTimeout(contrastTimeout);
+            contrastTimeout = setTimeout(() => {
+              if (currentThemeName.value === 'auto') {
+                contrastWarning.value = null;
+                return;
+              }
+              const bg = colors['background'];
+              const text = colors['text'];
+              const heading = colors['heading'];
+              
+              if (!bg) {
+                contrastWarning.value = null;
+                return;
+              }
+              
+              let issues = [];
+              if (text) {
+                const textContrast = getContrastRatio(bg, text);
+                if (textContrast < 4.5) issues.push("text");
+              }
+              if (heading) {
+                const headingContrast = getContrastRatio(bg, heading);
+                if (headingContrast < 3.0) issues.push("heading");
+              }
+              
+              if (issues.length > 0) {
+                contrastWarning.value = "Low contrast (" + issues.join(", ") + ")";
+              } else {
+                contrastWarning.value = null;
+              }
+            }, 300);
+          }, { deep: true, immediate: true });
+
+          const editableThemeName = ref("");
+          const cssSuffix = computed(() =>
+            (themes.value ? "t" : "") + (extra.value ? "e" : "") +
+            (forms.value ? "f" : "") + (kbd.value ? "k" : "") || "n"
+          );
+
+          // ─ Methods ─
+          const prevFont = () => {
+            currentFontIndex.value =
+              (currentFontIndex.value - 1 + FONTS.length) % FONTS.length;
+          };
+          const nextFont = () => {
+            currentFontIndex.value = (currentFontIndex.value + 1) %
+              FONTS.length;
+          };
+          const prevTheme = () => {
+            if (filteredThemes.value.length) {
+              currentThemeIndex.value =
+                (currentThemeIndex.value - 1 + filteredThemes.value.length) %
+                filteredThemes.value.length;
+            }
+          };
+          const nextTheme = () => {
+            if (filteredThemes.value.length) {
+              currentThemeIndex.value = (currentThemeIndex.value + 1) %
+                filteredThemes.value.length;
+            }
+          };
+
+          function jumpToTheme(name) {
+            const idx = filteredThemes.value.indexOf(name);
+            if (idx > -1) currentThemeIndex.value = idx;
+          }
+
+          function syncColors() {
+            const name = currentThemeName.value;
+            const themeObj = THEME_DATA[name]; // direct lookup — no CSS parsing needed
+
+            COLOR_VARS.forEach(({ id, v }) => {
+              if (themeObj && themeObj[v]) {
+                // Parse the known OKLCH value from the JS theme data — always accurate
+                const raw = themeObj[v].trim();
+                const match = raw.match(
+                  /oklch\(\s*([\d.]+%?)\s+([\d.e-]+)\s+([\d.e-]+)/,
+                );
+                colors[id] = match
+                  ? oklchToHex(match[1], match[2], match[3])
+                  : "#888888";
+              } else {
+                // 'auto' or unknown theme: fall back to reading from computed styles
+                colors[id] = varToHex(v);
+              }
+            });
+          }
+
+          // Fallback: poll until CSS is loaded (used only for 'auto'/system theme)
+          function syncColorsWhenReady(attemptsLeft = 40) {
+            const test = getComputedStyle(document.body)
+              .getPropertyValue("--clampography-background").trim();
+            if (test) {
+              syncColors();
+            } else if (attemptsLeft > 0) {
+              requestAnimationFrame(() =>
+                syncColorsWhenReady(attemptsLeft - 1)
+              );
+            }
+          }
+
+          function resetColors() {
+            COLOR_VARS.forEach(({ v }) =>
+              document.body.style.removeProperty(v)
+            );
+            requestAnimationFrame(syncColors);
+          }
+
+          // ─ Side-effect watches ─
+          // CSS variant
+          watch(cssSuffix, (s) => {
+            cssLink.href = `/css/${s}.css`;
+            localStorage.setItem("clampography-dev-extra", extra.value);
+            localStorage.setItem("clampography-dev-forms", forms.value);
+            localStorage.setItem("clampography-dev-kbd", kbd.value);
+            localStorage.setItem(
+              "clampography-dev-themes-enabled",
+              themes.value,
+            );
+
+            // Wait for the new stylesheet to actually apply its CSS variables
+            cssLink.onload = () => requestAnimationFrame(syncColors);
+          }, { immediate: true });
+
+          // Font
+          watch(currentFont, (f) => {
+            cw.style.fontFamily = f.stack;
+          }, { immediate: true });
+
+          // Theme
+          watch([currentThemeName, themes], ([name, enabled]) => {
+            COLOR_VARS.forEach(({ v }) =>
+              document.body.style.removeProperty(v)
+            );
+            if (enabled && name && name !== "auto") {
+              document.body.setAttribute("data-theme", name);
+              localStorage.setItem("clampography-dev-theme", name);
+              editableThemeName.value = name;
+            } else if (enabled && name === "auto") {
+              document.body.removeAttribute("data-theme");
+              localStorage.setItem("clampography-dev-theme", "auto");
+              editableThemeName.value = "auto";
+            } else if (!enabled) {
+              document.body.removeAttribute("data-theme");
+            }
+            // After any theme change, wait for a paint cycle then sync
+            requestAnimationFrame(() => requestAnimationFrame(syncColors));
+          }, { immediate: true });
+
+          // Throttle CSS property writes to one per animation frame
+          let _colorRafId = null;
+          const _pendingColors = {};
+
+          function updateVar(cssVar, val) {
+            _pendingColors[cssVar] = val;
+            if (!_colorRafId) {
+              _colorRafId = requestAnimationFrame(() => {
+                for (const [v, hex] of Object.entries(_pendingColors)) {
+                  document.body.style.setProperty(v, hexToOklch(hex));
+                  delete _pendingColors[v];
+                }
+                _colorRafId = null;
+              });
+            }
+          }
+
+          // ─ Color clipboard (Ctrl+Click / Ctrl+RightClick) ─
+          let colorClipboard = null;
+
+          function onColorClick(e, item) {
+            if (e.ctrlKey) {
+              // Ctrl+Click → copy current OKLCH to internal clipboard + system clipboard
+              e.preventDefault();
+              colorClipboard = hexToOklch(colors[item.id]);
+              navigator.clipboard.writeText(colorClipboard).catch(() => { });
+              showColorMsg(item.id, 'Copied!');
+            }
+            // Without Ctrl: let the native color picker open normally
+          }
+
+          function onColorRightClick(e, item) {
+            if (e.ctrlKey) {
+              e.preventDefault();
+              // Try system clipboard first, fall back to internal
+              navigator.clipboard.readText().then((text) => {
+                const oklchVal = text.trim();
+                const hex = oklchToHex(...parseOklchParts(oklchVal));
+                if (hex) {
+                  colors[item.id] = hex;
+                  updateVar(item.v, hex);
+                  colorClipboard = oklchVal;
+                  showColorMsg(item.id, 'Pasted!');
+                }
+              }).catch(() => {
+                // Clipboard denied — use internal clipboard
+                if (colorClipboard) {
+                  const hex = oklchToHex(...parseOklchParts(colorClipboard));
+                  if (hex) {
+                    colors[item.id] = hex;
+                    updateVar(item.v, hex);
+                    showColorMsg(item.id, 'Pasted!');
+                  }
+                }
+              });
+            }
+          }
+
+          // Parse `oklch(L% C H)` into [L, C, H] strings for oklchToHex
+          function parseOklchParts(oklchStr) {
+            const m = oklchStr.match(/oklch\(\s*([\d.]+%?)\s+([\d.e-]+)\s+([\d.e-]+)/);
+            return m ? [m[1], m[2], m[3]] : [null, null, null];
+          }
+
+          // Temporary label for each color row
+          const colorMsg = reactive({});
+          function showColorMsg(id, msg) {
+            colorMsg[id] = msg;
+            setTimeout(() => { delete colorMsg[id]; }, 1500);
+          }
+
+          // ─ Export Theme ─
+          const isCopied = ref(false);
+
+          function generateThemeJson() {
+            const themeObj = {
+              name: currentThemeName.value || "custom-theme",
+            };
+            COLOR_VARS.forEach(({ id }) => {
+              themeObj[id] = hexToOklch(colors[id]);
+            });
+            return JSON.stringify(themeObj, null, 2);
+          }
+
+          // ─ API Interactions ─
+          const toasts = ref([]);
+          let toastIdCounter = 0;
+
+          function addToast(msg, type = 'success') {
+            const id = ++toastIdCounter;
+            toasts.value.push({ id, text: msg, type });
+            setTimeout(() => {
+              const idx = toasts.value.findIndex(t => t.id === id);
+              if (idx > -1) toasts.value.splice(idx, 1);
+            }, 3000);
+          }
+
+          async function saveTheme() {
+            if (currentThemeName.value === 'auto') return;
+            
+            // Format name to kebab-case just to be safe
+            const newName = editableThemeName.value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+            if (!newName) {
+              addToast("❌ Invalid name", "error");
+              return;
+            }
+
+            const existingTheme = THEME_DATA[currentThemeName.value] || {};
+            const themeData = { ...existingTheme };
+            themeData["color-scheme"] = getThemeScheme(colors.background);
+            COLOR_VARS.forEach(({ id, v }) => {
+              themeData[v] = hexToOklch(colors[id]);
+            });
+
+            try {
+              const res = await fetch("/api/themes", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  action: "UPDATE",
+                  name: newName,
+                  oldName: currentThemeName.value,
+                  data: themeData
+                })
+              });
+              const responseData = await res.json();
+              if (!res.ok) throw new Error("Failed to save");
+
+              // Keep browser-side THEME_DATA in sync so syncColors() reads fresh values
+              THEME_DATA[newName] = themeData;
+              if (currentThemeName.value !== newName) delete THEME_DATA[currentThemeName.value];
+
+              // Update local available themes list if name changed
+              if (currentThemeName.value !== newName) {
+                availableThemesRef.value = responseData.themesList || [];
+                
+                // Update OFFICIAL_THEMES locally if renamed.
+                const idx = officialThemesRef.value.indexOf(currentThemeName.value);
+                if (idx > -1) {
+                  officialThemesRef.value = [
+                    ...officialThemesRef.value.slice(0, idx),
+                    newName,
+                    ...officialThemesRef.value.slice(idx + 1)
+                  ];
+                }
+                
+                currentThemeIndex.value = filteredThemes.value.indexOf(newName);
+              }
+
+              // Reload CSS without refreshing the page
+              const timestamp = new Date().getTime();
+              cssLink.href = `/css/${cssSuffix.value}.css?t=${timestamp}`;
+
+              addToast(`✅ "${newName}" saved!`, "success");
+            } catch (e) {
+              addToast(`❌ Error saving "${currentThemeName.value}"`, "error");
+            }
+          }
+
+          async function cloneTheme() {
+            const newName = prompt("Enter a name for the new theme (e.g., my-awesome-theme):", `${currentThemeName.value}-clone`);
+            if (!newName) return;
+
+            const existingTheme = THEME_DATA[currentThemeName.value] || {};
+            const themeData = { ...existingTheme };
+            themeData["color-scheme"] = getThemeScheme(colors.background);
+            COLOR_VARS.forEach(({ id, v }) => {
+              themeData[v] = hexToOklch(colors[id]);
+            });
+
+            try {
+              const res = await fetch("/api/themes", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  action: "CREATE",
+                  name: newName,
+                  data: themeData
+                })
+              });
+
+              const responseData = await res.json();
+              if (!responseData.success) throw new Error(responseData.error || "Failed to create");
+
+              // Keep browser-side THEME_DATA in sync
+              THEME_DATA[newName] = themeData;
+
+              availableThemesRef.value = responseData.themesList || [];
+
+              currentThemeIndex.value = filteredThemes.value.indexOf(newName);
+
+              const timestamp = new Date().getTime();
+              cssLink.href = `/css/${cssSuffix.value}.css?t=${timestamp}`;
+
+              addToast(`✨ "${newName}" created!`, "success");
+            } catch (e) {
+              addToast(`❌ Error creating "${newName}"`, "error");
+            }
+          }
+
+          function resetTheme() {
+            if (currentThemeName.value === 'auto') return;
+            editableThemeName.value = currentThemeName.value;
+            COLOR_VARS.forEach(({ v }) =>
+              document.body.style.removeProperty(v)
+            );
+            syncColors();
+            addToast(`🔄 "${currentThemeName.value}" reset!`, "info");
+          }
+
+          async function deleteTheme() {
+            const themeToDelete = currentThemeName.value;
+            if (themeToDelete === 'auto') return;
+
+            // Snapshot theme data for potential restore via Backspace
+            const wasOfficial = officialThemesRef.value.includes(themeToDelete);
+            const snapshot = {
+              name: themeToDelete,
+              data: { ...(THEME_DATA[themeToDelete] || {}) },
+              wasOfficial
+            };
+
+            // Determine which theme to land on after deletion:
+            // prefer the next one at same index, fallback to previous
+            const currentIdx = currentThemeIndex.value;
+            const currentList = filteredThemes.value;
+            const nextThemeName =
+              currentList[currentIdx + 1] ||           // next in list
+              currentList[currentIdx - 1] ||           // or previous
+              currentList.find(t => t !== themeToDelete) || // any other
+              null;
+
+            // Pre-write to localStorage so the filteredThemes watcher lands here
+            if (nextThemeName) {
+              localStorage.setItem("clampography-dev-theme", nextThemeName);
+            }
+
+            // Optimistic UI update — remove from reactive ref so Vue re-renders immediately
+            availableThemesRef.value = availableThemesRef.value.filter(t => t !== themeToDelete);
+
+            if (wasOfficial) {
+              officialThemesRef.value = officialThemesRef.value.filter(t => t !== themeToDelete);
+            }
+
+            try {
+              const res = await fetch("/api/themes", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  action: "DELETE",
+                  name: themeToDelete
+                })
+              });
+
+              const responseData = await res.json();
+              if (!responseData.success) throw new Error(responseData.error || "Failed to delete");
+
+              // Explicitly filter out the deleted theme from server response
+              // in case of a timing/race issue between optimistic update and server reply
+              const safeList = (responseData.themesList || []).filter(t => t !== themeToDelete);
+              availableThemesRef.value = safeList;
+
+              const timestamp = new Date().getTime();
+              cssLink.href = `/css/${cssSuffix.value}.css?t=${timestamp}`;
+
+              addToast(`🗑️ Theme "${themeToDelete}" deleted!`, "success");
+              // Push to history only on success
+              deleteHistory.value.push(snapshot);
+            } catch (e) {
+              addToast(`❌ Error deleting theme "${themeToDelete}"`, "error");
+              // Revert optimistic update — restore theme back to list
+              if (wasOfficial) officialThemesRef.value = [...officialThemesRef.value, themeToDelete];
+              availableThemesRef.value = [...availableThemesRef.value, themeToDelete];
+            }
+          }
+
+          async function publishTheme() {
+            const themeName = currentThemeName.value;
+            if (themeName === 'auto') return;
+            try {
+              const res = await fetch("/api/themes", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  action: "PUBLISH",
+                  name: themeName
+                })
+              });
+              const responseData = await res.json();
+              if (!responseData.success) throw new Error(responseData.error || "Failed to publish");
+              
+              if (!officialThemesRef.value.includes(themeName)) {
+                officialThemesRef.value.push(themeName);
+              }
+              addToast(`🎉 "${themeName}" published!`, "success");
+            } catch (e) {
+              addToast(`❌ Error publishing "${themeName}"`, "error");
+            }
+          }
+
+          async function unpublishTheme() {
+            const themeName = currentThemeName.value;
+            if (themeName === 'auto') return;
+            try {
+              const res = await fetch("/api/themes", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  action: "UNPUBLISH",
+                  name: themeName
+                })
+              });
+              const responseData = await res.json();
+              if (!responseData.success) throw new Error(responseData.error || "Failed to unpublish");
+              
+              const idx = officialThemesRef.value.indexOf(themeName);
+              if (idx > -1) officialThemesRef.value.splice(idx, 1);
+              addToast(`📥 "${themeName}" moved to Dev!`, "info");
+            } catch (e) {
+              addToast(`❌ Error unpublishing "${themeName}"`, "error");
+            }
+          }
+
+          // Delete history for Backspace restore
+          const deleteHistory = ref([]);
+
+          // Keyboard shortcuts
+          onMounted(() => {
+            // On mount: poll until CSS is ready (handles cold cache and cached loads alike)
+            syncColorsWhenReady();
+
+            document.addEventListener("keydown", (e) => {
+              // Don't fire shortcuts when user is typing in a text input, textarea, or select
+              const active = document.activeElement;
+              if (active) {
+                const tag = active.tagName;
+                const isTextInput = tag === "TEXTAREA" || (tag === "INPUT" && active.type === "text");
+                if (isTextInput || tag === "SELECT") return;
+                
+                // If focus is on a button, color input, etc., blur it on any shortcut key 
+                // (except Tab) so Space doesn't trigger it again.
+                if (e.key !== "Tab") {
+                  active.blur();
+                }
+              }
+
+              // ← / → / Space: navigate themes
+              if (e.key === "ArrowLeft" && !e.ctrlKey) {
+                e.preventDefault();
+                prevTheme();
+              }
+              if (e.key === "ArrowRight" && !e.ctrlKey) {
+                e.preventDefault();
+                nextTheme();
+              }
+              if (e.key === " ") {
+                e.preventDefault();
+                nextTheme();
+              }
+
+              // Ctrl+← / Ctrl+→: legacy - keep working
+              if (e.ctrlKey && e.key === "ArrowLeft") {
+                e.preventDefault();
+                prevTheme();
+              }
+              if (e.ctrlKey && e.key === "ArrowRight") {
+                e.preventDefault();
+                nextTheme();
+              }
+
+              // C: clone
+              if (e.key === "c" || e.key === "C") {
+                e.preventDefault();
+                cloneTheme();
+              }
+
+              // S: save
+              if (e.key === "s" || e.key === "S") {
+                e.preventDefault();
+                saveTheme();
+              }
+
+              // R: reset
+              if (e.key === "r" || e.key === "R") {
+                e.preventDefault();
+                resetTheme();
+              }
+
+              // P: publish / unpublish (toggle)
+              if (e.key === "p" || e.key === "P") {
+                e.preventDefault();
+                if (isOfficialTheme.value) {
+                  unpublishTheme();
+                } else if (currentThemeName.value !== 'auto') {
+                  publishTheme();
+                }
+              }
+
+              // Delete: delete theme
+              if (e.key === "Delete") {
+                e.preventDefault();
+                deleteTheme();
+              }
+
+              // Backspace: restore last deleted theme
+              if (e.key === "Backspace") {
+                e.preventDefault();
+                restoreTheme();
+              }
+            });
+          });
+
+          async function restoreTheme() {
+            if (deleteHistory.value.length === 0) {
+              addToast("📭 Nothing to restore", "info");
+              return;
+            }
+
+            const entry = deleteHistory.value[deleteHistory.value.length - 1];
+
+            try {
+              const res = await fetch("/api/themes", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  action: "CREATE",
+                  name: entry.name,
+                  data: entry.data
+                })
+              });
+
+              const responseData = await res.json();
+              if (!responseData.success) throw new Error(responseData.error || "Failed to restore");
+
+              // Keep browser-side THEME_DATA in sync
+              THEME_DATA[entry.name] = entry.data;
+
+              deleteHistory.value.pop();
+
+              availableThemesRef.value = responseData.themesList || [];
+              if (entry.wasOfficial) {
+                officialThemesRef.value = [...officialThemesRef.value, entry.name];
+              }
+
+              // Switch to the restored theme
+              await new Promise(r => setTimeout(r, 0)); // let filteredThemes recompute
+              const idx = filteredThemes.value.indexOf(entry.name);
+              if (idx > -1) currentThemeIndex.value = idx;
+
+              const timestamp = new Date().getTime();
+              cssLink.href = `/css/${cssSuffix.value}.css?t=${timestamp}`;
+
+              addToast(`↩️ Theme "${entry.name}" restored!`, "success");
+            } catch (e) {
+              addToast(`❌ Error restoring theme "${entry.name}"`, "error");
+            }
+          }
+
+          return {
+            FONTS,
+            COLOR_VARS,
+            extra,
+            forms,
+            kbd,
+            themes,
+            themeFilter,
+            currentFont,
+            currentThemeName,
+            colors,
+            contrastWarning,
+            prevFont,
+            nextFont,
+            prevTheme,
+            nextTheme,
+            jumpToTheme,
+            filteredThemes,
+            editableThemeName,
+            updateVar,
+            hexToOklch,
+            toasts,
+            deleteHistory,
+            saveTheme,
+            cloneTheme,
+            resetTheme,
+            deleteTheme,
+            restoreTheme,
+            publishTheme,
+            unpublishTheme,
+            isOfficialTheme,
+            colorMsg,
+            onColorClick,
+            onColorRightClick
+          };
+        },
+      }).mount("#pg-sidebar");
+    }
+  </script>
+</body>
+
+</html>
