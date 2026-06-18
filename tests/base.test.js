@@ -161,18 +161,18 @@ describe("Fluid math engine edge cases", () => {
     expect(root["--spacing-xs"]).not.toContain("clamp(");
   });
 
-  it("exposes --clampography-v-min and --clampography-v-max as unitless rem values", () => {
+  it("exposes --clampography-fluid-min and --clampography-fluid-max as unitless rem values", () => {
     // 320px / 16 = 20rem, 1280px / 16 = 80rem
     const root = baseStyles({ fluidMin: 320, fluidMax: 1280 })[":where(:root)"];
-    expect(root["--clampography-v-min"]).toBe("20");
-    expect(root["--clampography-v-max"]).toBe("80");
+    expect(root["--clampography-fluid-min"]).toBe("20");
+    expect(root["--clampography-fluid-max"]).toBe("80");
   });
 
   it("updates v-min and v-max when custom fluid bounds are provided", () => {
     // 480px / 16 = 30rem, 1440px / 16 = 90rem
     const root = baseStyles({ fluidMin: 480, fluidMax: 1440 })[":where(:root)"];
-    expect(root["--clampography-v-min"]).toBe("30");
-    expect(root["--clampography-v-max"]).toBe("90");
+    expect(root["--clampography-fluid-min"]).toBe("30");
+    expect(root["--clampography-fluid-max"]).toBe("90");
   });
 
   it("h1 max is larger than h2 max (heading hierarchy is preserved)", () => {
@@ -193,7 +193,7 @@ describe("Fluid math engine edge cases", () => {
     const withPx = baseStyles({ fluidMin: parseInt("375px"), fluidMax: 1280 })[":where(:root)"];
     const withNum = baseStyles({ fluidMin: 375, fluidMax: 1280 })[":where(:root)"];
     expect(withPx["--spacing-md"]).toBe(withNum["--spacing-md"]);
-    expect(withPx["--clampography-v-min"]).toBe(withNum["--clampography-v-min"]);
+    expect(withPx["--clampography-fluid-min"]).toBe(withNum["--clampography-fluid-min"]);
   });
 });
 

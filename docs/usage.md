@@ -337,8 +337,8 @@ You can also override the viewport bounds that all headings use for interpolatio
     /* Change the fluid engine viewport range */
     /* These are set automatically from plugin options (fluid-min / fluid-max) */
     /* but can be overridden in CSS if needed */
-    --clampography-v-min: 23.4375; /* 375px / 16 */
-    --clampography-v-max: 90;      /* 1440px / 16 */
+    --clampography-fluid-min: 23.4375; /* 375px / 16 */
+    --clampography-fluid-max: 90;      /* 1440px / 16 */
   }
 }
 ```
