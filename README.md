@@ -91,6 +91,11 @@ Clampography is highly modular. You can configure it directly in your CSS:
 - 🔄 **[Configuration Flow Diagram](docs/configuration-flow.md)**
 - 🤝 **[Contributing](docs/contributing.md)**
 
+## 🌐 Browser Support
+Clampography targets modern browsers to keep the CSS output clean, small, and mathematically precise without relying on heavy polyfills or fallbacks.
+- **Basic (Typography Only):** ~97% global support (requires `clamp()`).
+- **Optimal (Themes & Forms):** ~92% global support (requires `oklch()` and `color-mix()`).
+
 ## 🙏 Inspirations
 - [daisyUI](https://daisyui.com/) created by [Pouya Saadeghi](https://saadeghi.com/)
 - The official **Typography** plugin for Tailwind CSS: [tailwindcss-typography](https://github.com/tailwindlabs/tailwindcss-typography)
