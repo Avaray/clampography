@@ -94,7 +94,7 @@ Clampography is highly modular. You can configure it directly in your CSS:
 ## 🌐 Browser Support
 Clampography targets modern browsers to keep the CSS output clean, small, and mathematically precise without relying on heavy polyfills or fallbacks.
 - **Basic (Typography Only):** ~97% global support (requires [clamp()](https://caniuse.com/css-math-functions)).
-- **Optimal (Themes & Forms):** ~92% global support (requires [oklch()](https://caniuse.com/css-color-functions) and [color-mix()](https://caniuse.com/wf-color-mix)).
+- **Optimal (Themes & Forms):** ~93% global support (requires [oklch()](https://caniuse.com/css-color-functions) and [color-mix()](https://caniuse.com/wf-color-mix)).
 
 ## 🙏 Inspirations
 - [daisyUI](https://daisyui.com/) created by [Pouya Saadeghi](https://saadeghi.com/)
