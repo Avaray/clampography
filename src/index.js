@@ -6,8 +6,7 @@ import formsStyles from "./forms.js";
 import kbdStyles from "./kbd.js";
 import printStyles from "./print.js";
 
-// Import version from package.json
-import { version } from "../package.json" with { type: "json" };
+
 
 /**
  * Helper to resolve boolean options from CSS configuration.
@@ -35,7 +34,7 @@ export default plugin.withOptions(
 
         // Show startup log only once
         if (showLogs && firstRun) {
-          console.log(`🍀 Clampography v${version} loaded successfully`);
+          console.log(`🍀 Clampography loaded successfully`);
           firstRun = false;
         }
 
