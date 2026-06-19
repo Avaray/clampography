@@ -672,116 +672,76 @@ Console output:
 - **light** - Clean light theme with blue accents
 - **dark** - Modern dark theme with high contrast
 
-### Load Specific Themes
+### Load Specific Themes (Subset)
 
+When the list of official themes grows, you might not want to use `themes: all` to keep your CSS bundle small. Instead, you can specify an exact list of themes you want to load.
+
+When providing a custom list, you **must explicitly declare** which theme acts as the default (`--default`) and which acts as the system dark mode fallback (`--prefersdark`). Without these flags, themes will only generate `[data-theme]` selectors and your page will have no colors by default!
+
+**Example: Loading 5 themes with specific roles:**
 ```css
 @plugin "clampography" {
-  themes: "light, dark";
+  /* Loads 5 themes. 
+     'corporate' is the default (:where(:root)).
+     'dim' is used for system dark mode (@media prefers-color-scheme).
+     'luxury', 'cyberpunk', and 'wireframe' are available manually via data-theme. */
+  themes: "corporate --default, dim --prefersdark, luxury, cyberpunk, wireframe";
 }
 ```
 
-**Result:**
-
-```css
-/* Light as default */
-:where(:root),
-[data-theme="light"] {
-  /* light colors */
-}
-
-/* Dark for system dark mode */
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* dark colors */
-  }
-}
-
-/* Dark also available for manual switching */
-[data-theme="dark"] {
-  /* ... */
-}
-```
-
-**Important:** When using `themes: all`, the plugin automatically sets:
-
-- `light` as default (`:where(:root)`)
-- `dark` for `prefers-color-scheme: dark`
-- If `light` doesn't exist, the first theme in the list becomes default
-- For specific themes without flags, only `[data-theme]` selectors are generated
-  (no `:root` colors).
-
-### Customize Default Behavior
-
-Override which theme is default and which responds to `prefers-color-scheme`.
-
-```css
-@plugin "clampography" {
-  /* Using a comma-separated string: */
-  themes: "dark --default, light --prefersdark";
-}
-```
-
-Or using an array (if configured via `tailwind.config.js` or modern CSS config):
-
+Or using an array (if configured via modern JS config):
 ```js
 @plugin "clampography" {
-  themes: ["dark --default", "light --prefersdark"];
+  themes: [
+    "corporate --default", 
+    "dim --prefersdark", 
+    "luxury", 
+    "cyberpunk", 
+    "wireframe"
+  ];
 }
 ```
 
 **Result:**
+- `:where(:root)` gets `corporate` colors.
+- `@media (prefers-color-scheme: dark)` gets `dim` colors.
+- All 5 themes get `[data-theme="..."]` selectors for manual switching.
+
+### Load a Single Official Theme
+
+If you want your application to have exactly one theme (no dark mode, no theme switching), simply pass its name and mark it as default:
 
 ```css
-/* Dark theme by default */
+@plugin "clampography" {
+  themes: "corporate --default";
+}
+```
+
+**Result:**
+```css
+/* Only 'corporate' colors are loaded onto the :root */
 :where(:root),
-[data-theme="dark"] {
-  /* dark colors */
+[data-theme="corporate"] {
+  /* corporate colors */
 }
-
-/* Light theme for users who prefer light mode */
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* light colors */
-  }
-}
-
-/* Other themes available for manual switching */
-[data-theme="light"] {
-  /* ... */
-}
+/* No other themes or media queries are generated, keeping CSS minimal */
 ```
 
-**Use case:** Dark-first website that respects user preferences.
+### Load Themes Without Default (Opt-in only)
 
-### Load Themes Without Default
-
-If you don't specify `--default` or use `themes: all`, themes are only available
-via `data-theme` attribute.
+If you intentionally don't specify `--default` or use `themes: all`, themes are only applied when the `data-theme` attribute is explicitly added to your HTML.
 
 ```css
 @plugin "clampography" {
-  themes: "dark";
+  themes: "dark, cyberpunk";
 }
 ```
 
 **Result:**
-
 ```css
-/* No :root colors - only data-theme selectors */
-[data-theme="dark"] {
-  /* ... */
-}
-```
-
-**Important:** Your page will have no colors by default until you add
-`data-theme` to an element!
-
-To fix this, explicitly set a default:
-
-```css
-@plugin "clampography" {
-  themes: "dark --default";
-}
+/* No :root colors! Your page will have no colors by default. */
+[data-theme="dark"] { /* ... */ }
+[data-theme="cyberpunk"] { /* ... */ }
 ```
 
 ---
