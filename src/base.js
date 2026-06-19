@@ -167,6 +167,7 @@ export default (options = {}) => {
       "-webkit-font-smoothing": "antialiased",
       "-moz-osx-font-smoothing": "grayscale",
       "text-wrap": "pretty",
+      "font-size-adjust": "from-font",
     },
 
     // HEADINGS (H1-H6)
@@ -227,6 +228,7 @@ export default (options = {}) => {
     [scope("a")]: {
       "text-decoration-line": "underline",
       cursor: "pointer",
+      "overflow-wrap": "break-word",
     },
 
     [scope(":where(h1, h2, h3, h4, h5, h6) a")]: {
@@ -290,6 +292,7 @@ export default (options = {}) => {
       "font-size": "0.875em",
       "-webkit-font-smoothing": "auto",
       "-moz-osx-font-smoothing": "auto",
+      "overflow-wrap": "break-word",
     },
 
     [scope("kbd")]: {
