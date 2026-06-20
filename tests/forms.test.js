@@ -61,11 +61,13 @@ describe("Forms Styles Generation", () => {
 
   it("styles select with padding-inline-end and background-image", () => {
     const styles = formsStyles({ root: ":root" });
-    const selectKey = ":root select";
-    expect(styles[selectKey]).toBeDefined();
+    const selectKey = Object.keys(styles).find(
+      k => k.includes("select:not(") && k.includes("[multiple]")
+    );
+    expect(selectKey).toBeDefined();
     expect(styles[selectKey]["padding-inline-end"]).toBe("2.5rem");
     expect(styles[selectKey]["padding-right"]).toBeUndefined();
-    expect(styles[selectKey]["background-image"]).toContain("url(");
+    expect(styles[selectKey]["background-image"]).toContain("linear-gradient");
   });
 
   it("styles file-selector-button with margin-inline-end", () => {
