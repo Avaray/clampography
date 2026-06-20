@@ -73,6 +73,8 @@ export default (options = {}) => {
       "--clampography-spacing-xl": makeFluid(1, 3),
       "--clampography-list-indent": makeFluid(1.5, 2),
       "--clampography-scroll-offset": "5rem",
+      "--clampography-radius": "0.4em",
+      "--clampography-border-width": "1px",
       "--clampography-font-base":
         "Inter, system-ui, -apple-system, 'Segoe UI Variable Display', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif",
       "--clampography-font-mono":
