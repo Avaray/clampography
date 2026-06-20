@@ -1407,6 +1407,28 @@ any active theme — both built-in and custom.
 }
 ```
 
+### Global Customization (Radius & Borders)
+
+The styling relies on two global variables defined in `:root` that dictate the shape of form elements:
+
+```css
+:root {
+  --clampography-radius: 0.4em; /* Scales fluidly with font size */
+  --clampography-border-width: 1px;
+}
+```
+
+If you prefer sharp corners or thick brutalist borders across your entire project, simply override these variables in your own CSS:
+
+```css
+:root {
+  --clampography-radius: 0;
+  --clampography-border-width: 2px;
+}
+```
+
+---
+
 ### Buttons
 
 Default button style inherits `surface` colors and adds a `border`. A `.primary`
@@ -1448,10 +1470,10 @@ variables, and share the same border + focus ring treatment.
 
 | State | Effect |
 |---|---|
-| `:focus` | Border → `primary`, `box-shadow` glow ring (20% opacity) |
+| `:focus-visible` | Border → `primary`, `box-shadow` glow ring (20% opacity) |
 | `:disabled` | `opacity: 0.5`, `cursor: not-allowed` |
 | `[readonly]` | Semi-transparent `surface` background, `cursor: default` |
-| `:user-invalid` | Border → `error` color, red glow ring on focus |
+| `:user-invalid` / `[aria-invalid]` | Border → `error` color, red glow ring on focus |
 | `::placeholder` | `muted` color |
 
 **WebKit resets included:**
