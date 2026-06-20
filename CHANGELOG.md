@@ -2,25 +2,37 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.0.0] - Unreleased
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-### Breaking Changes
+## [Unreleased / 2.0.1-rc]
 
-- **Tailwind CSS v4 Plugin Architecture**: The project has been fully migrated to use the native Tailwind CSS v4 plugin system (`@plugin "clampography"`). Previous initialization methods are no longer supported.
-- **Color System Migration**: All theme colors have been migrated to the `oklch()` color space for better interpolation, accessibility, and modern browser support. Hex and RGB values are no longer used for built-in themes.
-- **Decoupled Typography & Colors**: Typography base styles and layout structures no longer inject colors automatically. The base typography loads fluid, responsive features only. To use colors, the `themes` option must be explicitly configured.
+This release introduces major architectural refactoring, the separation of concerns into distinct modules, and a powerful local development environment. 
 
-### Features
+### ✨ Major Features
+- **Modular Architecture**: Split the plugin into specific configurable modules (`base`, `extra`, `forms`, `kbd`, `scrollbar`, `highlights`).
+- **Interactive Dev Server**: Created a fully featured local playground (`dev/index.html` & `dev/server.js`) with hot theme switching, font carousels, nested list stress tests, and keyboard shortcuts.
+- **Massive Theme Expansion**: Added over 40+ built-in themes including modern, brutalist, and specialized categories (like retrowave/vaporwave neon and pastel variations).
+- **OKLCH Color Space**: Migrated all theme colors to the `oklch()` color space for a wider color gamut and highly predictable lightness/chroma rendering.
+- **Themed Scrollbars Module**: Added `scrollbar.js` to automatically colorize browser scrollbars using the native `scrollbar-color` CSS property while preserving OS thickness.
+- **Highlights & Micro-interactions Module**: Added `highlights.js` for styling text `::selection`, `<mark>` tags, and `:target` URL jump animations.
 
-- **Modular Configuration Options**: The plugin now accepts fine-grained configuration for loading specific feature sets:
-  - `forms`: Full visual form styling (`forms: true`).
-  - `kbd`: 3D isometric keyboard key styling on `<kbd>` elements.
-  - `print`: Dedicated print optimization styles (`print: true`).
-  - `base` & `extra`: Granular control over the typography base styles and enhanced decorations.
-- **Advanced Fluid Math Engine**: Introduced `fluid-min` and `fluid-max` options to dynamically calculate perfect `clamp()` bounds for all typography and spacing elements, eliminating hardcoded mathematical strings.
-- **Scope Isolation (Prose Mode)**: Added the `typography` option to scope all typography and extra styles to a specific CSS class (e.g., `.clampography`), preventing style leaks into unrelated UI components.
-- **Figma Design Tokens Integration**: The build process now automatically exports a W3C-compliant `css/figma-tokens.json` file containing all built-in themes, ready to be synced with Figma.
-- **Enhanced Accessibility**: `prefers-reduced-motion` and `prefers-contrast` media queries have been properly isolated and implemented to ensure smooth, accessible experiences for all users.
-- **Scoped Theming**: Added the `root` configuration option to scope theme variables to specific selectors (e.g., `#app` instead of `:root`).
-- **Utility Prefixing**: Introduced the `prefix` option to namespace generated utility classes (e.g., `bg-clampography-primary`), preventing collisions with other tailwind utilities.
-- **Theme Support**: Includes robust support for configuring themes (defaulting to light and dark modes) alongside options to inject custom OKLCH-based palettes via `@plugin "clampography/theme"`.
+### 🧩 Forms Module Overhaul
+- **Fluid Padding**: Replaced hardcoded margins/paddings with fluid spacing tokens (`var(--clampography-spacing-xs)`, etc.).
+- **Global Shape Variables**: Added `--clampography-radius` (default `0.4em`) and `--clampography-border-width` (default `1px`) to `:root` to allow easy global overrides of form shapes (e.g., brutalist sharp corners).
+- **Select Arrow**: Replaced hardcoded grey SVG data URI with a CSS-only `linear-gradient` chevron that adapts to the current theme text color.
+- **Accessibility & UX**: 
+  - Migrated from `:focus` to `:focus-visible` to prevent annoying mouse-click focus rings.
+  - Added support for JS-driven `[aria-invalid="true"]` alongside `:user-invalid`.
+- **WebKit Fixes**: Added proper resets for `::-webkit-color-swatch-wrapper` in `type="color"` inputs to prevent double borders. Correctly excluded `type="hidden"`, `type="submit"`, and `type="file"` from text input styling.
+
+### 📐 Typography & Base Refactoring
+- **Fluid Spacing System**: Solidified spacing tokens (`--clampography-spacing-xs` to `xl`) and list indentations.
+- **Nested Lists**: Fixed alignment and nesting issues for multi-digit `<ol>` markers. Completely rewrote list styling using flexbox and logical margins to allow 6-levels deep nesting without layout breakage.
+- **Margin Collapse**: Fixed layout breaks and margin collapses in prose content wrappers.
+
+### 🛠 Configuration & DX
+- **Scope Customization**: Added support for custom root scoping (e.g., changing `:root` to a specific class).
+- **Prefixing**: Added support for generating Tailwind color utilities (`bg-clampography-primary`, `text-clampography-muted`).
+- **State Management**: Added localStorage persistence for the Dev Server (saves active themes and toggles).
+- **Documentation**: Heavily expanded `docs/usage.md` and added `docs/configuration-flow.md` with Mermaid architecture diagrams.
