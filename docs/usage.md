@@ -229,6 +229,26 @@ Style `<kbd>` elements as realistic 3D keyboard keys.
 
 **Use case:** Documentation, tutorials, or any content that references keyboard shortcuts.
 
+### With Themed Scrollbars (Optional)
+
+Automatically colorize your browser's scrollbars to match the active Clampography theme.
+*Note: This relies on the modern CSS `scrollbar-color` standard. The browser preserves its native scrollbar thickness. It gracefully degrades in older browsers.*
+
+```css
+@import "tailwindcss";
+@plugin "clampography" {
+  themes: all;
+  scrollbar: true; /* default: false */
+}
+```
+
+**Result:**
+
+- ✅ Scrollbar track and thumb match the theme's background and border colors.
+- ✅ The browser's native scrollbar thickness is preserved.
+
+**Use case:** Sites looking for a highly polished, unified aesthetic without breaking native OS scrollbar behavior.
+
 ### With Highlights & Micro-interactions (Optional)
 
 Style text selections, highlighted text, and URL target jumps.
@@ -540,6 +560,9 @@ You can isolate Clampography's styling to a specific class using the `typography
 
   /* Load print optimization styles (@media print) */
   print: true | false; /* default: false */
+
+  /* Theme browser scrollbars to match current theme */
+  scrollbar: true | false; /* default: false */
 
   /* Theme text selection, <mark>, and :target highlight flashes */
   highlights: true | false; /* default: false */

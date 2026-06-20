@@ -18,21 +18,22 @@ if (!existsSync(CSS_DIR)) {
   mkdirSync(CSS_DIR, { recursive: true });
 }
 
-// 32 pre-built CSS combos: themes × extra × forms × kbd × highlights
-// suffix letters: t=themes, e=extra, f=forms, k=kbd, h=highlights, n=none (all off)
+// 64 pre-built CSS combos: themes × extra × forms × kbd × scrollbar × highlights
+// suffix letters: t=themes, e=extra, f=forms, k=kbd, s=scrollbar, h=highlights, n=none (all off)
 function buildCombos() {
   const flags = [
     { key: "t", opt: "themes",     on: "all",  off: "false" },
     { key: "e", opt: "extra",      on: "true", off: "false" },
     { key: "f", opt: "forms",      on: "true", off: "false" },
     { key: "k", opt: "kbd",        on: "true", off: "false" },
+    { key: "s", opt: "scrollbar",  on: "true", off: "false" },
     { key: "h", opt: "highlights", on: "true", off: "false" },
   ];
 
   const combos = [];
 
-  // 2^5 = 32 combinations
-  for (let mask = 0; mask < 32; mask++) {
+  // 2^6 = 64 combinations
+  for (let mask = 0; mask < 64; mask++) {
     const suffix = flags
       .filter((_, i) => (mask >> (flags.length - 1 - i)) & 1)
       .map((f) => f.key)
@@ -50,7 +51,7 @@ function buildCombos() {
 
 const COMBOS = buildCombos();
 
-function makeInputCSS({ themes: enableThemes, extra, forms, kbd, highlights }) {
+function makeInputCSS({ themes: enableThemes, extra, forms, kbd, scrollbar, highlights }) {
   let css = `@import "tailwindcss";
 @plugin "../../src/index.js" {
   themes: ${enableThemes};
@@ -58,6 +59,7 @@ function makeInputCSS({ themes: enableThemes, extra, forms, kbd, highlights }) {
   extra: ${extra};
   forms: ${forms};
   kbd: ${kbd};
+  scrollbar: ${scrollbar};
   highlights: ${highlights};
 }
 `;

@@ -5,6 +5,7 @@ import extraStyles from "./extra.js";
 import formsStyles from "./forms.js";
 import kbdStyles from "./kbd.js";
 import printStyles from "./print.js";
+import scrollbarStyles from "./scrollbar.js";
 import highlightsStyles from "./highlights.js";
 
 
@@ -46,6 +47,7 @@ export default plugin.withOptions(
         const includeForms = resolveBool(options.forms, false); // Default: false
         const includeKbd = resolveBool(options.kbd, false);   // Default: false
         const includePrint = resolveBool(options.print, false); // Default: false
+        const includeScrollbar = resolveBool(options.scrollbar, false); // Default: false
         const includeHighlights = resolveBool(options.highlights, false); // Default: false
 
         // Extract fluid bounds for clampography math engine
@@ -64,6 +66,7 @@ export default plugin.withOptions(
         includeForms && addBase(formsStyles({ ...options, typography }));
         includeKbd && addBase(kbdStyles({ ...options, typography }));
         includePrint && addBase(printStyles({ ...options, typography }));
+        includeScrollbar && addBase(scrollbarStyles({ ...options, typography }));
         includeHighlights && addBase(highlightsStyles({ ...options, typography }));
 
         // 2. Parse themes configuration
