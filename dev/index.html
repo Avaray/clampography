@@ -355,6 +355,11 @@
           <input type="checkbox" v-model="kbd">
           <div class="pg-switch"></div>
         </div>
+        <div class="pg-toggle-item" @click="highlights = !highlights" style="font-weight: bold">
+          Highlights
+          <input type="checkbox" v-model="highlights">
+          <div class="pg-switch"></div>
+        </div>
         <div class="pg-toggle-item" @click="themes = !themes" style="font-weight: bold">
           Themes
           <input type="checkbox" v-model="themes">
@@ -1519,6 +1524,7 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
           const extra = ref(lsBool("clampography-dev-extra"));
           const forms = ref(lsBool("clampography-dev-forms"));
           const kbd = ref(lsBool("clampography-dev-kbd"));
+          const highlights = ref(lsBool("clampography-dev-highlights"));
           const themes = ref(lsBool("clampography-dev-themes-enabled"));
 
           const currentFontIndex = ref(0);
@@ -1602,7 +1608,8 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
           const editableThemeName = ref("");
           const cssSuffix = computed(() =>
             (themes.value ? "t" : "") + (extra.value ? "e" : "") +
-            (forms.value ? "f" : "") + (kbd.value ? "k" : "") || "n"
+            (forms.value ? "f" : "") + (kbd.value ? "k" : "") +
+            (highlights.value ? "h" : "") || "n"
           );
 
           // ─ Methods ─
@@ -1681,6 +1688,7 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
             localStorage.setItem("clampography-dev-extra", extra.value);
             localStorage.setItem("clampography-dev-forms", forms.value);
             localStorage.setItem("clampography-dev-kbd", kbd.value);
+            localStorage.setItem("clampography-dev-highlights", highlights.value);
             localStorage.setItem(
               "clampography-dev-themes-enabled",
               themes.value,
@@ -2179,6 +2187,7 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
             extra,
             forms,
             kbd,
+            highlights,
             themes,
             themeFilter,
             currentFont,
