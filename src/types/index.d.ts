@@ -11,6 +11,10 @@ interface ClampographyOptions {
   fluidMin?: string | number;
   "fluid-max"?: string | number;
   fluidMax?: string | number;
+  scrollbar?: boolean;
+  highlights?: boolean;
+  "scale-mode"?: "viewport" | "container" | string;
+  scaleMode?: "viewport" | "container" | string;
   typography?: string;
   root?: string;
   prefix?: string | boolean;
