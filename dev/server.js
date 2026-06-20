@@ -108,7 +108,7 @@ async function buildCombo(combo) {
 }
 
 // Build all combos in parallel on startup
-console.log(`⚙️  Pre-building ${COMBOS.length} CSS variants (themes × extra × forms × kbd)...`);
+console.log(`⚙️  Pre-building ${COMBOS.length} CSS variants (themes × extra × forms × kbd × scrollbar × highlights)...`);
 const start = Date.now();
 await Promise.all(COMBOS.map(buildCombo));
 console.log(`✅ All variants built in ${Date.now() - start}ms`);
