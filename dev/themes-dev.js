@@ -5,23 +5,6 @@
  * Do not manually edit this file unless you know what you're doing.
  */
 
-export const _3024Day = {
-  "color-scheme": "light",
-  "--clampography-background": "oklch(0.975 0.0 89.9)",
-  "--clampography-border": "oklch(0.446 0.007 59.5)",
-  "--clampography-error": "oklch(0.833 0.06 348.8)",
-  "--clampography-heading": "oklch(0.109 0.024 66.2)",
-  "--clampography-info": "oklch(0.579 0.004 39.5)",
-  "--clampography-link": "oklch(0.888 0.055 220.7)",
-  "--clampography-muted": "oklch(0.706 0.004 17.2)",
-  "--clampography-primary": "oklch(0.747 0.116 88.1)",
-  "--clampography-secondary": "oklch(0.584 0.093 335.8)",
-  "--clampography-success": "oklch(0.307 0.01 39.3)",
-  "--clampography-surface": "oklch(0.706 0.004 17.2)",
-  "--clampography-text": "oklch(0.374 0.008 43.2)",
-  "--clampography-warning": "oklch(0.374 0.008 43.2)",
-};
-
 export const _3024Night = {
   "color-scheme": "dark",
   "--clampography-background": "oklch(0.109 0.024 66.2)",
@@ -37,74 +20,6 @@ export const _3024Night = {
   "--clampography-surface": "oklch(0.374 0.008 43.2)",
   "--clampography-text": "oklch(0.706 0.004 17.2)",
   "--clampography-warning": "oklch(0.374 0.008 43.2)",
-};
-
-export const aardvarkBlue = {
-  "color-scheme": "dark",
-  "--clampography-background": "oklch(0.224 0.068 262.4)",
-  "--clampography-border": "oklch(0.796 0.0 89.9)",
-  "--clampography-error": "oklch(0.658 0.191 27.7)",
-  "--clampography-heading": "oklch(0.975 0.0 89.9)",
-  "--clampography-info": "oklch(0.696 0.131 251.4)",
-  "--clampography-link": "oklch(0.591 0.111 223.8)",
-  "--clampography-muted": "oklch(0.37 0.0 89.9)",
-  "--clampography-primary": "oklch(0.723 0.09 215.8)",
-  "--clampography-secondary": "oklch(0.594 0.232 328.3)",
-  "--clampography-success": "oklch(0.815 0.186 132.8)",
-  "--clampography-surface": "oklch(0.879 0.059 254.1)",
-  "--clampography-text": "oklch(0.895 0.0 89.9)",
-  "--clampography-warning": "oklch(0.921 0.155 99.0)",
-};
-
-export const abernathy = {
-  "color-scheme": "dark",
-  "--clampography-background": "oklch(0.157 0.007 237.1)",
-  "--clampography-border": "oklch(0.945 0.032 75.2)",
-  "--clampography-error": "oklch(0.628 0.258 29.2)",
-  "--clampography-heading": "oklch(1.0 0.0 89.9)",
-  "--clampography-info": "oklch(0.723 0.151 234.7)",
-  "--clampography-link": "oklch(0.764 0.13 194.8)",
-  "--clampography-muted": "oklch(0.35 0.0 89.9)",
-  "--clampography-primary": "oklch(0.905 0.155 194.8)",
-  "--clampography-secondary": "oklch(0.592 0.272 328.4)",
-  "--clampography-success": "oklch(0.866 0.295 142.5)",
-  "--clampography-surface": "oklch(0.947 0.003 106.5)",
-  "--clampography-text": "oklch(0.947 0.003 106.5)",
-  "--clampography-warning": "oklch(0.968 0.211 109.8)",
-};
-
-export const adventure = {
-  "color-scheme": "dark",
-  "--clampography-background": "oklch(0.107 0.0 89.9)",
-  "--clampography-border": "oklch(0.894 0.009 128.6)",
-  "--clampography-error": "oklch(0.639 0.151 40.6)",
-  "--clampography-heading": "oklch(0.878 0.026 65.5)",
-  "--clampography-info": "oklch(0.84 0.075 223.4)",
-  "--clampography-link": "oklch(0.843 0.038 253.5)",
-  "--clampography-muted": "oklch(0.454 0.025 18.1)",
-  "--clampography-primary": "oklch(0.843 0.038 253.5)",
-  "--clampography-secondary": "oklch(0.833 0.07 74.0)",
-  "--clampography-success": "oklch(0.72 0.161 121.1)",
-  "--clampography-surface": "oklch(0.472 0.0 89.9)",
-  "--clampography-text": "oklch(0.999 0.001 197.1)",
-  "--clampography-warning": "oklch(0.826 0.125 63.4)",
-};
-
-export const adventureTime = {
-  "color-scheme": "dark",
-  "--clampography-background": "oklch(0.232 0.076 280.9)",
-  "--clampography-border": "oklch(0.908 0.05 67.1)",
-  "--clampography-error": "oklch(0.683 0.198 25.6)",
-  "--clampography-heading": "oklch(0.972 0.008 293.9)",
-  "--clampography-info": "oklch(0.626 0.123 231.2)",
-  "--clampography-link": "oklch(0.671 0.061 177.2)",
-  "--clampography-muted": "oklch(0.572 0.119 257.8)",
-  "--clampography-primary": "oklch(0.948 0.053 187.3)",
-  "--clampography-secondary": "oklch(0.486 0.095 292.8)",
-  "--clampography-success": "oklch(0.908 0.208 136.6)",
-  "--clampography-surface": "oklch(0.509 0.045 99.5)",
-  "--clampography-text": "oklch(0.908 0.05 67.1)",
-  "--clampography-warning": "oklch(0.824 0.166 90.3)",
 };
 
 export const aestheticBreeze = {
@@ -143,19 +58,19 @@ export const afterglow = {
 
 export const alabaster = {
   "color-scheme": "light",
-  "--clampography-background": "oklch(0.975 0.0 89.9)",
-  "--clampography-border": "oklch(0.556 0.0 89.9)",
-  "--clampography-error": "oklch(0.645 0.201 24.8)",
-  "--clampography-heading": "oklch(0.0 0.0 0.0)",
-  "--clampography-info": "oklch(0.557 0.157 249.8)",
-  "--clampography-link": "oklch(0.563 0.118 234.1)",
-  "--clampography-muted": "oklch(0.975 0.0 89.9)",
-  "--clampography-primary": "oklch(0.675 0.122 219.2)",
-  "--clampography-secondary": "oklch(0.468 0.159 310.8)",
-  "--clampography-success": "oklch(0.743 0.225 137.0)",
-  "--clampography-surface": "oklch(0.879 0.059 254.1)",
-  "--clampography-text": "oklch(0.0 0.0 0.0)",
-  "--clampography-warning": "oklch(0.835 0.138 73.3)",
+  "--clampography-background": "oklch(97.6% 0.000 89.9)",
+  "--clampography-border": "oklch(55.6% 0.000 89.9)",
+  "--clampography-error": "oklch(64.5% 0.201 24.8)",
+  "--clampography-heading": "oklch(0.0% 0.000 0.0)",
+  "--clampography-info": "oklch(55.7% 0.158 250.0)",
+  "--clampography-link": "oklch(56.3% 0.119 234.5)",
+  "--clampography-muted": "oklch(97.6% 0.000 89.9)",
+  "--clampography-primary": "oklch(67.6% 0.122 219.2)",
+  "--clampography-secondary": "oklch(46.7% 0.159 310.9)",
+  "--clampography-success": "oklch(74.4% 0.225 137.0)",
+  "--clampography-surface": "oklch(94.0% 0.000 89.9)",
+  "--clampography-text": "oklch(0.0% 0.000 0.0)",
+  "--clampography-warning": "oklch(83.5% 0.138 73.3)",
 };
 
 export const alienBlood = {
@@ -7670,12 +7585,7 @@ export const zeonica = {
 };
 
 export const themes = {
-  "3024-day": _3024Day,
   "3024-night": _3024Night,
-  "aardvark-blue": aardvarkBlue,
-  "abernathy": abernathy,
-  "adventure": adventure,
-  "adventure-time": adventureTime,
   "aesthetic-breeze": aestheticBreeze,
   "afterglow": afterglow,
   "alabaster": alabaster,

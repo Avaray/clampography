@@ -1035,7 +1035,7 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
 
       <form id="feline-form" onsubmit="return false">
         <div
-          style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); margin-bottom: var(--spacing-md)">
+          style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--clampography-spacing-md); margin-bottom: var(--clampography-spacing-md)">
           <div>
             <label for="cat-name">Cat Name <strong>*</strong></label>
             <input type="text" id="cat-name" placeholder="e.g. Luna">
@@ -1046,7 +1046,7 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
           </div>
         </div>
         <div
-          style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); margin-bottom: var(--spacing-md)">
+          style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--clampography-spacing-md); margin-bottom: var(--clampography-spacing-md)">
           <div>
             <label for="cat-email">Owner Email <strong>*</strong></label>
             <input type="email" id="cat-email" placeholder="owner@example.com">
@@ -1068,12 +1068,12 @@ console.log(isBeingJudged(myCat)); // true, always true</code></pre>
             </select>
           </div>
         </div>
-        <div style="margin-bottom: var(--spacing-md)">
+        <div style="margin-bottom: var(--clampography-spacing-md)">
           <label for="notes">Behavioral Notes</label>
           <textarea id="notes" rows="3"
             placeholder="Describe temperament, quirks, and current crimes against furniture..."></textarea>
         </div>
-        <div style="margin-bottom: var(--spacing-md)">
+        <div style="margin-bottom: var(--clampography-spacing-md)">
           <label for="cat-photo">Cat Photo <small>(<abbr title="Joint Photographic Experts Group">JPG</abbr>, <abbr
                 title="Portable Network Graphics">PNG</abbr>
               or <abbr title="Graphics Interchange Format">GIF</abbr>)</small></label>
@@ -2062,21 +2062,25 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
             syncColorsWhenReady();
 
             document.addEventListener("keydown", (e) => {
-              // Don't fire shortcuts when user is typing in a text input, textarea, or select
+              // Ignore shortcuts if the user is typing in a content-editable element or form fields
               const active = document.activeElement;
               if (active) {
                 const tag = active.tagName;
-                const isTextInput = tag === "TEXTAREA" || (tag === "INPUT" && active.type === "text");
-                if (isTextInput || tag === "SELECT") return;
+                const isTyping = active.isContentEditable || 
+                                 tag === "TEXTAREA" || 
+                                 tag === "SELECT" ||
+                                 (tag === "INPUT" && !["button", "submit", "reset", "radio", "checkbox", "color", "range", "file"].includes(active.type));
                 
-                // If focus is on a button, color input, etc., blur it on any shortcut key 
-                // (except Tab) so Space doesn't trigger it again.
-                if (e.key !== "Tab") {
+                if (isTyping) return;
+                
+                // Blur interactive elements (buttons, checkboxes) on theme editor shortcuts 
+                // so they don't get accidentally triggered, but let Tab and Enter pass through.
+                if (e.ctrlKey && e.key !== "Tab" && e.key !== "Enter") {
                   active.blur();
                 }
               }
 
-              // ← / → / Space: navigate themes
+              // Navigation (No CTRL required for arrows and space)
               if (e.key === "ArrowLeft" && !e.ctrlKey) {
                 e.preventDefault();
                 prevTheme();
@@ -2086,11 +2090,14 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
                 nextTheme();
               }
               if (e.key === " ") {
-                e.preventDefault();
-                nextTheme();
+                // Don't hijack spacebar if a button/checkbox is focused
+                if (!active || (active.tagName !== "BUTTON" && active.tagName !== "INPUT")) {
+                  e.preventDefault();
+                  nextTheme();
+                }
               }
 
-              // Ctrl+← / Ctrl+→: legacy - keep working
+              // Ctrl + Arrows
               if (e.ctrlKey && e.key === "ArrowLeft") {
                 e.preventDefault();
                 prevTheme();
@@ -2100,41 +2107,33 @@ document.getElementById("meter-demo").textContent = this.value + "%"'>
                 nextTheme();
               }
 
-              // C: clone
-              if (e.key === "c" || e.key === "C") {
-                e.preventDefault();
-                cloneTheme();
-              }
-
-              // S: save
-              if (e.key === "s" || e.key === "S") {
-                e.preventDefault();
-                saveTheme();
-              }
-
-              // R: reset
-              if (e.key === "r" || e.key === "R") {
-                e.preventDefault();
-                resetTheme();
-              }
-
-              // P: publish / unpublish (toggle)
-              if (e.key === "p" || e.key === "P") {
-                e.preventDefault();
-                if (isOfficialTheme.value) {
-                  unpublishTheme();
-                } else if (currentThemeName.value !== 'auto') {
-                  publishTheme();
+              // Theme Editor shortcuts (Require CTRL, and preventDefault overrides browser defaults)
+              if (e.ctrlKey) {
+                const key = e.key.toLowerCase();
+                if (key === "c") {
+                  e.preventDefault();
+                  cloneTheme();
+                } else if (key === "s") {
+                  e.preventDefault();
+                  saveTheme();
+                } else if (key === "r") {
+                  e.preventDefault();
+                  resetTheme();
+                } else if (key === "p") {
+                  e.preventDefault();
+                  if (isOfficialTheme.value) {
+                    unpublishTheme();
+                  } else if (currentThemeName.value !== "auto") {
+                    publishTheme();
+                  }
                 }
               }
 
-              // Delete: delete theme
+              // Delete / Backspace (No CTRL needed)
               if (e.key === "Delete") {
                 e.preventDefault();
                 deleteTheme();
               }
-
-              // Backspace: restore last deleted theme
               if (e.key === "Backspace") {
                 e.preventDefault();
                 restoreTheme();
