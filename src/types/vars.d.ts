@@ -6,6 +6,7 @@
 export type ClampographyVars = 
   | "--clampography-background"
   | "--clampography-border"
+  | "--clampography-border-width"
   | "--clampography-error"
   | "--clampography-fluid-max"
   | "--clampography-fluid-min"
@@ -54,6 +55,7 @@ export type ClampographyVars =
   | "--clampography-list-indent"
   | "--clampography-muted"
   | "--clampography-primary"
+  | "--clampography-radius"
   | "--clampography-scroll-offset"
   | "--clampography-secondary"
   | "--clampography-spacing-lg"
