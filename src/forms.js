@@ -35,7 +35,7 @@ export default (options = {}) => {
       "display": "inline-flex",
       "align-items": "center",
       "justify-content": "center",
-      "gap": "0.375em",
+      "gap": "var(--clampography-spacing-xs)",
       "padding": "var(--clampography-spacing-xs) var(--clampography-spacing-sm)",
       "background-color": "var(--clampography-surface)",
       "color": "var(--clampography-text)",
