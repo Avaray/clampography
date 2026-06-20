@@ -63,7 +63,7 @@ export default (options = {}) => {
     },
 
     // ── Text Inputs & Textarea ────────────────────────────────────────────────
-    [scope(":where(input:not([type='checkbox'], [type='radio'], [type='range'], [type='color']), textarea, select)")]: {
+    [scope(":where(input:not([type='checkbox'], [type='radio'], [type='range'], [type='color'], [type='file'], [type='hidden'], [type='submit'], [type='reset'], [type='button'], [type='image']), textarea, select)")]: {
       "display": "block",
       "width": "100%",
       "padding": "var(--clampography-spacing-xs) var(--clampography-spacing-sm)",
@@ -75,7 +75,7 @@ export default (options = {}) => {
       "transition-duration": "150ms",
     },
 
-    [scope(":where(input:not([type='checkbox'], [type='radio'], [type='range'], [type='color']), textarea, select):focus")]: {
+    [scope(":where(input:not([type='checkbox'], [type='radio'], [type='range'], [type='color'], [type='file'], [type='hidden'], [type='submit'], [type='reset'], [type='button'], [type='image']), textarea, select):focus-visible")]: {
       "outline": "none",
       "border-color": "var(--clampography-primary)",
       "box-shadow": "0 0 0 3px color-mix(in oklab, var(--clampography-primary) 20%, transparent)",
@@ -91,11 +91,11 @@ export default (options = {}) => {
       "cursor": "default",
     },
 
-    [scope(":where(input, textarea, select):user-invalid")]: {
+    [scope(":where(input, textarea, select):where(:user-invalid, [aria-invalid='true'])")]: {
       "border-color": "var(--clampography-error)",
     },
 
-    [scope(":where(input, textarea, select):user-invalid:focus")]: {
+    [scope(":where(input, textarea, select):where(:user-invalid, [aria-invalid='true']):focus-visible")]: {
       "box-shadow": "0 0 0 3px color-mix(in oklab, var(--clampography-error) 20%, transparent)",
     },
 
@@ -113,13 +113,18 @@ export default (options = {}) => {
     },
 
     // ── Select ────────────────────────────────────────────────────────────────
-    [scope("select")]: {
+    [scope("select:not([multiple]):not([size])")]: {
       "appearance": "none",
-      "background-image": `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`,
-      "background-position": "inline-end 0.5rem center",
+      "background-image": "linear-gradient(45deg, transparent 50%, var(--clampography-text) 50%), linear-gradient(135deg, var(--clampography-text) 50%, transparent 50%)",
+      "background-position": "calc(100% - 1.25rem - 5px) center, calc(100% - 1.25rem) center",
+      "background-size": "5px 5px, 5px 5px",
       "background-repeat": "no-repeat",
-      "background-size": "1.5em 1.5em",
       "padding-inline-end": "2.5rem",
+    },
+
+    [scope("select[multiple], select[size]")]: {
+      "appearance": "auto",
+      "padding": "var(--clampography-spacing-xs) var(--clampography-spacing-sm)",
     },
 
     // ── File Input ────────────────────────────────────────────────────────────
@@ -181,6 +186,15 @@ export default (options = {}) => {
       "border-radius": "0.375rem",
       "background-color": "var(--clampography-background)",
       "cursor": "pointer",
+    },
+
+    [scope("[type='color']::-webkit-color-swatch-wrapper")]: {
+      "padding": "0",
+    },
+
+    [scope("[type='color']::-webkit-color-swatch")]: {
+      "border": "none",
+      "border-radius": "0.25rem",
     },
 
     // ── Fieldset & Legend ────────────────────────────────────────────────────
