@@ -18,6 +18,8 @@ When you use Tailwind CSS, the [Preflight](https://tailwindcss.com/docs/prefligh
 - 💬 **TypeScript Ready:** Auto-generated [TypeScript](https://www.typescriptlang.org/) types for all CSS variables.
 - 🌍 **RTL Ready:** Works correctly in right-to-left languages out of the box.
 - 🎨 **Figma Design Tokens:** Theme values exported as `figma-tokens.json` (W3C Design Tokens).
+- 🖱️ **Micro-interactions:** Themed text selections, `<mark>` highlights, and `:target` animations.
+- 🖨️ **Print & A11y Optimization:** Removes decorations and forces readable black text.
 
 ## 📦 Install
 
@@ -77,7 +79,6 @@ Clampography is highly modular. You can configure it directly in your CSS:
   forms: true | false;                    /* (default: false) */
   kbd: true | false;                      /* (default: false) */
   print: true | false;                    /* (default: false) */
-  scrollbar: true | false;                /* (default: false) */
   highlights: true | false;               /* (default: false) */
 
   /* Advanced Settings */
