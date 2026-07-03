@@ -87,6 +87,60 @@ export default (options = {}) => {
         "max-width": "100%",
         "page-break-inside": "avoid",
       },
+      // Lists (neutralize extra.js colors and ensure visibility)
+      [scope("ul > li::before")]: {
+        "background-color": "#555",
+        "print-color-adjust": "exact",
+        "-webkit-print-color-adjust": "exact",
+      },
+      [scope("ol > li::before")]: {
+        "color": "#555",
+      },
+      // Inline Code & Pre (neutralize extra.js & base.js backgrounds)
+      [scope(":where(code:not(pre code), kbd, samp)")]: {
+        "background-color": "transparent",
+        "color": "black",
+        "border-color": "#ccc",
+      },
+      // Mark & Del (neutralize extra.js colors)
+      [scope("mark")]: {
+        "background-color": "transparent",
+        "color": "black",
+        "border": "1px solid #ccc",
+      },
+      [scope("del")]: {
+        "text-decoration-color": "black",
+      },
+      // Blockquote (neutralize extra.js inline start color)
+      [scope("blockquote")]: {
+        "border-inline-start-color": "#ccc",
+        "color": "black",
+      },
+      // Captions & Muted (neutralize extra.js colors)
+      [scope("caption, figcaption, .muted")]: {
+        "color": "#666",
+      },
+      // HR, Details & Summary (neutralize extra.js colors)
+      [scope("hr")]: {
+        "background-color": "#ccc",
+        "border-color": "#ccc",
+      },
+      [scope("details")]: {
+        "border-color": "#ccc",
+      },
+      [scope("summary")]: {
+        "color": "black",
+      },
+      // Forms (neutralize forms.js backgrounds and borders)
+      [scope(":where(input, textarea, select, button, [type='button'], [type='reset'], [type='submit'])")]: {
+        "background-color": "transparent",
+        "color": "black",
+        "border-color": "#ccc",
+      },
+      [scope(":where(input, textarea, select):focus-visible")]: {
+        "box-shadow": "none",
+        "outline": "none",
+      },
     },
   };
 };

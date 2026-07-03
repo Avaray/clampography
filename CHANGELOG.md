@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.1] - 2026-07-03
+- **Print:** Fixed the `print` module to properly neutralize colors and backgrounds introduced by the `extra` and `forms` modules (e.g., list markers, inline code, `<mark>`, forms elements) to ensure a fully ink-friendly, professional print output.
+
 ## [2.1.0] - 2026-06-20
 - **Core:** Added global `--clampography-radius` and `--clampography-border-width` CSS variables to `:root` to allow easy overriding of form element shapes (e.g., sharp corners).
 - **Forms:** Refactored module to use fluid spacing tokens for button gaps.

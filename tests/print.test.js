@@ -76,4 +76,24 @@ describe("Print Styles Generation", () => {
     expect(printBlock[":root .prose h1"]).toBeDefined();
     expect(printBlock[":root .prose h1"]["font-size"]).toBe("28pt");
   });
+  it("neutralizes styles from extra and forms modules (lists, code, forms, mark)", () => {
+    const styles = printStyles({ root: ":root" });
+    const printBlock = styles["@media print"];
+
+    // Check Lists
+    expect(printBlock[":root ul > li::before"]).toBeDefined();
+    expect(printBlock[":root ul > li::before"]["background-color"]).toBe("#555");
+    expect(printBlock[":root ol > li::before"]["color"]).toBe("#555");
+
+    // Check Inline Code
+    const codeKey = Object.keys(printBlock).find(k => k.includes("code:not(pre code)"));
+    expect(printBlock[codeKey]["background-color"]).toBe("transparent");
+    expect(printBlock[codeKey]["border-color"]).toBe("#ccc");
+
+    // Check Forms
+    const formKey = Object.keys(printBlock).find(k => k.includes("input") && k.includes("textarea"));
+    expect(printBlock[formKey]["background-color"]).toBe("transparent");
+    expect(printBlock[formKey]["border-color"]).toBe("#ccc");
+    expect(printBlock[formKey]["color"]).toBe("black");
+  });
 });
