@@ -103,7 +103,7 @@ Clampography is highly modular. You can configure it directly in your CSS:
 
 Clampography targets modern browsers to keep the CSS output clean, small, and mathematically precise without relying on heavy polyfills or fallbacks.
 
-- **Minimum requirement:** ~94% global support. All modules depend on [:where() and :is()]([:where() and :is()](https://caniuse.com/mdn-css_selectors_where)) selectors — without them, styles will not apply at all.
+- **Minimum requirement:** ~94% global support. All modules depend on [:where() and :is()](https://caniuse.com/mdn-css_selectors_where) selectors — without them, styles will not apply at all.
 - **Optimal (Themes & Forms):** ~93% global support (additionally requires [oklch()](https://caniuse.com/css-color-functions) and [color-mix()](https://caniuse.com/wf-color-mix)).
 - **Container Query scaling** (`scale-mode: container`): ~92% global support (additionally requires [cqi units](https://caniuse.com/css-container-queries)).
 
