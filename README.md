@@ -4,13 +4,14 @@
 
 When you use Tailwind CSS, the [Preflight](https://tailwindcss.com/docs/preflight) reset removes all browser defaults. You get a completely unstyled baseline, which is great for UI, but terrible for blog articles or documentation pages because all your `<h1>`, `<p>`, `<ul>`, and other tags lose their styling.
 
-**Clampography solves this.** It restores typography defaults and makes them mathematically perfect. It automatically generates a fluid type scale using [CSS clamp() functions](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/clamp). Your text and spacing will scale smoothly between mobile and 4K displays - without writing a single media query.
+**Clampography solves this.** It restores typography defaults and makes them mathematically perfect. It automatically generates a fluid type scale using [CSS clamp() functions](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/clamp). Your text and spacing will scale smoothly between mobile and 4K displays - without writing a single [media query](https://tailwindcss.com/docs/responsive-design).
 
 > [!NOTE]
 > Clampography is designed for projects using a build tool like [Vite](https://vitejs.dev/) or [Webpack](https://webpack.js.org/), or a framework with CSS bundling like [Astro](https://astro.build/), [Next.js](https://nextjs.org/), [Remix](https://remix.run/), or [SvelteKit](https://svelte.dev/docs/kit/introduction). With a build tool, unused modules are automatically removed, keeping your CSS bundle small.
 > A build tool is not required - CDN files are also available. However, CDN files cannot be tree-shaken, resulting in a significantly larger CSS file.
 
 ## ✨ Features
+
 - 🧮 **Fluid Typography & Spacing:** Smooth scaling from mobile to desktop.
 - 🎨 **Built-in Themes:** `light` and `dark` included. More themes coming soon.
 - 🧩 **Modular:** Enable only what you need.
@@ -41,6 +42,7 @@ deno install npm:clampography
 ## 🛠️ Quick Start
 
 ### 1. Basic (Fluid Typography Only)
+
 This restores typography but keeps it clean. No colors are injected.
 
 ```css
@@ -49,6 +51,7 @@ This restores typography but keeps it clean. No colors are injected.
 ```
 
 ### 2. Optimal Experience (Themes + Extra Styles)
+
 This adds colors, styled forms, and extra decorations.
 
 ```css
@@ -91,14 +94,18 @@ Clampography is highly modular. You can configure it directly in your CSS:
 ```
 
 ## 📚 Documentation
+
 - 📖 **[Complete Usage Guide](docs/usage.md)**
 - 🔄 **[Configuration Flow Diagram](docs/configuration-flow.md)**
 - 🤝 **[Contributing](docs/contributing.md)**
 
 ## 🌐 Browser Support
+
 Clampography targets modern browsers to keep the CSS output clean, small, and mathematically precise without relying on heavy polyfills or fallbacks.
-- **Basic (Typography Only):** ~97% global support (requires [clamp()](https://caniuse.com/css-math-functions)).
-- **Optimal (Themes & Forms):** ~93% global support (requires [oklch()](https://caniuse.com/css-color-functions) and [color-mix()](https://caniuse.com/wf-color-mix)).
+
+- **Minimum requirement:** ~94% global support. All modules depend on [:where() and :is()]([:where() and :is()](https://caniuse.com/mdn-css_selectors_where)) selectors — without them, styles will not apply at all.
+- **Optimal (Themes & Forms):** ~93% global support (additionally requires [oklch()](https://caniuse.com/css-color-functions) and [color-mix()](https://caniuse.com/wf-color-mix)).
+- **Container Query scaling** (`scale-mode: container`): ~92% global support (additionally requires [cqi units](https://caniuse.com/css-container-queries)).
 
 ## 🙏 Inspirations
 - [daisyUI](https://daisyui.com/) created by [Pouya Saadeghi](https://saadeghi.com/)
