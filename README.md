@@ -61,6 +61,8 @@ This adds colors, styled forms, and extra decorations.
 }
 ```
 
+By enabling these modules, Clampography generates semantic color utilities that automatically adapt to the current theme. You can activate a theme by setting the `data-theme` attribute and use the generated utility classes in your markup:
+
 ```html
 <body data-theme="dark" class="bg-clampography-background text-clampography-text">
   <h1>Fluid Heading</h1>
