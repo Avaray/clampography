@@ -6,13 +6,13 @@ When you use Tailwind CSS, the [Preflight](https://tailwindcss.com/docs/prefligh
 
 **Clampography solves this.** It restores typography defaults and makes them mathematically perfect. It automatically generates a fluid type scale using [CSS clamp() functions](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/clamp). Your text and spacing will scale smoothly between mobile and 4K displays - without writing a single [media query](https://tailwindcss.com/docs/responsive-design).
 
-> Clampography is designed for projects using a build tool like [Vite](https://vitejs.dev/), [Rollup](https://rollupjs.org/) or [Webpack](https://webpack.js.org/), or a framework with CSS bundling like [Astro](https://astro.build/), [Next.js](https://nextjs.org/), [Nuxt](https://nuxt.com/), [Remix](https://remix.run/), or [SvelteKit](https://svelte.dev/docs/kit/introduction). With a build tool, unused modules are automatically removed, keeping your CSS bundle small.
+Clampography works anywhere Tailwind CSS works. It is designed for projects using a build tool like [Vite](https://vitejs.dev/), [Rollup](https://rollupjs.org/), or [Webpack](https://webpack.js.org/), or a framework with CSS bundling like [Astro](https://astro.build/), [Next.js](https://nextjs.org/), [Nuxt](https://nuxt.com/), [Remix](https://remix.run/), or [SvelteKit](https://svelte.dev/docs/kit/introduction). With a build tool, unused modules (or styles) are automatically removed, keeping your CSS bundle small.
 
 ## ✨ Features
 
 - 🧮 **Fluid Typography & Spacing:** Smooth scaling from mobile to desktop.
-- 🎨 **Built-in Themes:** `light` and `dark` included. More themes coming soon.
 - 🧩 **Modular:** Enable only what you need.
+- 🎨 **Built-in Themes:** `light` and `dark` included. More themes coming soon.
 - 🎯 **Zero Specificity:** All styles use `:where()` - your own CSS always wins, no `!important` needed.
 - 💬 **TypeScript Ready:** Auto-generated [TypeScript](https://www.typescriptlang.org/) types for all CSS variables.
 - 🌍 **RTL Ready:** Works correctly in right-to-left languages out of the box.
