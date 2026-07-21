@@ -43,7 +43,7 @@ jobs:
   publish:
     name: Build and Publish
     needs: check-version
-    # This 'if' condition is what makes GitHub UI show this job as "Skipped" (szary status)
+    # This 'if' condition is what makes GitHub UI show this job as "Skipped"
     # when the version hasn't changed.
     if: needs.check-version.outputs.should_publish == 'true'
     runs-on: ubuntu-latest
