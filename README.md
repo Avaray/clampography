@@ -12,7 +12,7 @@ When you use Tailwind CSS, the [Preflight](https://tailwindcss.com/docs/prefligh
 
 - 🧮 **Fluid Typography & Spacing:** Smooth scaling from mobile to desktop.
 - 🧩 **Modular:** Enable only what you need.
-- 🎨 **Built-in Themes:** `light` and `dark` included. More themes coming soon.
+- 🎨 **Themes:** `light` and `dark` included. More themes coming soon.
 - 🎯 **Zero Specificity:** All styles use `:where()` - your own CSS always wins, no `!important` needed.
 - 💬 **TypeScript Ready:** Auto-generated [TypeScript](https://www.typescriptlang.org/) types for all CSS variables.
 - 🌍 **RTL Ready:** Works correctly in right-to-left languages out of the box.
