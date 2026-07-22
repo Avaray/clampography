@@ -4,7 +4,7 @@
 
 When you use Tailwind CSS, the [Preflight](https://tailwindcss.com/docs/preflight) reset removes all browser defaults. You get a completely unstyled baseline, which is great for UI, but terrible for blog articles or documentation pages because all your `<h1>`, `<p>`, `<ul>`, and other tags lose their styling.
 
-**Clampography solves this.** It restores typography defaults and makes them mathematically perfect. It automatically generates a fluid type scale using [CSS clamp() functions](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/clamp). Your text and spacing will scale smoothly between mobile and 4K displays - without writing a single [media query](https://tailwindcss.com/docs/responsive-design).
+**Clampography solves this.** It restores typography defaults and makes them mathematically perfect. It automatically generates a fluid type scale using [CSS clamp() functions](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/clamp). Your text and spacing will scale smoothly between mobile and 4K displays - without writing a single [media query](https://tailwindcss.com/docs/responsive-design#targeting-a-breakpoint-range).
 
 **Clampography works anywhere Tailwind CSS works.** It is designed for projects using a build tool like [Vite](https://vitejs.dev/), [Rollup](https://rollupjs.org/), or [Webpack](https://webpack.js.org/), or a framework with CSS bundling like [Astro](https://astro.build/), [Next.js](https://nextjs.org/), [Nuxt](https://nuxt.com/), [Remix](https://remix.run/), or [SvelteKit](https://svelte.dev/docs/kit/introduction). With a build tool, unused modules (or styles) are automatically removed, keeping your CSS bundle small.
 
@@ -77,8 +77,8 @@ Clampography is highly modular. You can configure it directly in your CSS:
 ```css
 @plugin "clampography" {
   /* Feature Modules */
-  themes: "light, dark" | "all" | false;  /* (default: false) */
   base: true | false;                     /* (default: true) */
+  themes: "light, dark" | "all" | false;  /* (default: false) */
   extra: true | false;                    /* (default: false) */
   forms: true | false;                    /* (default: false) */
   kbd: true | false;                      /* (default: false) */
