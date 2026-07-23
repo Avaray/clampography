@@ -2,7 +2,8 @@
 
 The Clampography dev server is a local development tool for previewing typography, testing all module combinations, and managing themes - including creating, editing, publishing, and deleting them.
 
-> The dev server relies on native [Bun APIs](https://bun.com/docs/runtime/bun-apis) (`serve` from `bun` and `Bun.spawn` for parallel Tailwind builds). [Bun](https://bun.sh/docs/installation) is required to run the development environment. 
+
+[Bun](https://bun.sh/docs/installation) is required to run the development environment, because the dev server relies on [Bun's native APIs](https://bun.com/docs/runtime/bun-apis).
 
 ## Starting the Server
 
@@ -10,7 +11,7 @@ The Clampography dev server is a local development tool for previewing typograph
 bun run dev
 ```
 
-The server starts at **http://localhost:3000**.
+The server starts at **http://localhost:3000**
 
 ## What It Does on Startup
 
