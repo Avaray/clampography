@@ -77,6 +77,13 @@ export default (options = {}) => {
         "box-shadow": "0 0 0 4px transparent",
         "border-radius": "4px",
       }
-    }
+    },
+
+    // ACCESSIBILITY: Disable target animation for users who prefer reduced motion
+    "@media (prefers-reduced-motion: reduce)": {
+      [scope(":target")]: {
+        "animation": "none",
+      },
+    },
   };
 };
