@@ -5,6 +5,8 @@ The Clampography dev server is a local development tool for previewing typograph
 
 [Bun](https://bun.sh/docs/installation) is required to run the development environment, because the dev server relies on [Bun's native APIs](https://bun.com/docs/runtime/bun-apis).
 
+![Dev Server Screenshot](./images/screenshot_dev_server.jpg)
+
 ## Starting the Server
 
 ```bash
