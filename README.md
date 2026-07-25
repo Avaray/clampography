@@ -97,6 +97,7 @@ Clampography is highly modular. You can configure it directly in your CSS:
 
 - 📖 **[Complete Usage Guide](docs/usage.md)**
 - 🔄 **[Configuration Flow Diagram](docs/configuration-flow.md)**
+- 💻 **[Developer Server (Theme Editor)](docs/dev-server.md)**
 - 🤝 **[Contributing](docs/contributing.md)**
 
 ## 🌐 Browser Support
